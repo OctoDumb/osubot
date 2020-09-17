@@ -20,7 +20,7 @@ export interface IBotConfig {
     vk: {
         token: string,
         groupId: number,
-        ownerId: number
+        ownerId: number | number[]
     },
     osu: {
         token: string,
