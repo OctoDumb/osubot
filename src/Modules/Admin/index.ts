@@ -16,6 +16,8 @@ export default class Admin extends Module {
     ];
 
     isPermitted(message: Message, bot: Bot) {
-        return message.sender === bot.config.vk.ownerId;
+        const { ownerId } = bot.config.vk;
+        const { sender } = message;
+        return Array.isArray(ownerId) ? ownerId.includes(sender) : sender === ownerId;
     }
 }
