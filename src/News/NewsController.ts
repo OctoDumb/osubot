@@ -64,9 +64,9 @@ export default class NewsController {
                 let filters = this.getRule(id, rule.name).filters.map(f => NewsRule.parseFilters(f));
                 if(!filters.length) return true;
 
-                let r = true;
+                let r = false;
                 for(let filter of filters)
-                    r &&= filter.every(f => rule.useFilter(object, f));
+                    r ||= filter.every(f => rule.useFilter(object, f));
 
                 return r;
             });
