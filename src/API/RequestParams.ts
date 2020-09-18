@@ -1,3 +1,5 @@
+import { IDBUser } from "../Database";
+
 export interface IUserRequestParams {
     username: string;
     mode?: number;
@@ -17,12 +19,14 @@ export interface IRecentRequestParams {
 }
 
 export interface IScoreRequestParams {
-    username: string,
-    beatmapId: number,
-    mode?: number,
-    mods?: number
+    username: string;
+    beatmapId: number;
+    mode?: number;
+    mods?: number;
 }
 
 export interface ILeaderboardRequestParams {
-    
+    beatmapId: number;
+    users: IDBUser[];
+    mode?: number;
 }

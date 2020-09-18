@@ -1,3 +1,4 @@
+import { IDBUser } from "../Database";
 import { IBeatmap } from "./MapAPI";
 
 export interface IUserAPIResponse {
@@ -42,9 +43,6 @@ export interface IScoreAPIResponse {
 }
 
 export interface ILeaderboardAPIResponse {
-    maps: {
-        mods: number,
-        map: IBeatmap[]
-    },
+    user: IDBUser,
     scores: IScoreAPIResponse[]
 }

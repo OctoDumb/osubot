@@ -23,5 +23,5 @@ export default interface IServerAPI {
 
 export interface IAPIWithScores extends IServerAPI {
     getScores(params: IScoreRequestParams): Promise<IScoreAPIResponse[]>;
-    getLeaderboard(params: ILeaderboardRequestParams): Promise<ILeaderboardAPIResponse>;
+    getLeaderboard(params: ILeaderboardRequestParams): Promise<ILeaderboardAPIResponse[]>;
 }

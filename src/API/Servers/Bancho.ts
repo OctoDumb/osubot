@@ -1,12 +1,12 @@
 import IServerAPI, { IAPIWithScores } from "../ServerAPI";
 import Axios from "axios";
-import { IUserRequestParams, ITopRequestParams, IRecentRequestParams, IScoreRequestParams } from "../RequestParams";
-import { IUserAPIResponse, ITopAPIResponse, IRecentAPIResponse, IScoreAPIResponse } from "../APIResponse";
+import { IUserRequestParams, ITopRequestParams, IRecentRequestParams, IScoreRequestParams, ILeaderboardRequestParams } from "../RequestParams";
+import { IUserAPIResponse, ITopAPIResponse, IRecentAPIResponse, IScoreAPIResponse, ILeaderboardAPIResponse } from "../APIResponse";
 import { stringify } from "querystring";
 import { APINotFoundError } from "../APIErrors";
 import { getAccuracy } from "../../Util";
 
-export default class BanchoAPI implements IServerAPI {
+export default class BanchoAPI implements IServerAPI, IAPIWithScores {
     api = Axios.create({
         baseURL: "https://osu.ppy.sh/api"
     });
@@ -92,12 +92,12 @@ export default class BanchoAPI implements IServerAPI {
         return data.filter(s => pass ? s.rank != "F" : true).map(d => this.adaptScore(d, mode));
     }
 
-    async getScore({
+    async getScores({
         username,
         beatmapId,
         mode = 0,
         mods = null
-    }: IScoreRequestParams): Promise<IScoreAPIResponse> {
+    }: IScoreRequestParams): Promise<IScoreAPIResponse[]> {
         let { data } = await this.api(`/get_scores?${stringify({
             k: this.token,
             u: username,
@@ -105,10 +105,38 @@ export default class BanchoAPI implements IServerAPI {
             m: mode
         })}`);
 
-        if (!mods)
+        if (mods)
             data = data.filter(p => p.enabled_mods == mods);
         
-        return this.adaptScore(data, mode);
+        return data.map(d => this.adaptScore(d, mode));
+    }
+
+    async getLeaderboard({
+        beatmapId,
+        users,
+        mode = 0
+    }: ILeaderboardRequestParams): Promise<ILeaderboardAPIResponse[]> {
+        let scores: ILeaderboardAPIResponse[] = [];
+        try {
+            let lim = Math.ceil(users.length / 5);
+            for(var i = 0; i < lim; i++) {
+                try {
+                    let lb: ILeaderboardAPIResponse[] = users.splice(0, 5).map(user => ({ user, scores: [] }));
+                    let sc: (IScoreAPIResponse[] | Error | string)[] = await Promise.all(
+                        lb.map(u => this.getScores({
+                            username: u.user.nickname,
+                            beatmapId,
+                            mode
+                        }).catch(e => e))
+                    );
+                    for(let j = 0; j < lb.length; j++)
+                        lb[j].scores = <IScoreAPIResponse[]>sc[j];
+                    scores.push(...lb.filter(s => typeof s.scores != "string" && !(s.scores instanceof Error)))
+                } catch(e) {}
+            }
+        } catch(e) {}
+
+        return scores;
     }
 
     private adaptScore(
