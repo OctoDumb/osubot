@@ -4,6 +4,7 @@ import VK from "vk-io";
 import MapAPI from "../API/MapAPI";
 import { Mods } from "../Util";
 import NewsController from "../News/NewsController";
+import ChatCache from "../ChatCache";
 
 export default interface ICommandArguments {
     message: Message;
@@ -30,6 +31,8 @@ export interface ITopCommandArguments extends IArgumentsWithMode, IArgumentsWith
 export interface IRecentCommandArguments extends IArgumentsWithMode {
     pass?: boolean;
 }
+
+export interface ICompareCommandArguments extends IArgumentsWithMode, IArgumentsWithMods {}
 
 export interface IArgumentParser {
     arg: string;
@@ -139,6 +142,7 @@ export function parseArguments<T>(args: string[], parsers: IArgumentParser[] = [
 }
 
 export interface IServerCommandArguments<T> extends ICommandArguments {
+    chats: ChatCache;
     clean: string;
     args: T;
 }

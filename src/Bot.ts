@@ -15,6 +15,7 @@ import cron from "node-cron";
 import NewsController from "./News/NewsController";
 import Admin from "./Modules/Admin";
 import Main from "./Modules/Main";
+import ChatCache from "./ChatCache";
 
 export interface IBotConfig {
     vk: {
@@ -55,6 +56,8 @@ export default class Bot {
         Admin, 
         Bancho 
     ].map(m => new m(this));
+
+    lastMaps = new ChatCache();
 
     maps = new MapAPI(2583);
     private adminApi = new BotAPI(this);
