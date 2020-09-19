@@ -50,13 +50,14 @@ export function defaultArguments(message: Message, { database, vk, maps: mapAPI,
     return { message, database, vk, mapAPI, news, chats: lastMaps };
 }
 
-export async function getUserInfo(message: Message, db: Server, clean: string, args: { mode?: number }) {
-    let { nickname: username, mode } = await db.getUser(message.sender);
+export async function getUserInfo(message: Message, db: Server, clean: string, args?: { mode?: number }) {
+    let { nickname: username = "", mode = 0 } = await db.getUser(message.sender);
     if(message.forwarded)
         username = (await db.getUser(message.forwarded.senderId)).nickname;
     if(clean)
         username = clean;
-    mode = args.mode;
+    if(args.mode != undefined)
+        mode = args.mode;
 
     return { username, mode };
 }
@@ -140,6 +141,15 @@ export function clearMods(mods: string[]) {
         mods.splice(mods.indexOf("SD"), 1);
 
     return mods;
+}
+
+export function modsEqual(score: number, arg: number) {
+    if(score & Mods.NC)
+        score -= Mods.DT;
+    if(score & Mods.PF)
+        score -= Mods.SD;
+
+    return score == arg;
 }
 
 /**

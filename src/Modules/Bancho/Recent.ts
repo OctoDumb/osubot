@@ -22,7 +22,7 @@ export default class BanchoRecent extends ServerCommand {
         };
     }
 
-    async run({ message, mapAPI, clean, args }: IServerCommandArguments<IRecentCommandArguments>) {
+    async run({ message, mapAPI, clean, args, chats }: IServerCommandArguments<IRecentCommandArguments>) {
         let { username, mode } = await getUserInfo(message, this.database, clean, args);
 
         let [ recent ] = await this.api.getRecent({ username, mode, pass: args.pass });
@@ -32,6 +32,7 @@ export default class BanchoRecent extends ServerCommand {
         let mods = modsToString(recent.mods);
 
         let map = await mapAPI.getBeatmap(recent.beatmapId, mods);
+        chats.setChatMap(message.peerId, recent.beatmapId);
 
         let pp = await mapAPI.getPP(recent.beatmapId, {
             combo: recent.maxCombo,
