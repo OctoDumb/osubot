@@ -71,9 +71,11 @@ export default class Bot {
     
     constructor() {
         this.vk.updates.on("message", ctx => {
-            let message = new Message(ctx);
-            for(let module of this.modules)
-                module.run(message, this);
+            try {
+                let message = new Message(ctx);
+                for(let module of this.modules)
+                    module.run(message, this);
+            } catch(e) {}
         });
     }
 
