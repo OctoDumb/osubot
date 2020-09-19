@@ -49,7 +49,7 @@ export function TopTemplate(server: ServerModule, nickname: string, scores: ITop
             let map = maps[i];
             let length = formatTime(~~(map.length / 1e3));
             let modsString = joinMods(modsToString(score.mods));
-            return `${map.title} [${map.version}] ${modsString[0]?"+":""}${modsString}
+            return `${map.title} [${map.version}] ${modsString}
                 ${statsToString(map.mode, map.difficulty)} ${round(map.difficulty.stars)}✩
                 Grade: ${score.rank} > ${score.maxCombo}x > ${length}
                 Accuracy: ${round(score.accuracy * 100)}% > ${hitsToString(score.counts, score.mode)}
@@ -106,7 +106,7 @@ export function RecentTemplate(server: ServerModule, recent: IRecentAPIResponse,
 /**
  * Message template for Compare command 
  */
-export function CompareScoreTemplate(server: ServerModule, score: IScoreAPIResponse, map: IBeatmap) {
+export function CompareScoreTemplate(server: ServerModule, score: IScoreAPIResponse, pp: IPPResponse, map: IBeatmap) {
     let length = formatTime(~~(map.length / 1e3));
     let modsString = joinMods(modsToString(score.mods));
     return `
@@ -117,7 +117,7 @@ export function CompareScoreTemplate(server: ServerModule, score: IScoreAPIRespo
         ${score.date}
         Score: ${score.score} | Combo: ${score.maxCombo}x
         Accuracy: ${round(score.accuracy * 100)}%
-        PP: 0 ⯈ FC: 0 ⯈ SS: 0
+        PP: ${round(pp.pp)} ⯈ FC: ${round(pp.fcpp)} ⯈ SS: ${round(pp.sspp)}
         Hitcounts: ${hitsToString(score.counts, score.mode)}
         Grade: ${score.rank}
     `;
