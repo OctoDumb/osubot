@@ -53,28 +53,12 @@ export default class BanchoAPI implements IServerAPI, IAPIWithScores {
             limit
         })}`);
 
-        return data.map(s => {
-            let counts = {
-                300: Number(s.count300),
-                100: Number(s.count100),
-                50: Number(s.count50),
-                geki: Number(s.countgeki),
-                katu: Number(s.countkatu),
-                miss: Number(s.countmiss)
-            };
-            return {
-                beatmapId: Number(s.beatmap_id),
-                mode: mode ?? 0,
-                score: Number(s.score),
-                maxCombo: Number(s.maxcombo),
-                counts,
-                mods: Number(s.enabled_mods),
-                rank: s.rank,
-                date: new Date(s.date),
-                accuracy: getAccuracy(mode, counts),
-                pp: Number(s.pp)
+        return data.map(s => Object.assign(
+            this.adaptScore(s, mode), 
+            { 
+                pp: Number(s.pp) 
             }
-        });
+        ));
     }
 
     async getRecent({ 
