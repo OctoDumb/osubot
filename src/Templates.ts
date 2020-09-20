@@ -5,7 +5,7 @@ import {
 } from "./API/APIResponse";
 import ServerModule from "./Commands/Server/ServerModule";
 import { IBeatmap, IPPResponse } from "./API/MapAPI";
-import { statsToString, formatTime, formatBPM, modsToString, hitsToString, round } from "./Util";
+import { statsToString, formatTime, formatBPM, modsToString, hitsToString, round, formatDate } from "./Util";
 import Message from "./Message";
 import { IDBUser, IDBUserStats } from "./Database";
 import IReplay from "./Replay/Replay";
@@ -54,7 +54,7 @@ export function TopTemplate(server: ServerModule, nickname: string, scores: ITop
                 Grade: ${score.rank} > ${score.maxCombo}x > ${length}
                 Accuracy: ${round(score.accuracy * 100)}% > ${hitsToString(score.counts, score.mode)}
                 PP: ${score.pp}
-                ${score.date.toDateString()}
+                ${formatDate(score.date)}
                 ${server.baseLink}b/${score.beatmapId}`;
         }).join("\n")}
     `;
@@ -72,7 +72,7 @@ export function TopSingleTemplate(server: ServerModule, nickname: string, score:
         ${map.artist} - ${map.title} [${map.version}] by ${map.creator}
         ${length} | ${statsToString(map.mode, map.difficulty)} BPM: ${formatBPM(map.bpm)} | ${round(map.difficulty.stars)}✩ ${modsString}
 
-        ${score.date.toDateString()}
+        ${formatDate(score.date)}
         Score: ${score.score} | Combo: ${score.maxCombo}x
         Accuracy: ${round(score.accuracy * 100)}%
         Hitcounts: ${hitsToString(score.counts, score.mode)}
@@ -114,7 +114,7 @@ export function CompareScoreTemplate(server: ServerModule, score: IScoreAPIRespo
         Top score on ${map.artist} - ${map.title} [${map.version}] by ${map.creator}
         ${length} | ${statsToString(map.mode, map.difficulty)} BPM: ${formatBPM(map.bpm)} | ${round(map.difficulty.stars)}✩ ${modsString}
 
-        ${score.date}
+        ${formatDate(score.date)}
         Score: ${score.score} | Combo: ${score.maxCombo}x
         Accuracy: ${round(score.accuracy * 100)}%
         PP: ${round(pp.pp)} ⯈ FC: ${round(pp.fcpp)} ⯈ SS: ${round(pp.sspp)}

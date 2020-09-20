@@ -182,6 +182,10 @@ export function hitsToString(hits: IHitCounts, mode: number) {
     }
 }
 
+export function fixNum(n: number): string {
+    return `${n < 10 ? '0' : ''}${n}`;
+}
+
 export function formatBPM(bpm: { min: number, max: number, avg: number }): string {
     if(bpm.min == bpm.max) return `${bpm.min}`;
     return `${bpm.min}-${bpm.max} (${bpm.avg})`;
@@ -191,6 +195,11 @@ export function formatTime(seconds: number) {
     let minutes = Math.floor(seconds / 60);
     seconds = seconds % 60;
     return `${minutes < 10 ? '0' : ''}${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+}
+
+export function formatDate(date: Date) {
+    return `${fixNum(date.getDate())}.${fixNum(date.getMonth())}.${date.getFullYear()}`
+        + ` ${fixNum(date.getMinutes())}:${fixNum(date.getSeconds())}`;
 }
 
 export function round(num: number, positions: number = 2) {
