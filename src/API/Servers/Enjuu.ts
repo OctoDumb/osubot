@@ -7,7 +7,7 @@ import { APINotFoundError } from "../APIErrors";
 
 export default class EnjuuAPI extends API implements IServerAPI, IAPIWithScores {
     api = Axios.create({
-        baseURL: "https://kurikku.pw/api"
+        baseURL: "https://enjuu.click/api"
     });
 
     async getUser({ 
