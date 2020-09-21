@@ -5,7 +5,7 @@ export default class BanchoMode extends ServerCommand {
     name = "Mode";
     command = [ "m", "mode", "ь", "ьщву" ];
 
-    description = "";
+    description = "Установить геймод по умолчанию";
 
     async run({ message }: IServerCommandArguments<null>) {
         let mode = message.arguments[0];
@@ -17,7 +17,7 @@ export default class BanchoMode extends ServerCommand {
         let m = ["Osu!", "Osu!Taiko", "Osu!Catch", "Osu!Mania"][Number(mode)];
 
         message.reply(`
-            [Server: Bancho]
+            [Server: ${this.module.name}]
             Режим ${m} успешно установлен!
         `);
     }

@@ -9,7 +9,7 @@ export default class BanchoTop extends ServerCommand {
     name = "Top";
     command = [ "top", "t", "ещз", "е" ];
 
-    description = "";
+    description = "Посмотреть топ 3 ваших скоров";
 
     parseArguments(message: Message, bot: Bot): IServerCommandArguments<ITopCommandArguments> {
         let args = defaultArguments(message, bot);

@@ -12,7 +12,7 @@ export default class Bancho extends ServerModule {
 
     baseLink = "https://osu.ppy.sh/";
 
-    description = "Уебанчо";
+    description = "Официальный сервер Osu!";
 
     api = this.apilist.bancho;
 
