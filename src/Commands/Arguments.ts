@@ -47,17 +47,25 @@ export const Parsers = {
         prefix: "-",
         parser(arg) {
             switch(arg) {
-                case "-s":
-                case "-std":
+                case "s":
+                case "ы":
+                case "std":
+                case "ыев":
                     return 0;
-                case "-t":
-                case "-taiko":
+                case "t":
+                case "е":
+                case "taiko":
+                case "ефшлщ":
                     return 1;
-                case "-c":
-                case "-ctb":
+                case "c":
+                case "с":
+                case "ctb":
+                case "сеи":
                     return 2;
-                case "-m":
-                case "-mania":
+                case "m":
+                case "ь":
+                case "mania":
+                case "ьфтшф":
                     return 3;
             }
             return null;
