@@ -26,10 +26,17 @@ export default class BanchoTop extends ServerCommand {
     }
 
     async run({ message, mapAPI, clean, args }: IServerCommandArguments<ITopCommandArguments>) {
-        let { nickname: username } = await this.database.getUser(message.sender);
+        let { nickname: username, mode } = await this.database.getUser(message.sender);
         if(clean) username = clean;
         
-        let top = await this.api.getTop({ username, limit: 100 });
+        let top = await this.api.getTop({ 
+            username, 
+            limit: 100,
+            mode: args.mode ?? mode
+        });
+
+        if (top.length < 3)
+            return message.reply("У игрока недостаточно скоров");
 
         if(args.morethan) {
             let amount = top.filter(t => t.pp >= args.morethan).length;
