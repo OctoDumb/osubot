@@ -14,9 +14,11 @@ export default class BanchoMode extends ServerCommand {
 
         this.database.setMode(message.sender, Number(mode));
 
+        let m = ["Osu!", "Osu!Taiko", "Osu!Catch", "Osu!Mania"][Number(mode)];
+
         message.reply(`
             [Server: Bancho]
-            Режим установлен!
+            Режим ${m} успешно установлен!
         `);
     }
 }
