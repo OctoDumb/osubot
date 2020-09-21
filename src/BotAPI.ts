@@ -13,7 +13,7 @@ export default class BotAPI {
     ) {
         this.app.use(bodyParser.urlencoded({ extended: true }));
 
-        this.addAuthorization()
+        this.addAuthorization();
         this.createEndpoints();
 
         let { api: config } = bot.config;

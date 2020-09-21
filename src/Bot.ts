@@ -1,13 +1,20 @@
 import { VK } from "vk-io";
 import { readFileSync } from "fs";
+import cron from "node-cron";
 import Message from "./Message";
 
 import Database from "./Database";
 import MapAPI from "./API/MapAPI";
+import NewsController from "./News/NewsController";
+import ChatCache from "./ChatCache";
 
 import Module from "./Commands/Module";
 import Bancho from "./Modules/Bancho";
 import Kurikku from "./Modules/Kurikku";
+import Ripple from "./Modules/Ripple";
+
+import Admin from "./Modules/Admin";
+import Main from "./Modules/Main";
 
 import BanchoAPI from "./API/Servers/Bancho";
 import KurikkuAPI from "./API/Servers/Kurikku";
@@ -16,12 +23,6 @@ import RippleAPI from "./API/Servers/Ripple";
 import AkatsukiAPI from "./API/Servers/Akatsuki";
 import AkatsukiRelaxAPI from "./API/Servers/AkatsukiRelax";
 import BotAPI from "./BotAPI";
-
-import cron from "node-cron";
-import NewsController from "./News/NewsController";
-import Admin from "./Modules/Admin";
-import Main from "./Modules/Main";
-import ChatCache from "./ChatCache";
 
 export interface IBotConfig {
     vk: {
@@ -71,7 +72,8 @@ export default class Bot {
         Main, 
         Admin, 
         Bancho,
-        Kurikku
+        Kurikku,
+        Ripple,
     ].map(m => new m(this));
 
     lastMaps = new ChatCache();
