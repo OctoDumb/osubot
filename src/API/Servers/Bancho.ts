@@ -1,4 +1,4 @@
-import IServerAPI, { IAPIWithScores } from "../ServerAPI";
+import IServerAPI, { IAPIWithScores, Server } from "../ServerAPI";
 import Axios from "axios";
 import { IUserRequestParams, ITopRequestParams, IRecentRequestParams, IScoreRequestParams, ILeaderboardRequestParams } from "../RequestParams";
 import { IUserAPIResponse, ITopAPIResponse, IRecentAPIResponse, IScoreAPIResponse, ILeaderboardAPIResponse } from "../APIResponse";
@@ -6,14 +6,16 @@ import { stringify } from "querystring";
 import { APINotFoundError } from "../APIErrors";
 import { getAccuracy } from "../../Util";
 
-export default class BanchoAPI implements IServerAPI, IAPIWithScores {
+export default class BanchoAPI extends Server implements IServerAPI, IAPIWithScores {
     api = Axios.create({
         baseURL: "https://osu.ppy.sh/api"
     });
 
     constructor(
         private token: string
-    ) {}
+    ) {
+        super();
+    }
 
     async getUser({ 
         username, 
@@ -26,19 +28,8 @@ export default class BanchoAPI implements IServerAPI, IAPIWithScores {
         })}`);
         if(!data)
             throw new APINotFoundError("User is not found!");
-        return {
-            id: Number(data.user_id),
-            username: data.username,
-            playcount: Number(data.playcount),
-            pp: Number(data.pp_raw),
-            rank: {
-                total: Number(data.pp_rank),
-                country: Number(data.pp_country_rank)
-            },
-            country: data.country,
-            accuracy: Number(data.accuracy),
-            level: Number(data.level)
-        }
+        
+        return this.adaptUser(data);
     }
 
     async getTop({ 
@@ -121,31 +112,5 @@ export default class BanchoAPI implements IServerAPI, IAPIWithScores {
         } catch(e) {}
 
         return scores;
-    }
-
-    private adaptScore(
-        scoreData, 
-        mode: number
-    ): IScoreAPIResponse {
-        let counts = {
-            300: Number(scoreData.count300),
-            100: Number(scoreData.count100),
-            50: Number(scoreData.count50),
-            geki: Number(scoreData.countgeki),
-            katu: Number(scoreData.countkatu),
-            miss: Number(scoreData.countmiss)
-        };
-        
-        return {
-            beatmapId: Number(scoreData.beatmap_id),
-            mode,
-            score: Number(scoreData.score),
-            maxCombo: Number(scoreData.maxcombo),
-            counts,
-            mods: Number(scoreData.enabled_mods),
-            rank: scoreData.rank,
-            date: new Date(scoreData.date),
-            accuracy: getAccuracy(mode, counts)
-        }
     }
 }
