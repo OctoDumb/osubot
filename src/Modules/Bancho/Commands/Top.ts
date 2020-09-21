@@ -35,9 +35,6 @@ export default class BanchoTop extends ServerCommand {
             mode: args.mode ?? mode
         });
 
-        if (top.length < 3)
-            return message.reply("У игрока недостаточно скоров");
-
         if(args.morethan) {
             let amount = top.filter(t => t.pp >= args.morethan).length;
             message.reply(`У игрока ${username} ${amount} скоров больше ${args.morethan}pp`);
