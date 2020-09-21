@@ -34,10 +34,10 @@ export default abstract class Module {
 
     help(message: Message) {
         message.reply(`
-Категория: ${this.name} - ${this.description}
-Префиксы: ${this.prefix.join(', ')}
+            Категория: ${this.name} - ${this.description}
+            Префиксы: ${this.prefix.join(', ')}
 
-${this.commands.map(c => `${c.name} - (${c.command.join(', ')}) - ${c.description}`).join('\n')}
+            ${this.commands.map(c => `${c.name} - (${c.command.join(', ')}) - ${c.description}`).join('\n')}
         `);
     }
 
