@@ -9,6 +9,11 @@ import Module from "./Commands/Module";
 import Bancho from "./Modules/Bancho";
 
 import BanchoAPI from "./API/Servers/Bancho";
+import KurikkuAPI from "./API/Servers/Kurikku";
+import EnjuuAPI from "./API/Servers/Enjuu";
+import RippleAPI from "./API/Servers/Ripple";
+import AkatsukiAPI from "./API/Servers/Akatsuki";
+import AkatsukiRelaxAPI from "./API/Servers/AkatsukiRelax";
 import BotAPI from "./BotAPI";
 
 import cron from "node-cron";
@@ -36,6 +41,11 @@ export interface IBotConfig {
 
 export interface IAPIList {
     bancho: BanchoAPI;
+    kurikku: KurikkuAPI;
+    enjuu: EnjuuAPI;
+    ripple: RippleAPI;
+    akatsuki: AkatsukiAPI;
+    akatsukiRelax: AkatsukiRelaxAPI;
 }
 
 export default class Bot {
@@ -48,7 +58,12 @@ export default class Bot {
 
     database = new Database(this.vk);
     api: IAPIList = {
-        bancho: new BanchoAPI(this.config.osu.token)
+        bancho: new BanchoAPI(this.config.osu.token),
+        kurikku: new KurikkuAPI(),
+        enjuu: new EnjuuAPI(),
+        ripple: new RippleAPI(),
+        akatsuki: new AkatsukiAPI(),
+        akatsukiRelax: new AkatsukiRelaxAPI(),
     };
     
     modules: Module[] = [ 
