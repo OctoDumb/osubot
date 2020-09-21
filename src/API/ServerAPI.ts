@@ -54,7 +54,10 @@ export abstract class API {
         }
     }
 
-    protected adaptUser(userData): IUserAPIResponse {
+    protected adaptUser(
+        userData,
+        mode?: string | number
+    ): IUserAPIResponse {
         return {
             id: Number(userData.user_id),
             username: userData.username,
