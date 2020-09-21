@@ -1,6 +1,6 @@
-import ServerCommand from "../../Commands/Server/ServerCommand";
-import { IServerCommandArguments } from "../../Commands/Arguments";
-import { UserTemplate } from "../../Templates";
+import ServerCommand from "../../../Commands/Server/ServerCommand";
+import { IServerCommandArguments } from "../../../Commands/Arguments";
+import { UserTemplate } from "../../../Templates";
 
 export default class BanchoUser extends ServerCommand {
     name = "User";

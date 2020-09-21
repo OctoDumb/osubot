@@ -1,11 +1,11 @@
-import ServerCommand from "../../Commands/Server/ServerCommand";
-import Message from "../../Message";
-import Bot from "../../Bot";
-import { IServerCommandArguments, ITopCommandArguments, parseArguments, Parsers } from "../../Commands/Arguments";
-import { defaultArguments, modsToString } from "../../Util";
-import { TopTemplate, TopSingleTemplate } from "../../Templates";
+import ServerCommand from "../../../Commands/Server/ServerCommand";
+import Message from "../../../Message";
+import Bot from "../../../Bot";
+import { IServerCommandArguments, ITopCommandArguments, parseArguments, Parsers } from "../../../Commands/Arguments";
+import { defaultArguments, modsToString } from "../../../Util";
+import { TopTemplate, TopSingleTemplate } from "../../../Templates";
 
-export default class BanchoTop extends ServerCommand {
+export default class KurikkuTop extends ServerCommand {
     name = "Top";
     command = [ "top", "t", "ещз", "е" ];
 

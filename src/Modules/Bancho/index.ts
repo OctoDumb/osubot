@@ -1,10 +1,10 @@
 import ServerModule from "../../Commands/Server/ServerModule";
-import BanchoNick from "./Nick";
-import BanchoUser from "./User";
-import BanchoTop from "./Top";
-import BanchoMode from "./Mode";
-import BanchoRecent from "./Recent";
-import BanchoCompare from "./Compare";
+import BanchoNick from "./Commands/Nick";
+import BanchoUser from "./Commands/User";
+import BanchoTop from "./Commands/Top";
+import BanchoMode from "./Commands/Mode";
+import BanchoRecent from "./Commands/Recent";
+import BanchoCompare from "./Commands/Compare";
 
 export default class Bancho extends ServerModule {
     name = "Bancho";

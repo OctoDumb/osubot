@@ -1,5 +1,5 @@
-import ServerCommand from "../../Commands/Server/ServerCommand";
-import { IServerCommandArguments } from "../../Commands/Arguments";
+import ServerCommand from "../../../Commands/Server/ServerCommand";
+import { IServerCommandArguments } from "../../../Commands/Arguments";
 
 export default class BanchoNick extends ServerCommand {
     name = "Nick";

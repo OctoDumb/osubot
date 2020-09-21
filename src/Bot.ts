@@ -7,6 +7,7 @@ import MapAPI from "./API/MapAPI";
 
 import Module from "./Commands/Module";
 import Bancho from "./Modules/Bancho";
+import Kurikku from "./Modules/Kurikku";
 
 import BanchoAPI from "./API/Servers/Bancho";
 import KurikkuAPI from "./API/Servers/Kurikku";
@@ -69,7 +70,8 @@ export default class Bot {
     modules: Module[] = [ 
         Main, 
         Admin, 
-        Bancho 
+        Bancho,
+        Kurikku
     ].map(m => new m(this));
 
     lastMaps = new ChatCache();

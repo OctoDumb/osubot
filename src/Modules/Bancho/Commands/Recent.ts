@@ -1,9 +1,9 @@
-import ServerCommand from "../../Commands/Server/ServerCommand";
-import { IServerCommandArguments, parseArguments, Parsers, IRecentCommandArguments } from "../../Commands/Arguments";
-import Message from "../../Message";
-import Bot from "../../Bot";
-import { defaultArguments, getUserInfo, modsToString } from "../../Util";
-import { RecentTemplate } from "../../Templates";
+import ServerCommand from "../../../Commands/Server/ServerCommand";
+import { IServerCommandArguments, parseArguments, Parsers, IRecentCommandArguments } from "../../../Commands/Arguments";
+import Message from "../../../Message";
+import Bot from "../../../Bot";
+import { defaultArguments, getUserInfo, modsToString } from "../../../Util";
+import { RecentTemplate } from "../../../Templates";
 
 export default class BanchoRecent extends ServerCommand {
     name = "Recent";
