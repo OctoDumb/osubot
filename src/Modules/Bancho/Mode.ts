@@ -14,7 +14,9 @@ export default class BanchoMode extends ServerCommand {
 
         this.database.setMode(message.sender, Number(mode));
 
-        message.reply(`[Server: Bancho]
-            Режим установлен!`);
+        message.reply(`
+            [Server: Bancho]
+            Режим установлен!
+        `);
     }
 }

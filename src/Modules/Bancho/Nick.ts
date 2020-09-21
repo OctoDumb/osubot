@@ -14,7 +14,9 @@ export default class BanchoNick extends ServerCommand {
 
         this.database.setNickname(message.sender, user.id, user.username);
         
-        message.reply(`[Server: Bancho]
-            Установлен ник: ${user.username}`);
+        message.reply(`
+            [Server: Bancho]
+            Установлен ник: ${user.username}
+        `);
     }
 }
