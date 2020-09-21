@@ -27,7 +27,7 @@ export interface IAPIWithScores extends IServerAPI {
     getLeaderboard(params: ILeaderboardRequestParams): Promise<ILeaderboardAPIResponse[]>;
 }
 
-export abstract class Server {
+export abstract class API {
     protected adaptScore(
         scoreData, 
         mode: number

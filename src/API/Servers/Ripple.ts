@@ -1,11 +1,11 @@
-import IServerAPI, { IAPIWithScores, Server } from "../ServerAPI";
+import IServerAPI, { IAPIWithScores, API } from "../ServerAPI";
 import Axios from "axios";
 import { IUserRequestParams, ITopRequestParams, IRecentRequestParams, IScoreRequestParams, ILeaderboardRequestParams } from "../RequestParams";
 import { IUserAPIResponse, ITopAPIResponse, IRecentAPIResponse, IScoreAPIResponse, ILeaderboardAPIResponse } from "../APIResponse";
 import { stringify } from "querystring";
 import { APINotFoundError } from "../APIErrors";
 
-export default class RippleAPI extends Server implements IServerAPI, IAPIWithScores {
+export default class RippleAPI extends API implements IServerAPI, IAPIWithScores {
     api = Axios.create({
         baseURL: "https://ripple.moe/api"
     });
