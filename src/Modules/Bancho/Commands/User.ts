@@ -6,7 +6,7 @@ export default class BanchoUser extends ServerCommand {
     name = "User";
     command = [ "u", "user", "г", "гыук" ];
 
-    description = "Посмотреть профиль на Bancho";
+    description = `Посмотреть профиль на ${this.module.name}`;
 
     async run({ message }: IServerCommandArguments<null>) {
         let { nickname: username } = await this.database.getUser(message.sender);
