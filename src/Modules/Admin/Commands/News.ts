@@ -1,5 +1,5 @@
-import ICommandArguments from "../../Commands/Arguments";
-import Command from "../../Commands/Command";
+import ICommandArguments from "../../../Commands/Arguments";
+import Command from "../../../Commands/Command";
 
 export default class AdminNews extends Command {
     name = "News";

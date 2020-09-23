@@ -1,8 +1,8 @@
 import Bot from "../../Bot";
 import Module from "../../Commands/Module";
 import Message from "../../Message";
-import AdminEval from "./Eval";
-import AdminNews from "./News";
+import AdminEval from "./Commands/Eval";
+import AdminNews from "./Commands/News";
 
 export default class Admin extends Module {
     name = "Admin";
