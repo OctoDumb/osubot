@@ -1,7 +1,7 @@
-import ServerCommand from "../../../Commands/Server/ServerCommand";
-import { IServerCommandArguments } from "../../../Commands/Arguments";
+import ServerCommand from "../../Commands/Server/ServerCommand";
+import { IServerCommandArguments } from "../../Commands/Arguments";
 
-export default class RippleNick extends ServerCommand {
+export default class NickCommand extends ServerCommand {
     name = "Nick";
     command = [ "n", "nick", "т", "тшсл" ];
 

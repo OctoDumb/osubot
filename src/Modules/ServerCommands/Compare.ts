@@ -1,12 +1,12 @@
-import { IAPIWithScores } from "../../../API/ServerAPI";
-import Bot from "../../../Bot";
-import { ICompareCommandArguments, IServerCommandArguments, parseArguments, Parsers } from "../../../Commands/Arguments";
-import ServerCommand from "../../../Commands/Server/ServerCommand";
-import Message from "../../../Message";
-import { CompareScoreTemplate } from "../../../Templates";
-import { defaultArguments, getUserInfo, modsEqual, modsToString } from "../../../Util";
+import { IAPIWithScores } from "../../API/ServerAPI";
+import Bot from "../../Bot";
+import { ICompareCommandArguments, IServerCommandArguments, parseArguments, Parsers } from "../../Commands/Arguments";
+import ServerCommand from "../../Commands/Server/ServerCommand";
+import Message from "../../Message";
+import { CompareScoreTemplate } from "../../Templates";
+import { defaultArguments, getUserInfo, modsEqual, modsToString } from "../../Util";
 
-export default class BanchoCompare extends ServerCommand {
+export default class CompareCommand extends ServerCommand {
     api: IAPIWithScores;
 
     name = "Compare";

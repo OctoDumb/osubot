@@ -1,7 +1,7 @@
-import ServerCommand from "../../../Commands/Server/ServerCommand";
-import { IServerCommandArguments } from "../../../Commands/Arguments";
+import ServerCommand from "../../Commands/Server/ServerCommand";
+import { IServerCommandArguments } from "../../Commands/Arguments";
 
-export default class BanchoMode extends ServerCommand {
+export default class ModeCommand extends ServerCommand {
     name = "Mode";
     command = [ "m", "mode", "ь", "ьщву" ];
 

@@ -1,8 +1,8 @@
-import ServerCommand from "../../../Commands/Server/ServerCommand";
-import { IServerCommandArguments } from "../../../Commands/Arguments";
-import { UserTemplate } from "../../../Templates";
+import ServerCommand from "../../Commands/Server/ServerCommand";
+import { IServerCommandArguments } from "../../Commands/Arguments";
+import { UserTemplate } from "../../Templates";
 
-export default class RippleUser extends ServerCommand {
+export default class UserCommand extends ServerCommand {
     name = "User";
     command = [ "u", "user", "г", "гыук" ];
 
