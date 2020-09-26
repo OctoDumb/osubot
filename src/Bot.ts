@@ -10,6 +10,7 @@ import ChatCache from "./ChatCache";
 
 import Module from "./Commands/Module";
 import Bancho from "./Modules/Bancho";
+import Gatari from "./Modules/Gatari"
 import Kurikku from "./Modules/Kurikku";
 import Ripple from "./Modules/Ripple";
 
@@ -17,6 +18,7 @@ import Admin from "./Modules/Admin";
 import Main from "./Modules/Main";
 
 import BanchoAPI from "./API/Servers/Bancho";
+import GatariAPI from "./API/Servers/Gatari";
 import KurikkuAPI from "./API/Servers/Kurikku";
 import EnjuuAPI from "./API/Servers/Enjuu";
 import RippleAPI from "./API/Servers/Ripple";
@@ -44,6 +46,7 @@ export interface IBotConfig {
 
 export interface IAPIList {
     bancho: BanchoAPI;
+    gatari: GatariAPI;
     kurikku: KurikkuAPI;
     enjuu: EnjuuAPI;
     ripple: RippleAPI;
@@ -62,6 +65,7 @@ export default class Bot {
     database = new Database(this.vk);
     api: IAPIList = {
         bancho: new BanchoAPI(this.config.osu.token),
+        gatari: new GatariAPI(),
         kurikku: new KurikkuAPI(),
         enjuu: new EnjuuAPI(),
         ripple: new RippleAPI(),
@@ -73,6 +77,7 @@ export default class Bot {
         Main, 
         Admin, 
         Bancho,
+        Gatari,
         Kurikku,
         Ripple,
     ].map(m => new m(this));
