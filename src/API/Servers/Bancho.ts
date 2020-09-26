@@ -18,7 +18,7 @@ export default class BanchoAPI extends API implements IServerAPI, IAPIWithScores
 
     async getUser({ 
         username, 
-        mode = 0 
+        mode = 0
     }: IUserRequestParams): Promise<IUserAPIResponse> {
         let { data: [data] } = await this.api(`/get_user?${stringify({ 
             k: this.token,

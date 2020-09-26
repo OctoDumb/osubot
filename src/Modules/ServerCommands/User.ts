@@ -1,6 +1,9 @@
+import Message from "../../Message";
+import Bot from "../../Bot";
 import ServerCommand from "../../Commands/Server/ServerCommand";
-import { IServerCommandArguments } from "../../Commands/Arguments";
+import { IArgumentsWithMode, IServerCommandArguments, IRecentCommandArguments, Parsers, parseArguments } from "../../Commands/Arguments";
 import { UserTemplate } from "../../Templates";
+import { defaultArguments } from "../../Util";
 
 export default class UserCommand extends ServerCommand {
     name = "User";
@@ -8,15 +11,30 @@ export default class UserCommand extends ServerCommand {
 
     description = `Посмотреть профиль на ${this.module.name}`;
 
-    async run({ message, privileges }: IServerCommandArguments<null>) {
-        let { nickname: username } = await this.database.getUser(message.sender);
-        if(message.arguments[0])
-            username = message.arguments.join(" ");
+    parseArguments(message: Message, bot: Bot): IServerCommandArguments<IArgumentsWithMode> {
+        let args = defaultArguments(message, bot);
+        return {
+            ...args,
+            ...parseArguments(message.arguments, [
+                Parsers.mode,
+                Parsers.pass
+            ])
+        };
+    }
 
-        let user = await this.api.getUser({ username });
+    async run({ message, privileges, args }: IServerCommandArguments<IArgumentsWithMode>) {
+        let { nickname: username, mode } = await this.database.getUser(message.sender);
+        
+        username = message.arguments[0] ?? username;
+
+        let user = await this.api.getUser({ 
+            username,
+            mode: args.mode ?? mode
+        });
 
         let users = await this.database.findByUserId(user.id);
-        let status = privileges.getUserStatus(users);
+        let status = users.length !== 0 ? privileges.getUserStatus(users) : "";
+        
 
         message.reply(UserTemplate(this.module, user, status));
     }
