@@ -3,3 +3,4 @@
 *.db
 config.json
 news_rules.json
+privileges.json
