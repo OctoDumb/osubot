@@ -25,9 +25,14 @@ export default class TopCommand extends ServerCommand {
         };
     }
 
-    async run({ message, mapAPI, clean, args }: IServerCommandArguments<ITopCommandArguments>) {
+    async run({ message, privileges, mapAPI, clean, args }: IServerCommandArguments<ITopCommandArguments>) {
         let { nickname: username, mode } = await this.database.getUser(message.sender);
         if(clean) username = clean;
+
+        let user = await this.api.getUser({ username });
+
+        let users = await this.database.findByUserId(user.id);
+        let status = privileges.getUserStatus(users);
         
         let top = await this.api.getTop({ 
             username, 
@@ -37,7 +42,7 @@ export default class TopCommand extends ServerCommand {
 
         if(args.morethan) {
             let amount = top.filter(t => t.pp >= args.morethan).length;
-            message.reply(`У игрока ${username} ${amount} скоров больше ${args.morethan}pp`);
+            message.reply(`У игрока ${user.username} ${amount} скоров больше ${args.morethan}pp`);
         } else if(args.place) {
             if(args.place > 100)
                 return message.reply("100!!!");
@@ -46,7 +51,7 @@ export default class TopCommand extends ServerCommand {
 
             let map = await mapAPI.getBeatmap(t.beatmapId, modsToString(t.mods));
 
-            let msg = TopSingleTemplate(this.module, username, t, args.place, map)
+            let msg = TopSingleTemplate(this.module, user.username, t, args.place, map, status);
             
             message.reply(msg);
         } else {
@@ -56,7 +61,7 @@ export default class TopCommand extends ServerCommand {
 
             let maps = await Promise.all([ ...top.map(t => mapAPI.getBeatmap(t.beatmapId, modsToString(t.mods))) ])
 
-            let msg = TopTemplate(this.module, username, top, maps);
+            let msg = TopTemplate(this.module, user.username, top, maps, status);
 
             message.reply(msg);
         }

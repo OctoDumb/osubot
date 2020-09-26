@@ -5,6 +5,7 @@ import MapAPI from "../API/MapAPI";
 import { Mods } from "../Util";
 import NewsController from "../News/NewsController";
 import ChatCache from "../ChatCache";
+import PrivilegesManager from "../Privileges";
 
 export default interface ICommandArguments {
     message: Message;
@@ -12,6 +13,7 @@ export default interface ICommandArguments {
     mapAPI: MapAPI;
     news: NewsController;
     vk: VK;
+    privileges: PrivilegesManager;
 }
 
 export interface IArgumentsWithMode {

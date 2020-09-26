@@ -3,6 +3,7 @@ import Module from "../../Commands/Module";
 import Message from "../../Message";
 import AdminEval from "./Commands/Eval";
 import AdminNews from "./Commands/News";
+import PrivilegesCommand from "./Commands/Priveleges";
 
 export default class Admin extends Module {
     name = "Admin";
@@ -12,12 +13,13 @@ export default class Admin extends Module {
 
     commands = [
         new AdminNews(),
-        new AdminEval()
+        new AdminEval(),
+        new PrivilegesCommand()
     ];
 
     isPermitted(message: Message, bot: Bot) {
         const { ownerId } = bot.config.vk;
         const { sender } = message;
-        return Array.isArray(ownerId) ? ownerId.includes(sender) : sender === ownerId;
+        return sender === ownerId || bot.privilegesManager.hasPrivilege(sender, "Owner");
     }
 }

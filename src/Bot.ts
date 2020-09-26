@@ -23,12 +23,13 @@ import RippleAPI from "./API/Servers/Ripple";
 import AkatsukiAPI from "./API/Servers/Akatsuki";
 import AkatsukiRelaxAPI from "./API/Servers/AkatsukiRelax";
 import BotAPI from "./BotAPI";
+import PrivilegesManager from "./Privileges";
 
 export interface IBotConfig {
     vk: {
         token: string,
         groupId: number,
-        ownerId: number | number[]
+        ownerId: number
     },
     osu: {
         token: string,
@@ -87,6 +88,8 @@ export default class Bot {
     public get uptime(): number {
         return ~~((Date.now() - this.startTime) / 1000);
     }
+
+    public privilegesManager = new PrivilegesManager();
     
     constructor() {
         this.vk.updates.on("message", ctx => {

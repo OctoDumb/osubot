@@ -17,18 +17,18 @@ function joinMods(mods: string[]) {
 /**
  * Message template for User command 
  */
-export function UserTemplate(server: ServerModule, user: IUserAPIResponse) {
+export function UserTemplate(server: ServerModule, user: IUserAPIResponse, status: string) {
     let { 
         username, id, 
         country, rank, 
         playcount, 
         level, pp, 
-        accuracy 
+        accuracy
     } = user;
     
     return `
         [Server: ${server.name}]
-        Player ${username}
+        Player ${username} ${status}
         Rank: #${rank.total} (${country}#${rank.country})
         Playcount: ${playcount} (Lv${Math.floor(level)})
         PP: ${Math.round(pp)}
@@ -41,10 +41,10 @@ export function UserTemplate(server: ServerModule, user: IUserAPIResponse) {
 /**
  * Message template for Top command 
  */
-export function TopTemplate(server: ServerModule, nickname: string, scores: ITopAPIResponse[], maps: IBeatmap[]) {
+export function TopTemplate(server: ServerModule, nickname: string, scores: ITopAPIResponse[], maps: IBeatmap[], status: string) {
     return `
         [Server: ${server.name}]
-        Топ скоры игрока ${nickname} [${scores[0].mode}]
+        Топ скоры игрока ${nickname} ${status} [${scores[0].mode}]
         ${scores.map((score, i) => {
             let map = maps[i];
             let length = formatTime(~~(map.length / 1e3));
@@ -63,12 +63,12 @@ export function TopTemplate(server: ServerModule, nickname: string, scores: ITop
 /**
  * Message template for Top command with `place` argument
  */
-export function TopSingleTemplate(server: ServerModule, nickname: string, score: ITopAPIResponse, place: number, map: IBeatmap) {
+export function TopSingleTemplate(server: ServerModule, nickname: string, score: ITopAPIResponse, place: number, map: IBeatmap, status: string) {
     let length = formatTime(~~(map.length / 1e3));
     let modsString = joinMods(modsToString(score.mods));
     return `
         [Server: ${server.name}]
-        Топ #${place} плей игрока ${nickname} (${score.mode})
+        Топ #${place} плей игрока ${nickname} ${status} (${score.mode})
         ${map.artist} - ${map.title} [${map.version}] by ${map.creator}
         ${length} | ${statsToString(map.mode, map.difficulty)} BPM: ${formatBPM(map.bpm)} | ${round(map.difficulty.stars)}✩ ${modsString}
 
@@ -126,14 +126,13 @@ export function CompareScoreTemplate(server: ServerModule, score: IScoreAPIRespo
 /**
  * Message template for Chat command 
  */
-export function ChatTopTemplate(server: ServerModule, message: Message, users: IDBUserStats[]) {
+export function ChatTopTemplate(server: ServerModule, message: Message, users: IDBUserStats[], statuses: string[], full = false) {
     return `
         [Server: ${server.name}]
-        Топ беседы (ID ${message.chatId}):
-        ${users.sort((a, b) => b.pp - a.pp).map((u, i) => `
-            #${i + 1} ${u.nickname} | ${round(u.pp, 1)} | Ранк ${u.rank} | ${round(u.acc)}%
-        `).map(Message.fixString)
-            .join('\n')}
+        Топ${full && users.length > 10 ? '-10' : ''} беседы (ID ${message.chatId}):
+        ${users.sort((a, b) => b.pp - a.pp).slice(0, full ? 10 : undefined).map((u, i) => `
+            #${i + 1} ${u.nickname} ${statuses[i]} | ${round(u.pp, 1)} | Ранк ${u.rank} | ${round(u.acc)}%
+        `).join('\n')}
     `;
 }
 
@@ -151,10 +150,10 @@ export function LeaderboardTemplate(server: ServerModule, scores: {user: IDBUser
             `;
         }).map(Message.fixString)
             .join('\n')}
-    `;
+    ` ;
 }
 
-export function ReplayTemplate(replay: IReplay, map: IBeatmap) {
+export function ReplayTemplate(replay: IReplay, map: IBeatmap, pp: IPPResponse) {
     let length = formatTime(~~(map.length / 1e3));
     let modsString = joinMods(modsToString(replay.mods));
     return `
@@ -165,7 +164,7 @@ export function ReplayTemplate(replay: IReplay, map: IBeatmap) {
 
         Score: ${replay.score} | Combo: ${replay.combo}x
         Accuracy: ${round(replay.accuracy)}%
-        PP: 0 ⯈ FC: 0 ⯈ SS: 0
+        PP: ${round(pp.pp)} ⯈ FC: ${round(pp.fcpp)} ⯈ SS: ${round(pp.sspp)}
         Hitcounts: ${hitsToString(replay.counts, replay.mode)}
     `;
 }

@@ -46,8 +46,13 @@ export enum Mods {
  * @param message Message object
  * @param param1 Bot instance
  */
-export function defaultArguments(message: Message, { database, vk, maps: mapAPI, news, lastMaps }: Bot) {
-    return { message, database, vk, mapAPI, news, chats: lastMaps };
+export function defaultArguments(message: Message, { 
+    database, vk, 
+    maps: mapAPI, 
+    news, lastMaps: chats, 
+    privilegesManager: privileges }: Bot
+) {
+    return { message, database, vk, mapAPI, news, chats, privileges };
 }
 
 export async function getUserInfo(message: Message, db: Server, clean: string, args?: { mode?: number }) {
