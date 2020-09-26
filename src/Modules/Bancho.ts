@@ -5,6 +5,7 @@ import TopCommand from "./ServerCommands/Top";
 import ModeCommand from "./ServerCommands/Mode";
 import RecentCommand from "./ServerCommands/Recent";
 import CompareCommand from "./ServerCommands/Compare";
+import FindCommand from "./ServerCommands/Find";
 
 export default class Bancho extends ServerModule {
     name = "Bancho";
@@ -24,6 +25,7 @@ export default class Bancho extends ServerModule {
         new UserCommand(this),
         new TopCommand(this),
         new RecentCommand(this),
-        new CompareCommand(this)
+        new CompareCommand(this),
+        new FindCommand(this)
     ];
 }

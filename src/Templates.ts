@@ -153,6 +153,18 @@ export function LeaderboardTemplate(server: ServerModule, scores: {user: IDBUser
     ` ;
 }
 
+/**
+ * Message template for Find command 
+ */
+export function FindTemplate(server: ServerModule, username: string, users: IDBUser[]) {
+    let usersURLs = users.map(u => `https://vk.com/id${u.id}`).join("\n");
+    return `
+        [Server: ${server.name}]
+        Пользователи с ником ${username}:
+        ${usersURLs}
+    `
+}
+
 export function ReplayTemplate(replay: IReplay, map: IBeatmap, pp: IPPResponse) {
     let length = formatTime(~~(map.length / 1e3));
     let modsString = joinMods(modsToString(replay.mods));
