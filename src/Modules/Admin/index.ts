@@ -4,6 +4,7 @@ import Message from "../../Message";
 import AdminEval from "./Commands/Eval";
 import AdminNews from "./Commands/News";
 import PrivilegesCommand from "./Commands/Priveleges";
+import AdminSQL from "./Commands/SQL";
 
 export default class Admin extends Module {
     name = "Admin";
@@ -14,6 +15,7 @@ export default class Admin extends Module {
     commands = [
         new AdminNews(),
         new AdminEval(),
+        new AdminSQL(),
         new PrivilegesCommand(),
     ];
 
