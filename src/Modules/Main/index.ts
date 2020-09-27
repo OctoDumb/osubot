@@ -1,6 +1,7 @@
 import Module from "../../Commands/Module";
 import MainNews from "./Commands/News";
 import MainStatus from "./Commands/Status";
+import MainUptime from "./Commands/Uptime";
 
 export default class Main extends Module {
     name = "";
@@ -10,6 +11,7 @@ export default class Main extends Module {
 
     commands = [
         new MainNews(),
-        new MainStatus()
+        new MainStatus(),
+        new MainUptime()
     ];
 }

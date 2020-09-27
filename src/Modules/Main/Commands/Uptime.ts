@@ -1,7 +1,7 @@
 import ICommandArguments from "../../../Commands/Arguments";
 import Command from "../../../Commands/Command";
 
-export default class AdminUptime extends Command {
+export default class MainUptime extends Command {
     name = "Uptime";
     command = ["uptime"];
 
