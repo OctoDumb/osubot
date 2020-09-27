@@ -20,7 +20,7 @@ export default class AdminEval extends Command {
             message.reply(`
                 Успех!
                 Тип данных: ${typeof res}
-                ${typeof res == "object" ? JSON.stringify(res) : res}
+                ${typeof res == "object" ? JSON.stringify(res, null, 2) : res}
             `);
         } catch (e) {
             message.reply(`

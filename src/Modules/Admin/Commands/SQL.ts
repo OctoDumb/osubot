@@ -30,6 +30,6 @@ export default class AdminSQL extends Command {
                 break;
         }
 
-        return message.reply(JSON.stringify(res));
+        return message.reply(JSON.stringify(res, null, 2));
     }
 }
