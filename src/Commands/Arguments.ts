@@ -14,6 +14,7 @@ export default interface ICommandArguments {
     news: NewsController;
     vk: VK;
     privileges: PrivilegesManager;
+    uptime: number;
 }
 
 export interface IArgumentsWithMode {

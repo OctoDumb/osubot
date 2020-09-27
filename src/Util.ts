@@ -50,9 +50,17 @@ export function defaultArguments(message: Message, {
     database, vk, 
     maps: mapAPI, 
     news, lastMaps: chats, 
-    privilegesManager: privileges }: Bot
-) {
-    return { message, database, vk, mapAPI, news, chats, privileges };
+    privilegesManager: privileges, 
+    uptime
+}: Bot) {
+    return { 
+        message, 
+        database, 
+        vk, mapAPI, 
+        news, chats, 
+        privileges,
+        uptime 
+    };
 }
 
 export async function getUserInfo(message: Message, db: Server, clean: string, args?: { mode?: number }) {

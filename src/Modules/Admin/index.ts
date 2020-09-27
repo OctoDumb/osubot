@@ -3,6 +3,7 @@ import Module from "../../Commands/Module";
 import Message from "../../Message";
 import AdminEval from "./Commands/Eval";
 import AdminNews from "./Commands/News";
+import AdminUptime from "./Commands/Uptime";
 import PrivilegesCommand from "./Commands/Priveleges";
 
 export default class Admin extends Module {
@@ -14,7 +15,8 @@ export default class Admin extends Module {
     commands = [
         new AdminNews(),
         new AdminEval(),
-        new PrivilegesCommand()
+        new AdminUptime(),
+        new PrivilegesCommand(),
     ];
 
     isPermitted(message: Message, bot: Bot) {
