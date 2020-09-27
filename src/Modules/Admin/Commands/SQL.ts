@@ -23,10 +23,10 @@ export default class AdminSQL extends Command {
                 res = await database.get(stmt);
                 break;
             case DBCommandType.all:
-                res = await database.get(stmt);
+                res = await database.all(stmt);
                 break;
             case DBCommandType.run:
-                res = await database.get(stmt);
+                res = await database.run(stmt);
                 break;
         }
 
