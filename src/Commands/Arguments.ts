@@ -32,6 +32,7 @@ export interface ITopCommandArguments extends IArgumentsWithMode, IArgumentsWith
 
 export interface IRecentCommandArguments extends IArgumentsWithMode {
     pass?: boolean;
+    place?: number;
 }
 
 export interface ICompareCommandArguments extends IArgumentsWithMode, IArgumentsWithMods {}

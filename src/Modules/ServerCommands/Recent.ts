@@ -17,6 +17,7 @@ export default class RecentCommand extends ServerCommand {
             ...args,
             ...parseArguments(message.arguments, [
                 Parsers.mode,
+                Parsers.place,
                 Parsers.pass
             ])
         };
@@ -25,11 +26,14 @@ export default class RecentCommand extends ServerCommand {
     async run({ message, mapAPI, clean, args, chats }: IServerCommandArguments<IRecentCommandArguments>) {
         let { username, mode } = await getUserInfo(message, this.database, clean, args);
 
-        let [ recent ] = await this.api.getRecent({ 
+        let recents = await this.api.getRecent({ 
             username, 
             mode: args.mode ?? mode, 
-            pass: args.pass 
+            pass: args.pass,
+            limit: args.place ?? 1
         });
+
+        let recent = recents[args.place ? args.place - 1 : 0];
 
         if(!recent) return message.reply("no recent");
 
