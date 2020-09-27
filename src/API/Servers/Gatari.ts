@@ -39,7 +39,7 @@ export default class GatariAPI extends API implements IServerAPI, IAPIWithScores
             l: limit
         })}`);
 
-        return data.map(s => Object.assign(
+        return data.scores.map(s => Object.assign(
             this.adaptScore(s, mode), 
             { 
                 pp: Number(s.pp) 
@@ -78,9 +78,9 @@ export default class GatariAPI extends API implements IServerAPI, IAPIWithScores
         })}`);
 
         if (mods)
-            data = data.filter(p => p.enabled_mods == mods);
+            data.scores = data.scores.filter(p => p.enabled_mods == mods);
         
-        return data.map(d => this.adaptScore(d, mode));
+        return data.scores.map(d => this.adaptScore(d, mode));
     }
 
     async getLeaderboard({
