@@ -2,7 +2,7 @@ import ServerCommand from "../../Commands/Server/ServerCommand";
 import Message from "../../Message";
 import Bot from "../../Bot";
 import { IServerCommandArguments, ITopCommandArguments, parseArguments, Parsers } from "../../Commands/Arguments";
-import { defaultArguments, modsToString } from "../../Util";
+import { defaultArguments, getUserInfo, modsToString } from "../../Util";
 import { TopTemplate, TopSingleTemplate } from "../../Templates";
 
 export default class TopCommand extends ServerCommand {
@@ -26,8 +26,7 @@ export default class TopCommand extends ServerCommand {
     }
 
     async run({ message, database, privileges, mapAPI, clean, args }: IServerCommandArguments<ITopCommandArguments>) {
-        let { nickname: username, mode } = await this.database.getUser(message.sender);
-        if(clean) username = clean;
+        let { username, mode } = await getUserInfo(message, this.database, clean, args);
 
         let user = await this.api.getUser({ username, mode });
 
