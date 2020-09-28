@@ -29,7 +29,9 @@ export default class TopCommand extends ServerCommand {
         let { nickname: username, mode } = await this.database.getUser(message.sender);
         if(clean) username = clean;
 
-        let user = await this.api.getUser({ username });
+        let user = await this.api.getUser({ username, mode });
+
+        await this.database.updateInfo(user, mode);
 
         let users = await this.database.findByUserId(user.id);
         let status = privileges.getUserStatus(users);

@@ -27,6 +27,8 @@ export default class UserCommand extends ServerCommand {
 
         let user = await this.api.getUser({ username, mode });
 
+        await this.database.updateInfo(user, mode);
+
         let users = await this.database.findByUserId(user.id);
         let status = users.length !== 0 ? privileges.getUserStatus(users) : "";
         
