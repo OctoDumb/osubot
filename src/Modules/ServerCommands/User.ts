@@ -3,7 +3,7 @@ import Bot from "../../Bot";
 import ServerCommand from "../../Commands/Server/ServerCommand";
 import { IArgumentsWithMode, IServerCommandArguments, IRecentCommandArguments, Parsers, parseArguments } from "../../Commands/Arguments";
 import { UserTemplate } from "../../Templates";
-import { defaultArguments } from "../../Util";
+import { defaultArguments, getUserInfo } from "../../Util";
 
 export default class UserCommand extends ServerCommand {
     name = "User";
@@ -22,15 +22,10 @@ export default class UserCommand extends ServerCommand {
         };
     }
 
-    async run({ message, privileges, args }: IServerCommandArguments<IArgumentsWithMode>) {
-        let { nickname: username, mode } = await this.database.getUser(message.sender);
-        
-        username = message.arguments[0] ?? username;
+    async run({ message, privileges, clean, args }: IServerCommandArguments<IArgumentsWithMode>) {
+        let { username, mode } = await getUserInfo(message, this.database, clean, args);
 
-        let user = await this.api.getUser({ 
-            username,
-            mode: args.mode ?? mode
-        });
+        let user = await this.api.getUser({ username, mode });
 
         let users = await this.database.findByUserId(user.id);
         let status = users.length !== 0 ? privileges.getUserStatus(users) : "";
