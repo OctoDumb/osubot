@@ -50,9 +50,17 @@ export function defaultArguments(message: Message, {
     database, vk, 
     maps: mapAPI, 
     news, lastMaps: chats, 
-    privilegesManager: privileges }: Bot
-) {
-    return { message, database, vk, mapAPI, news, chats, privileges };
+    privilegesManager: privileges, 
+    uptime
+}: Bot) {
+    return { 
+        message, 
+        database, 
+        vk, mapAPI, 
+        news, chats, 
+        privileges,
+        uptime 
+    };
 }
 
 export async function getUserInfo(message: Message, db: Server, clean: string, args?: { mode?: number }) {
@@ -211,4 +219,27 @@ export function formatDate(date: Date) {
 
 export function round(num: number, positions: number = 2) {
     return Math.round(num * (10 ** positions)) / (10 ** positions);
+}
+
+export function changeKeyboardLayout(string: string): null | string {
+    if(!/[а-яА-ЯёЁ]+/.test(string)) return null;
+
+    const en = [
+        "q","w","e","r","t","y","u","i","o","p","\[","\]",
+        "a","s","d","f","g","h","j","k","l",";","'",
+        "z","x","c","v","b","n","m",",","."
+    ];
+
+    const ru = [
+        "й","ц","у","к","е","н","г","ш","щ","з","х","ъ",
+        "ф","ы","в","а","п","р","о","л","д","ж","э",
+        "я","ч","с","м","и","т","ь","б","ю"
+    ];
+
+    ru.forEach((s, i) => {
+        let regExp = new RegExp(`${s}+`, "gi");
+        string = string.replace(regExp, en[i]);
+    });
+
+    return string;
 }
