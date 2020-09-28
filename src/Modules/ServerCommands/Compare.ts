@@ -29,7 +29,7 @@ export default class CompareCommand extends ServerCommand {
 
         let beatmapId = chats.getChatMap(message.peerId);
         if(!beatmapId)
-            return message.reply("Отправьте карту!");
+            throw "Не найдена карта!";
 
         let scores = await this.api.getScores({
             username,

@@ -19,5 +19,5 @@ export default abstract class Command {
         return defaultArguments(message, bot);
     }
 
-    abstract run(args: ICommandArguments): void;
+    abstract async run(args: ICommandArguments): Promise<void>;
 }

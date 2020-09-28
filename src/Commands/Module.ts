@@ -17,7 +17,7 @@ export default abstract class Module {
     protected get database() { return this.bot.database; }
     protected get apilist() { return this.bot.api; }
 
-    run(message: Message, bot: Bot) {
+    async run(message: Message, bot: Bot) {
         if(!this.prefix.includes(message.prefix)) return;
         if(!this.isPermitted(message, bot)) return;
 
@@ -27,9 +27,13 @@ export default abstract class Module {
         let command = this.commands.find(c => c.command.includes(message.command));
         if(!command) return;
         
-        let args = command.parseArguments(message, bot);
-        command.use();
-        command.run(args);
+        try {
+            let args = command.parseArguments(message, bot);
+            command.use();
+            await command.run(args);
+        } catch(e) {
+            message.reply(`Ошибка! ${e instanceof Error ? e.message : e}`);
+        }
     }
 
     help(message: Message) {

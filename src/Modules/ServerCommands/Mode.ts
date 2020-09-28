@@ -10,7 +10,7 @@ export default class ModeCommand extends ServerCommand {
     async run({ message }: IServerCommandArguments<null>) {
         let mode = message.arguments[0];
 
-        if(mode == null) return message.reply("no.");
+        if(mode == null) throw "Некорректный режим!";
 
         this.database.setMode(message.sender, Number(mode));
 

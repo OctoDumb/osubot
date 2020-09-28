@@ -45,8 +45,11 @@ export default class TopCommand extends ServerCommand {
             let amount = top.filter(t => t.pp >= args.morethan).length;
             message.reply(`У игрока ${user.username} ${amount} скоров больше ${args.morethan}pp`);
         } else if(args.place) {
-            if(args.place > 100)
-                return message.reply("100!!!");
+            if(args.place > 100 || args.place < 1)
+                throw "Некорректное место! (1-100)";
+
+            if(args.place > top.length)
+                throw "Такого скора нет!";
 
             let t = top[args.place - 1];
 

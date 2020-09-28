@@ -11,17 +11,13 @@ export default class MainStatus extends Command {
         let { sender, arguments: args } = message;
 
         if(args.length < 1)
-            return message.reply("Недостаточно аргументов!");
+            throw "Недостаточно аргументов!";
 
         switch(args[0].toLowerCase()) {
             case "set":
                 if(args.length < 2)
                     return message.reply("Недостаточно аргументов!");
-                try {
-                    privileges.setStatus(sender, args[1]);
-                } catch(e) {
-                    return message.reply(`Ошибка: ${e.message}`)
-                }
+                privileges.setStatus(sender, args[1]);
                 break;
 
             case "list":
@@ -33,7 +29,7 @@ export default class MainStatus extends Command {
                 break;
 
             default: 
-                return message.reply("Неизвестная команда!");
+                throw "Неизвестная команда!";
         }
     }
 }
