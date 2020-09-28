@@ -25,7 +25,7 @@ export default class TopCommand extends ServerCommand {
         };
     }
 
-    async run({ message, privileges, mapAPI, clean, args }: IServerCommandArguments<ITopCommandArguments>) {
+    async run({ message, database, privileges, mapAPI, clean, args }: IServerCommandArguments<ITopCommandArguments>) {
         let { nickname: username, mode } = await this.database.getUser(message.sender);
         if(clean) username = clean;
 
@@ -51,9 +51,13 @@ export default class TopCommand extends ServerCommand {
 
             let map = await mapAPI.getBeatmap(t.beatmapId, modsToString(t.mods));
 
+            let cover = await database.covers.getCover(map.beatmapsetID);
+
             let msg = TopSingleTemplate(this.module, user.username, t, args.place, map, status);
             
-            message.reply(msg);
+            message.reply(msg, {
+                attachment: cover
+            });
         } else {
             if(args.mods != undefined)
                 top = top.filter(t => t.mods == args.mods);

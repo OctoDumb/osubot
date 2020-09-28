@@ -6,6 +6,7 @@ export interface IBeatmap {
     artist: string
     creator: string
     version: string
+    beatmapsetID: number
     mode: number
     difficulty: {
         ar: number

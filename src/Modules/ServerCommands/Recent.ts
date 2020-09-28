@@ -23,7 +23,7 @@ export default class RecentCommand extends ServerCommand {
         };
     }
 
-    async run({ message, mapAPI, clean, args, chats }: IServerCommandArguments<IRecentCommandArguments>) {
+    async run({ message, database, mapAPI, clean, args, chats }: IServerCommandArguments<IRecentCommandArguments>) {
         let { username, mode } = await getUserInfo(message, this.database, clean, args);
 
         let recents = await this.api.getRecent({ 
@@ -42,6 +42,8 @@ export default class RecentCommand extends ServerCommand {
         let map = await mapAPI.getBeatmap(recent.beatmapId, mods);
         chats.setChatMap(message.peerId, recent.beatmapId);
 
+        let cover = await database.covers.getCover(map.beatmapsetID);
+
         let pp = await mapAPI.getPP(recent.beatmapId, {
             combo: recent.maxCombo,
             miss: recent.counts.miss,
@@ -52,6 +54,8 @@ export default class RecentCommand extends ServerCommand {
 
         let msg = RecentTemplate(this.module, recent, map, pp);
 
-        message.reply(msg);
+        message.reply(msg, {
+            attachment: cover
+        });
     }
 }
