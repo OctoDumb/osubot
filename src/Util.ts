@@ -59,9 +59,11 @@ export async function getUserInfo(message: Message, db: Server, clean: string, a
     let { nickname: username = "", mode = 0 } = await db.getUser(message.sender);
     if(message.forwarded)
         username = (await db.getUser(message.forwarded.senderId)).nickname;
+    if(message.arguments.length)
+        username = message.arguments.join(" ");
     if(clean)
         username = clean;
-    if(args.mode != undefined)
+    if(args?.mode != undefined)
         mode = args.mode;
 
     return { username, mode };
