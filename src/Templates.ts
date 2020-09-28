@@ -9,6 +9,7 @@ import { statsToString, formatTime, formatBPM, modsToString, hitsToString, round
 import Message from "./Message";
 import { IDBUser, IDBUserStats } from "./Database";
 import IReplay from "./Replay/Replay";
+import { UsersGetResponse } from "vk-io";
 
 function joinMods(mods: string[]) {
     return (mods.length ? "+" : "") + mods.join('');
@@ -156,12 +157,12 @@ export function LeaderboardTemplate(server: ServerModule, scores: {user: IDBUser
 /**
  * Message template for Find command 
  */
-export function FindTemplate(server: ServerModule, username: string, users: IDBUser[]) {
-    let usersURLs = users.map(u => `https://vk.com/id${u.id}`).join("\n");
+export function FindTemplate(server: ServerModule, username: string, users: UsersGetResponse) {
+    let links = users.map(u => `[id${u.id}|${u.first_name} ${u.last_name}]`).join("\n");
     return `
         [Server: ${server.name}]
         Пользователи с ником ${username}:
-        ${usersURLs}
+        ${links}
     `
 }
 

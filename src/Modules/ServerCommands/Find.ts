@@ -1,6 +1,7 @@
 import ServerCommand from "../../Commands/Server/ServerCommand";
 import { IArgumentsWithMode, IServerCommandArguments } from "../../Commands/Arguments";
 import { FindTemplate } from "../../Templates";
+import { getUserInfo } from "../../Util";
 
 export default class FindCommand extends ServerCommand {
     name = "Find";
@@ -9,17 +10,21 @@ export default class FindCommand extends ServerCommand {
 
     description = `Найти вк человека, играющего на ${this.module.name}`;
 
-    async run({ message }: IServerCommandArguments<IArgumentsWithMode>) {
-        let username: string = message.arguments[0];
+    async run({ message, vk, clean }: IServerCommandArguments<null>) {
+        let { username } = await getUserInfo(message, this.database, clean);
         let u = await this.api.getUser({ username });
-        let users = await this.database.findByUserId(u.id);
+        let dbusers = await this.database.findByUserId(u.id);
 
-        if(!users[0])
+        if(!dbusers[0])
             return message.reply(`
                 [Server: ${this.module.name}]
                 Пользователей с таким ником не найдено!`
             );
 
-        message.reply(FindTemplate(this.module, username, users));
+        let users = await vk.api.users.get({
+            user_ids: dbusers.map(u => u.id).join()
+        });
+
+        message.reply(FindTemplate(this.module, u.username, users));
     }
 }
