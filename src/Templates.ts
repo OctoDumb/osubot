@@ -10,6 +10,7 @@ import Message from "./Message";
 import { IDBUser, IDBUserStats } from "./Database";
 import IReplay from "./Replay/Replay";
 import { UsersGetResponse } from "vk-io";
+import { IChatTopUser } from "./Modules/ServerCommands/Chat";
 
 function joinMods(mods: string[]) {
     return (mods.length ? "+" : "") + mods.join('');
@@ -127,12 +128,17 @@ export function CompareScoreTemplate(server: ServerModule, score: IScoreAPIRespo
 /**
  * Message template for Chat command 
  */
-export function ChatTopTemplate(server: ServerModule, chat: number, users: IDBUserStats[], statuses: string[], full?: number) {
+export function ChatTopTemplate(server: ServerModule, chat: number, users: IChatTopUser[], full?: number) {
+    if(users.length == 0)
+        return `
+            [Server: ${server.name}]
+            Не найдено статистик для этого чата
+        `;
     return `
         [Server: ${server.name}]
         Топ${full ? '' : `-${users.length}`} беседы (ID ${chat}):
-        ${users.sort((a, b) => b.pp - a.pp).map((u, i) => `
-            #${i + 1} ${u.nickname} ${statuses[i]} | ${round(u.pp, 1)} | Ранк ${u.rank} | ${round(u.acc)}%
+        ${users.sort((a, b) => b.stats.pp - a.stats.pp).map((u, i) => `
+            #${i + 1} ${u.stats.nickname} ${u.status} | ${round(u.stats.pp, 1)} | Ранк ${u.stats.rank} | ${round(u.stats.acc)}%
         `).join('\n')}
     `;
 }

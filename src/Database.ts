@@ -1,5 +1,6 @@
 import * as sqlite from "sqlite3";
 import VK from "vk-io";
+import { IUserAPIResponse } from "./API/APIResponse";
 
 export class Covers {
     constructor(
@@ -100,13 +101,13 @@ export class Server {
         // idk
     }
 
-    async updateInfo(user: any, mode: number) {
+    async updateInfo(user: IUserAPIResponse, mode: number) {
         let dbuser = await this.db.get(`SELECT * FROM ${this.table}_stats_${mode} WHERE id = ?`, user.id);
         if(!dbuser.id)
             await this.db.run(
                 `INSERT INTO ${this.table}_stats_${mode} (id, nickname, pp, rank, acc) VALUES (?, ?, ?, ?, ?)`, 
                 user.id, 
-                user.nickname, 
+                user.username, 
                 user.pp, 
                 user.rank.total, 
                 user.accuracy
@@ -114,7 +115,7 @@ export class Server {
         else
             await this.db.run(
                 `UPDATE ${this.table}_stats_${mode} SET nickname = ?, pp = ?, rank = ?, acc = ? WHERE id = ?`,
-                user.nickname,
+                user.username,
                 user.pp,
                 user.rank.total,
                 user.accuracy,
