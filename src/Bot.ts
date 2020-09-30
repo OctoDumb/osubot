@@ -1,21 +1,28 @@
 import { AttachmentType, MessageContext, VK } from "vk-io";
 import { readFileSync } from "fs";
 import cron from "node-cron";
-import Message from "./Message";
 
+import Message from "./Message";
 import Database from "./Database";
 import MapAPI from "./API/MapAPI";
 import NewsController from "./News/NewsController";
 import ChatCache from "./ChatCache";
+import BotAPI from "./BotAPI";
+import PrivilegesManager from "./Privileges";
+import StandaloneCommand from "./Commands/StandaloneCommand";
+import MapCommand from "./StandaloneCommands/Map";
+import ServerModule from "./Commands/Server/ServerModule";
+import { MapInfoTemplate } from "./Templates";
+
+import Admin from "./Modules/Admin";
+import Main from "./Modules/Main";
 
 import Module from "./Commands/Module";
 import Bancho from "./Modules/Bancho";
 import Gatari from "./Modules/Gatari"
 import Kurikku from "./Modules/Kurikku";
 import Ripple from "./Modules/Ripple";
-
-import Admin from "./Modules/Admin";
-import Main from "./Modules/Main";
+import Enjuu from "./Modules/Enjuu";
 
 import BanchoAPI from "./API/Servers/Bancho";
 import GatariAPI from "./API/Servers/Gatari";
@@ -24,12 +31,8 @@ import EnjuuAPI from "./API/Servers/Enjuu";
 import RippleAPI from "./API/Servers/Ripple";
 import AkatsukiAPI from "./API/Servers/Akatsuki";
 import AkatsukiRelaxAPI from "./API/Servers/AkatsukiRelax";
-import BotAPI from "./BotAPI";
-import PrivilegesManager from "./Privileges";
-import StandaloneCommand from "./Commands/StandaloneCommand";
-import MapCommand from "./StandaloneCommands/Map";
-import ServerModule from "./Commands/Server/ServerModule";
-import { MapInfoTemplate } from "./Templates";
+import Akatsuki from "./Modules/Akatsuki";
+import AkatsukiRelax from "./Modules/AkatsukiRelax";
 
 export interface IBotConfig {
     vk: {
@@ -88,7 +91,10 @@ export default class Bot {
         Bancho,
         Gatari,
         Kurikku,
+        Enjuu,
         Ripple,
+        Akatsuki,
+        AkatsukiRelax
     ].map(m => new m(this));
 
     commands: StandaloneCommand[] = [

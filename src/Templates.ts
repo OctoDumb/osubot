@@ -1,7 +1,8 @@
 import { 
     IUserAPIResponse,
     ITopAPIResponse,
-    IRecentAPIResponse, IScoreAPIResponse
+    IRecentAPIResponse, 
+    IScoreAPIResponse
 } from "./API/APIResponse";
 import ServerModule from "./Commands/Server/ServerModule";
 import { IBeatmap, IPPResponse } from "./API/MapAPI";

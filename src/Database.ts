@@ -97,8 +97,13 @@ export class Server {
             await this.db.run(`UPDATE ${this.table} SET nickname = ?, uid = ? WHERE id = ?`, nickname, uid, id);
     }
 
-    async setMode(id: number, mode: number) {
-        // idk
+    async setMode(id: number, mode: number): Promise<boolean> {
+        let user = await this.getUser(id);
+        if(!user.id)
+            return false;
+        await this.db.run(`UPDATE ${this.table} SET mode = ? WHERE id = ?`, mode, id);
+
+        return true;
     }
 
     async updateInfo(user: IUserAPIResponse, mode: number) {
