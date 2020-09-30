@@ -9,7 +9,7 @@ enum DBCommandType {
 
 export default class AdminSQL extends Command {
     name = "SQL";
-    command = [ "sql", "SQL" ];
+    command = [ "sql" ];
 
     description = "";
 
