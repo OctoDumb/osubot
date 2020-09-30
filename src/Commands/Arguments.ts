@@ -13,6 +13,7 @@ export default interface ICommandArguments {
     mapAPI: MapAPI;
     news: NewsController;
     vk: VK;
+    chats: ChatCache;
     privileges: PrivilegesManager;
     uptime: number;
 }
@@ -37,6 +38,16 @@ export interface IRecentCommandArguments extends IArgumentsWithMode {
 }
 
 export interface ICompareCommandArguments extends IArgumentsWithMode, IArgumentsWithMods {}
+
+export interface IChatCommandArguments extends IArgumentsWithMode {
+    top?: number;
+}
+
+export interface IMapCommandArguments extends IArgumentsWithMods {
+    accuracy?: number;
+    combo?: number;
+    miss?: number;
+}
 
 export interface IArgumentParser {
     arg: string;
@@ -124,6 +135,11 @@ export const Parsers = {
         prefix: "-",
         suffix: "p",
         parser: Boolean
+    },
+    top: {
+        arg: "top",
+        prefix: "-",
+        parser: Number
     }
 };
 
@@ -154,7 +170,8 @@ export function parseArguments<T>(args: string[], parsers: IArgumentParser[] = [
 }
 
 export interface IServerCommandArguments<T> extends ICommandArguments {
-    chats: ChatCache;
     clean: string;
     args: T;
 }
+
+export interface IStandaloneCommandArguments<T> extends IServerCommandArguments<T> {}

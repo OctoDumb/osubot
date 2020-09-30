@@ -2,6 +2,7 @@ import Message from "./Message";
 import Bot from "./Bot";
 import { IHitCounts } from "./API/APIResponse";
 import Database, { IDBUser, Server } from "./Database";
+import { IPPResponse } from "./API/MapAPI";
 
 /**
  * Mods bitwise enum
@@ -206,6 +207,15 @@ export function formatBPM(bpm: { min: number, max: number, avg: number }): strin
     return `${bpm.min}-${bpm.max} (${bpm.avg})`;
 }
 
+export function formatPP(pp: IPPResponse): string {
+    if(pp.pp == pp.sspp)
+        return `PP: ${round(pp.pp)}`;
+    else if(pp.pp == pp.fcpp)
+        return `PP: ${round(pp.pp)} ⯈ SS: ${round(pp.sspp)}`;
+    else
+        return `PP: ${round(pp.pp)} ⯈ FC: ${round(pp.fcpp)} ⯈ SS: ${round(pp.sspp)}`;
+}
+
 export function formatTime(seconds: number) {
     let minutes = Math.floor(seconds / 60);
     seconds = seconds % 60;
@@ -242,4 +252,12 @@ export function changeKeyboardLayout(string: string): null | string {
     });
 
     return string;
+}
+
+export function clearObject(a: object) {
+    for(let key of Object.keys(a)) {
+        if(a[key] == undefined)
+            delete a[key];
+    }
+    return a;
 }

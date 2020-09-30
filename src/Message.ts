@@ -34,9 +34,6 @@ export default class Message {
     ) {
         let args = ctx.text.split(" ");
 
-        if(args.length < 2)
-            throw new Error("Not enough arguments");
-
         this.prefix = args.shift().toLowerCase();
         this.command = args.shift().toLowerCase();
 

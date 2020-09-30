@@ -5,7 +5,7 @@ import {
 } from "./API/APIResponse";
 import ServerModule from "./Commands/Server/ServerModule";
 import { IBeatmap, IPPResponse } from "./API/MapAPI";
-import { statsToString, formatTime, formatBPM, modsToString, hitsToString, round, formatDate } from "./Util";
+import { statsToString, formatTime, formatBPM, modsToString, hitsToString, round, formatDate, formatPP } from "./Util";
 import Message from "./Message";
 import { IDBUser, IDBUserStats } from "./Database";
 import IReplay from "./Replay/Replay";
@@ -96,7 +96,7 @@ export function RecentTemplate(server: ServerModule, recent: IRecentAPIResponse,
 
         Score: ${recent.score} | Combo: ${recent.maxCombo}x
         Accuracy: ${round(recent.accuracy * 100)}%
-        PP: ${round(pp.pp)} ⯈ FC: ${round(pp.fcpp)} ⯈ SS: ${round(pp.sspp)}
+        ${formatPP(pp)}
         Hitcounts: ${hitsToString(recent.counts, recent.mode)}
         Grade: ${recent.rank} (72.7%)
 
@@ -118,7 +118,7 @@ export function CompareScoreTemplate(server: ServerModule, score: IScoreAPIRespo
         ${formatDate(score.date)}
         Score: ${score.score} | Combo: ${score.maxCombo}x
         Accuracy: ${round(score.accuracy * 100)}%
-        PP: ${round(pp.pp)} ⯈ FC: ${round(pp.fcpp)} ⯈ SS: ${round(pp.sspp)}
+        ${formatPP(pp)}
         Hitcounts: ${hitsToString(score.counts, score.mode)}
         Grade: ${score.rank}
     `;
@@ -127,11 +127,11 @@ export function CompareScoreTemplate(server: ServerModule, score: IScoreAPIRespo
 /**
  * Message template for Chat command 
  */
-export function ChatTopTemplate(server: ServerModule, message: Message, users: IDBUserStats[], statuses: string[], full = false) {
+export function ChatTopTemplate(server: ServerModule, chat: number, users: IDBUserStats[], statuses: string[], full?: number) {
     return `
         [Server: ${server.name}]
-        Топ${full && users.length > 10 ? '-10' : ''} беседы (ID ${message.chatId}):
-        ${users.sort((a, b) => b.pp - a.pp).slice(0, full ? 10 : undefined).map((u, i) => `
+        Топ${full ? '' : `-${users.length}`} беседы (ID ${chat}):
+        ${users.sort((a, b) => b.pp - a.pp).map((u, i) => `
             #${i + 1} ${u.nickname} ${statuses[i]} | ${round(u.pp, 1)} | Ранк ${u.rank} | ${round(u.acc)}%
         `).join('\n')}
     `;
@@ -177,7 +177,31 @@ export function ReplayTemplate(replay: IReplay, map: IBeatmap, pp: IPPResponse) 
 
         Score: ${replay.score} | Combo: ${replay.combo}x
         Accuracy: ${round(replay.accuracy)}%
-        PP: ${round(pp.pp)} ⯈ FC: ${round(pp.fcpp)} ⯈ SS: ${round(pp.sspp)}
+        ${formatPP(pp)}
         Hitcounts: ${hitsToString(replay.counts, replay.mode)}
+    `;
+}
+
+export function MapTemplate(map: IBeatmap, pp: IPPResponse, mods: string[]) {
+    let length = formatTime(~~(map.length / 1e3));
+    let modsString = joinMods(mods);
+    return `
+        ${map.artist} - ${map.title} [${map.version}] by ${map.creator}
+        ${length} | ${statsToString(map.mode, map.difficulty)} | ${map.difficulty.stars} ${modsString}
+        Accuracy: ${round(pp.param.acc)}%
+        Combo: ${pp.param.combo}x | ${pp.param.miss} misses
+        - PP: ${round(pp.pp)}
+    `;
+}
+
+export function MapInfoTemplate(map: IBeatmap, pp98: IPPResponse, pp99: IPPResponse) {
+    let length = formatTime(~~(map.length / 1e3));
+    return `
+        ${map.artist} - ${map.title} [${map.version}] by ${map.creator}
+        ${length} | ${statsToString(map.mode, map.difficulty)} | ${map.difficulty.stars}
+        PP:
+        - 98% = ${pp98.pp}
+        - 99% = ${pp99.pp}
+        - 100% = ${pp99.sspp}
     `;
 }
