@@ -15,6 +15,7 @@
     "@types/node": "^14.0.14",
     "@types/node-cron": "^2.0.3",
     "axios": "^0.19.2",
+    "eventemitter3": "^4.0.7",
     "express": "^4.17.1",
     "int64-buffer": "^0.99.1007",
     "leb": "^0.3.0",
@@ -27,7 +28,11 @@
     "@types/sqlite3": "^3.1.6"
   },
   "nodemonConfig": {
-    "ignore": ["*.db", "*.json", "*.ts"],
+    "ignore": [
+      "*.db",
+      "*.json",
+      "*.ts"
+    ],
     "delay": 500
   }
 }

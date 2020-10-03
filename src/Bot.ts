@@ -33,6 +33,7 @@ import AkatsukiAPI from "./API/Servers/Akatsuki";
 import AkatsukiRelaxAPI from "./API/Servers/AkatsukiRelax";
 import Akatsuki from "./Modules/Akatsuki";
 import AkatsukiRelax from "./Modules/AkatsukiRelax";
+import BanchoV2API from "./API/Servers/BanchoV2";
 
 export interface IBotConfig {
     vk: {
@@ -84,6 +85,8 @@ export default class Bot {
         akatsuki: new AkatsukiAPI(),
         akatsukiRelax: new AkatsukiRelaxAPI(),
     };
+
+    v2 = new BanchoV2API();
     
     modules: Module[] = [ 
         Main, 
@@ -157,6 +160,11 @@ export default class Bot {
         await this.vk.updates.start();
 
         this.startTime = Date.now();
+
+        await this.v2.login(
+            this.config.osu.username,
+            this.config.osu.password
+        );
 
         cron.schedule('*/5 * * * *', () => { this.updateUses() });
 

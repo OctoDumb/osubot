@@ -1,8 +1,72 @@
 import Axios, { AxiosInstance } from "axios";
+import { EventEmitter } from "eventemitter3";
 import { stringify } from "querystring";
-import { IV2News } from "./V2/V2Responses";
+import { IChangelogRequest, IV2BeatmapsetsRequest } from "./V2/V2Request";
+import { IChangelog, IV2Beatmapset, IV2News } from "./V2/V2Responses";
+
+type APIV2Events = {
+    ['osuupdate']: [IChangelog],
+    ['newranked']: [IV2Beatmapset],
+    ['osunews']: [IV2News]
+}
+
+interface IV2Data {
+    lastBuild: number;
+    lastRanked: number;
+    lastNews: number;
+}
+
+class BanchoV2Data extends EventEmitter<APIV2Events> {
+    data: IV2Data = {
+        lastBuild: Infinity,
+        lastRanked: Infinity,
+        lastNews: Infinity
+    };
+
+    constructor(
+        private api: BanchoV2API
+    ) {
+        super();
+    }
+
+    async updateChangelog() {
+        let build = (await this.api.getChangelog({}))[0];
+        if(this.data.lastBuild == Infinity)
+            this.data.lastBuild = build.id;
+        else if(build.id > this.data.lastBuild) {
+            this.data.lastBuild = build.id;
+            this.emit('osuupdate', build);
+        }
+    }
+
+    async updateRanked() {
+        let data = await this.api.getBeatmapsets({});
+        if(this.data.lastRanked == Infinity)
+            this.data.lastRanked = data[0].rankedDate.getTime();
+        else {
+            data = data.filter(s => s.rankedDate.getTime() > this.data.lastRanked);
+            if(!data.length)
+            for(let set of data) {
+                this.emit('newranked', set);
+            }
+            this.data.lastRanked = data[0].rankedDate.getTime();
+        }
+    }
+
+    async updateNews() {
+        let data = await this.api.getNews();
+        if(this.data.lastNews == Infinity)
+            this.data.lastNews = data.date.getTime();
+        else if(this.data.lastNews < data.date.getTime()) {
+            this.data.lastNews = data.date.getTime();
+            this.emit('osunews', data);
+        }
+    }
+}
 
 export default class BanchoV2API {
+    data = new BanchoV2Data(this);
+
     private access_token: string;
     private refresh_token: string;
     private api: AxiosInstance = Axios.create({
@@ -56,6 +120,37 @@ export default class BanchoV2API {
             }
             throw e;
         }
+    }
+
+    async getChangelog({ stream, limit }: IChangelogRequest): Promise<IChangelog[]> {
+        let data = (await this.request('/changelog', { stream: stream ?? "stable40", limit })).builds;
+        return data.map(build => ({
+            id: build.id,
+            version: build.version,
+            entries: build.changeLog_entries.map(entry => ({
+                category: entry.category,
+                title: entry.title,
+                isMajor: entry.major
+            }))
+        }));
+    }
+
+    async getBeatmapsets({ query, status }: IV2BeatmapsetsRequest): Promise<IV2Beatmapset[]> {
+        let data = await this.request('/beatmapsets/search/', { q: query ?? null, s: status ?? 'ranked' });
+        return data.beatmapsets.map(set => ({
+            id: set.id,
+            title: set.title,
+            artist: set.artist,
+            rankedDate: new Date(set.ranked_date),
+            creator: set.creator,
+            status: set.status,
+            beatmaps: set.beatmaps.map(map => ({
+                id: map.id,
+                mode: map.mode_int,
+                stars: map.difficulty_rating,
+                version: map.version
+            }))
+        }));
     }
 
     async getNews(): Promise<IV2News> {
