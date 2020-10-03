@@ -4,6 +4,9 @@ import GroupRule from "./Rules/Group";
 import OsuUpdateRule from "./Rules/OsuUpdate";
 
 import fs from "fs";
+import OsuNewsRule from "./Rules/OsuNews";
+import Message from "../Message";
+import NewRankedRule from "./Rules/NewRanked";
 
 interface IChatRule {
     enabled: boolean;
@@ -31,7 +34,9 @@ export default class NewsController {
     ) {
         this.rules = [
             new GroupRule(this, this.bot),
-            new OsuUpdateRule(this, this.bot)
+            new OsuUpdateRule(this, this.bot, this.bot.v2.data, 'osuupdate'),
+            new OsuNewsRule(this, this.bot, this.bot.v2.data, 'osunews'),
+            new NewRankedRule(this, this.bot, this.bot.v2.data, 'newranked')
         ];
 
         this.settings = fs.existsSync("./news_rules.json") 
@@ -74,14 +79,12 @@ export default class NewsController {
 
         let { message, attachment } = await rule.createMessage(object);
 
-        console.log(message, attachment);
-
         while(ids.length > 0) {
             try {
                 let code = ids
                     .splice(0, this.step)
                     .map(id =>
-                        `API.messages.send(${JSON.stringify({ peer_id: id, message, random_id: Math.ceil(Math.random() * (2 ** 20)), attachment: attachment ?? "", dont_parse_links: 1 })});`)
+                        `API.messages.send(${JSON.stringify({ peer_id: id, message: Message.fixString(message), random_id: Math.ceil(Math.random() * (2 ** 20)), attachment: attachment ?? "", dont_parse_links: 1 })});`)
                     .join('\n');
                 await this.bot.vk.api.execute({ code });
             } catch(e) {}
@@ -92,7 +95,7 @@ export default class NewsController {
 
     private getChats() {
         let ids = [];
-        for(let i = 1; i <= 2; i++) 
+        for(let i = 1; i <= 280; i++) 
             ids.push(2000000000 + i);
 
         return ids;

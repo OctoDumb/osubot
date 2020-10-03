@@ -13,10 +13,9 @@ export default class GroupRule extends NewsRule<INewsMessage> {
 
     async createMessage(message: INewsMessage): Promise<INewsSendParams> { return { ...message }; };
 
-    hasFilters = true;
+    hasFilters = false;
 
     useFilter(object: INewsMessage, filter: IFilter) {
-        if(filter.name == "contains")
-            return object.message.includes(filter.value.toLowerCase());
+        return true;
     }
 }
