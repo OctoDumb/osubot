@@ -166,6 +166,8 @@ export default class Bot {
             this.config.osu.password
         );
 
+        this.v2.data.start();
+
         cron.schedule('*/5 * * * *', () => { this.updateUses() });
 
         console.log("Started!");

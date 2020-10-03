@@ -29,6 +29,16 @@ class BanchoV2Data extends EventEmitter<APIV2Events> {
         super();
     }
 
+    start() {
+        setInterval(() => this.update(), 5000);
+    }
+
+    private async update() {
+        await this.updateChangelog();
+        await this.updateRanked();
+        await this.updateNews();
+    }
+
     async updateChangelog() {
         let build = (await this.api.getChangelog({}))[0];
         if(this.data.lastBuild == Infinity)
