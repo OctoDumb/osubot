@@ -205,7 +205,7 @@ export function MapInfoTemplate(map: IBeatmap, pp98: IPPResponse, pp99: IPPRespo
     let length = formatTime(~~(map.length / 1e3));
     return `
         ${map.artist} - ${map.title} [${map.version}] by ${map.creator}
-        ${length} | ${statsToString(map.mode, map.difficulty)} | ${map.difficulty.stars}
+        ${length} | ${statsToString(map.mode, map.difficulty)} | ${map.difficulty.stars}*
         PP:
         - 98% = ${pp98.pp}
         - 99% = ${pp99.pp}

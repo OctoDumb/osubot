@@ -3,6 +3,10 @@ export interface IChangelogRequest {
     limit?: number;
 }
 
+export interface IV2BeatmapsetRequest {
+    beatmapsetId?: number;
+}
+
 export interface IV2BeatmapsetsRequest {
     query?: string;
     status?: string;

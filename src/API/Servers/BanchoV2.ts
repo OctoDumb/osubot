@@ -1,8 +1,8 @@
 import Axios, { AxiosInstance } from "axios";
 import { EventEmitter } from "eventemitter3";
 import { stringify } from "querystring";
-import { IChangelogRequest, IV2BeatmapsetsRequest } from "./V2/V2Request";
-import { IChangelog, IV2Beatmapset, IV2News } from "./V2/V2Responses";
+import { IChangelogRequest, IV2BeatmapsetsRequest, IV2BeatmapsetRequest, IV2BeatmapRequest } from "./V2/V2Request";
+import { IChangelog, IV2Beatmapset, IV2Beatmap, IV2News } from "./V2/V2Responses";
 
 type APIV2Events = {
     ['osuupdate']: [IChangelog],
@@ -90,7 +90,7 @@ export default class BanchoV2API {
             password,
             grant_type: "password",
             client_id: 5,
-            client_secret: "FGc9GAtyHzeQDshWP5Ah7dega8hJACCAJpQtw6OXk",
+            client_secret: "FGc9GAtyHzeQDshWP5Ah7dega8hJACAJpQtw6OXk",
             scope: "*"
         });
 
@@ -143,6 +143,24 @@ export default class BanchoV2API {
                 isMajor: entry.major
             }))
         }));
+    }
+
+    async getBeatmapset({ beatmapsetId }: IV2BeatmapsetRequest): Promise<IV2Beatmapset> {
+        let data = await this.request(`/beatmapsets/${beatmapsetId}`);
+        return {
+            id: data.id,
+            title: data.title,
+            artist: data.artist,
+            rankedDate: new Date(data.ranked_date),
+            creator: data.creator,
+            status: data.status,
+            beatmaps: data.beatmaps.map(map => ({
+                id: map.id,
+                mode: map.mode_int,
+                stars: map.difficulty_rating,
+                version: map.version
+            }))
+        }
     }
 
     async getBeatmapsets({ query, status }: IV2BeatmapsetsRequest): Promise<IV2Beatmapset[]> {
