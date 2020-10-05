@@ -2,7 +2,9 @@ import { AttachmentType, MessageContext } from "vk-io";
 
 import Bot from "./Bot";
 import ServerModule from "./Commands/Server/ServerModule";
-import { MapInfoTemplate } from "./Templates";
+import { MapInfoTemplate, MapsetInfoTemplate } from "./Templates";
+import { IV2Beatmapset } from "./API/Servers/V2/V2Responses";
+import Message from "./Message";
 
 interface IMapLink {
     beatmapsetId?: number;
@@ -16,7 +18,7 @@ export default class MapLinkProcessor {
 
     api = this.bot.v2;
 
-    checkLink(ctx: MessageContext): IMapLink | null {
+    checkLink(message: Message, ctx: MessageContext): IMapLink | null {
         let variations = [
             'beatmapsets/(?<setId>[0-9]+)#\d+/(?<mapId>[0-9]+)',
             'b/(?<mapId>[0-9]+)',
@@ -27,8 +29,8 @@ export default class MapLinkProcessor {
             .flatMap ((m: ServerModule) => variations.map(v => new RegExp(`${m.baseLink}${v}`)));
 
         for(let r of rx) {
-            if(r.exec(ctx.text)) {
-                let g = ctx.text.match(r).groups;
+            if(r.exec(message.clean)) {
+                let g = message.clean.match(r).groups;
                 return {
                     beatmapsetId: Number(g.setId),
                     beatmapId: Number(g.mapId)
@@ -48,21 +50,50 @@ export default class MapLinkProcessor {
         return null;
     }
 
-    async process(ctx: MessageContext, mapLink: IMapLink) {
+    async process(message: Message, mapLink: IMapLink) {
         let { beatmapsetId, beatmapId } = mapLink;
         
         if (beatmapsetId) {
-            let data = await this.api.getBeatmapset({ beatmapsetId });
+            let mapset = await this.api.getBeatmapset({ beatmapsetId });
+            let cover = await this.bot.database.covers.getCover(beatmapsetId);
+            mapset = this.cutBeatmapset(mapset);
+
+            message.reply(MapsetInfoTemplate(mapset), {
+                attachment: cover
+            });
         } else if (beatmapId) {
             let map = await this.bot.maps.getBeatmap(beatmapId);
             let pp98 = await this.bot.maps.getPP(beatmapId, { acc: 98 });
             let pp99 = await this.bot.maps.getPP(beatmapId, { acc: 99 });
             let cover = await this.bot.database.covers.getCover(map.beatmapsetID);
-            ctx.send(MapInfoTemplate(map, pp98, pp99), {
+
+            message.reply(MapInfoTemplate(map, pp98, pp99), {
                 attachment: cover
             });
         } else {
-            ctx.send("Некорректная ссылка");
+            message.reply("Некорректная ссылка");
         }
+    }
+
+    private cutBeatmapset(set: IV2Beatmapset): IV2Beatmapset {
+        const count = 3;
+        let std = set.beatmaps.filter(b => b.mode === 0).sort((a, b) => a.stars - b.stars);
+        let taiko = set.beatmaps.filter(b => b.mode === 1).sort((a, b) => a.stars - b.stars);
+        let ctb = set.beatmaps.filter(b => b.mode === 2).sort((a, b) => a.stars - b.stars);
+        let mania = set.beatmaps.filter(b => b.mode === 3).sort((a, b) => a.stars - b.stars);
+
+        std = std.length >= count ? std.splice(std.length - count, std.length) : std;
+        taiko = taiko.length >= count ? taiko.splice(taiko.length - count, taiko.length) : taiko;
+        ctb = ctb.length >= count ? ctb.splice(ctb.length - count, ctb.length) : ctb;
+        mania = mania.length >= count ? mania.splice(mania.length - count, mania.length) : mania;
+
+        set.beatmaps = [
+            ...std,
+            ...taiko,
+            ...ctb,
+            ...mania
+        ];
+
+        return set;
     }
 }

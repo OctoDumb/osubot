@@ -12,6 +12,7 @@ import { IDBUser, IDBUserStats } from "./Database";
 import IReplay from "./Replay/Replay";
 import { UsersGetResponse } from "vk-io";
 import { IChatTopUser } from "./Modules/ServerCommands/Chat";
+import { IV2Beatmapset } from "./API/Servers/V2/V2Responses";
 
 function joinMods(mods: string[]) {
     return (mods.length ? "+" : "") + mods.join('');
@@ -156,8 +157,7 @@ export function LeaderboardTemplate(server: ServerModule, scores: {user: IDBUser
             return `
                 #${i + 1} ${user.nickname} | ${score.score} | ${score.maxCombo}x | ${round(score.accuracy)}% | ${round(0)}pp | ${score.date}
             `;
-        }).map(Message.fixString)
-            .join('\n')}
+        }).map(Message.fixString).join('\n')}
     ` ;
 }
 
@@ -198,6 +198,20 @@ export function MapTemplate(map: IBeatmap, pp: IPPResponse, mods: string[]) {
         Accuracy: ${round(pp.param.acc)}%
         Combo: ${pp.param.combo}x | ${pp.param.miss} misses
         - PP: ${round(pp.pp)}
+    `;
+}
+
+export function MapsetInfoTemplate(set: IV2Beatmapset) {
+    return `
+        ${set.artist} - ${set.title} by ${set.creator}
+        Beatmaps:
+        ${set.beatmaps.map((b, i) => {
+            let { mode, stars, version } = b;
+            let modeString = ["osu", "taiko", "ctb", "mania"][mode];
+            return `
+                ${i + 1}) ${version} | ${stars}* | ${modeString}
+            `;
+        }).map(s => s.replace(/\t/g, '').trim()).join("\n")}
     `;
 }
 

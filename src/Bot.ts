@@ -122,12 +122,12 @@ export default class Bot {
     constructor() {
         this.vk.updates.on("message", async ctx => {
             try {
-                let mapLink = this.mapLinkProcessor.checkLink(ctx);
+                let message = new Message(ctx);
+
+                let mapLink = this.mapLinkProcessor.checkLink(message, ctx);
 
                 if (mapLink) 
-                    return this.mapLinkProcessor.process(ctx, mapLink);
-
-                let message = new Message(ctx);
+                    return this.mapLinkProcessor.process(message, mapLink);
 
                 for(let module of this.modules)
                     module.run(message, this);
@@ -145,7 +145,7 @@ export default class Bot {
                         }
                     }
                 }
-            } catch(e) {}
+            } catch(e) {console.log(e)}
         });
     }
 
