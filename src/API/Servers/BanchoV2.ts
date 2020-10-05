@@ -1,7 +1,7 @@
 import Axios, { AxiosInstance } from "axios";
 import { EventEmitter } from "eventemitter3";
 import { stringify } from "querystring";
-import { IChangelogRequest, IV2BeatmapsetsRequest, IV2BeatmapsetRequest, IV2BeatmapRequest } from "./V2/V2Request";
+import { IChangelogRequest, IV2BeatmapsetsRequest, IV2BeatmapsetRequest } from "./V2/V2Request";
 import { IChangelog, IV2Beatmapset, IV2Beatmap, IV2News } from "./V2/V2Responses";
 
 type APIV2Events = {
