@@ -1,6 +1,7 @@
 import { MessageContext, MessagesSendParams } from "vk-io";
 import MessageForward from "vk-io/lib/structures/shared/message-forward";
 import MessageReply from "vk-io/lib/structures/shared/message-reply";
+import { timeStamp } from "console";
 
 export default class Message {
     static DefaultParams: MessagesSendParams = {
@@ -8,6 +9,7 @@ export default class Message {
         disable_mentions: true
     };
 
+    clean: string;
     prefix: string;
     command: string;
 
@@ -34,8 +36,9 @@ export default class Message {
     ) {
         let args = ctx.text.split(" ");
 
-        this.prefix = args.shift().toLowerCase();
-        this.command = args.shift().toLowerCase();
+        this.clean = ctx.text;
+        this.prefix = args.shift()?.toLowerCase();
+        this.command = args.shift()?.toLowerCase();
 
         this.arguments = args;
     }
