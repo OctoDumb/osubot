@@ -23,7 +23,7 @@ export default class MapCommand extends StandaloneCommand {
         }
     }
 
-    async run({ message, chats, mapAPI, args, clean }: IStandaloneCommandArguments<IMapCommandArguments>) {
+    async run({ message, database, chats, mapAPI, args, clean }: IStandaloneCommandArguments<IMapCommandArguments>) {
         let id = chats.getChatMap(message.peerId);
         if(!id)
             throw "Отправьте карту!";
@@ -40,8 +40,12 @@ export default class MapCommand extends StandaloneCommand {
             mods: mods.join(",")
         }));
 
+        let cover = await database.covers.getCover(map.beatmapsetID);
+
         let msg = MapTemplate(map, pp, mods);
 
-        message.reply(msg);
+        message.reply(msg, {
+            attachment: cover
+        });
     }
 }
