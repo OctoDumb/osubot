@@ -78,16 +78,13 @@ export default class MapLinkProcessor {
     }
 
     private cutBeatmapset(set: IV2Beatmapset): IV2Beatmapset {
-        const count = 3;
-        let std = set.beatmaps.filter(b => b.mode === 0).sort((a, b) => a.stars - b.stars);
-        let taiko = set.beatmaps.filter(b => b.mode === 1).sort((a, b) => a.stars - b.stars);
-        let ctb = set.beatmaps.filter(b => b.mode === 2).sort((a, b) => a.stars - b.stars);
-        let mania = set.beatmaps.filter(b => b.mode === 3).sort((a, b) => a.stars - b.stars);
+        set.beatmaps = set.beatmaps.sort((a, b) => a.stars - b.stars);
 
-        std = std.length >= count ? std.splice(std.length - count, std.length) : std;
-        taiko = taiko.length >= count ? taiko.splice(taiko.length - count, taiko.length) : taiko;
-        ctb = ctb.length >= count ? ctb.splice(ctb.length - count, ctb.length) : ctb;
-        mania = mania.length >= count ? mania.splice(mania.length - count, mania.length) : mania;
+        const count = 3;
+        let std = set.beatmaps.filter(b => b.mode === 0).splice(-count);
+        let taiko = set.beatmaps.filter(b => b.mode === 1).splice(-count);
+        let ctb = set.beatmaps.filter(b => b.mode === 2).splice(-count);
+        let mania = set.beatmaps.filter(b => b.mode === 3).splice(-count);
 
         set.beatmaps = [
             ...std,
