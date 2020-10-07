@@ -67,6 +67,8 @@ export default class MapLinkProcessor {
             let pp99 = await this.bot.maps.getPP(beatmapId, { acc: 99 });
             let cover = await this.bot.database.covers.getCover(map.beatmapsetID);
 
+            this.bot.lastMaps.setChatMap(message.peerId, beatmapId);
+
             message.reply(MapInfoTemplate(map, pp98, pp99), {
                 attachment: cover
             });
