@@ -101,7 +101,7 @@ export function RecentTemplate(server: ServerModule, recent: IRecentAPIResponse,
         Accuracy: ${round(recent.accuracy * 100)}%
         ${formatPP(pp)}
         Hitcounts: ${hitsToString(recent.counts, recent.mode)}
-        Grade: ${recent.rank} (72.7%)
+        Grade: ${recent.rank} ${recent.rank == "F" ? `(${round(pp.progress * 100)}%)` : ''}
 
         Beatmap: ${server.baseLink}b/${recent.beatmapId}
     `;

@@ -7,6 +7,7 @@ export interface IBeatmap {
     creator: string
     version: string
     beatmapsetID: number
+    maxCombo: number
     mode: number
     difficulty: {
         ar: number
@@ -27,6 +28,7 @@ export interface IPPResponse {
     pp: number
     fcpp: number
     sspp: number
+    progress: number
     param: {
         combo: number
         miss: number
@@ -67,4 +69,5 @@ interface IPPArguments {
     acc?: number;
     score?: number;
     mods?: string
+    fail?: number;
 }

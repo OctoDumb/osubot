@@ -196,6 +196,17 @@ export function hitsToString(hits: IHitCounts, mode: number) {
     }
 }
 
+export function hitsToFail(hits: IHitCounts, mode: number) {
+    switch(mode) {
+        case 0:
+            return hits[300] + hits[100] + hits[50] + hits.miss;
+        case 3:
+            return hits[300] + hits[100] + hits[50] + hits.geki + hits.katu + hits.miss;
+        default:
+            return 0;
+    }
+}
+
 export function fixNum(n: number): string {
     return `${n < 10 ? '0' : ''}${n}`;
 }

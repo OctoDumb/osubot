@@ -2,7 +2,7 @@ import ServerCommand from "../../Commands/Server/ServerCommand";
 import { IServerCommandArguments, parseArguments, Parsers, IRecentCommandArguments } from "../../Commands/Arguments";
 import Message from "../../Message";
 import Bot from "../../Bot";
-import { defaultArguments, getUserInfo, modsToString } from "../../Util";
+import { defaultArguments, getUserInfo, hitsToFail, modsToString } from "../../Util";
 import { RecentTemplate } from "../../Templates";
 
 export default class RecentCommand extends ServerCommand {
@@ -49,7 +49,8 @@ export default class RecentCommand extends ServerCommand {
             miss: recent.counts.miss,
             acc: recent.accuracy * 100,
             score: recent.score,
-            mods: mods.join()
+            mods: mods.join(),
+            fail: hitsToFail(recent.counts, recent.mode)
         });
 
         let msg = RecentTemplate(this.module, recent, map, pp);
