@@ -33,6 +33,8 @@ import AkatsukiRelaxAPI from "./API/Servers/AkatsukiRelax";
 import Akatsuki from "./Modules/Akatsuki";
 import AkatsukiRelax from "./Modules/AkatsukiRelax";
 import BanchoV2API from "./API/Servers/BanchoV2";
+import ScreenshotCreator from "./ScreenshotCreator";
+import TrackAPI from "./API/TrackAPI";
 
 export interface IBotConfig {
     vk: {
@@ -75,6 +77,7 @@ export default class Bot {
     });
 
     database = new Database(this.vk);
+    screenshotCreator = new ScreenshotCreator();
     api: IAPIList = {
         bancho: new BanchoAPI(this.config.osu.token),
         gatari: new GatariAPI(),
@@ -86,6 +89,8 @@ export default class Bot {
     };
 
     v2 = new BanchoV2API();
+
+    track = new TrackAPI();
     
     modules: Module[] = [ 
         Main, 
@@ -158,6 +163,8 @@ export default class Bot {
             this.config.osu.username,
             this.config.osu.password
         );
+
+        await this.screenshotCreator.launch();
 
         /* this.v2.data.start(); */
 

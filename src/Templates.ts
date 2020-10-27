@@ -6,13 +6,14 @@ import {
 } from "./API/APIResponse";
 import ServerModule from "./Commands/Server/ServerModule";
 import { IBeatmap, IPPResponse } from "./API/MapAPI";
-import { statsToString, formatTime, formatBPM, modsToString, hitsToString, round, formatDate, formatPP } from "./Util";
+import { statsToString, formatTime, formatBPM, modsToString, hitsToString, round, formatDate, formatPP, formatChange } from "./Util";
 import Message from "./Message";
 import { IDBUser, IDBUserStats } from "./Database";
 import IReplay from "./Replay/Replay";
 import { UsersGetResponse } from "vk-io";
 import { IChatTopUser } from "./Modules/ServerCommands/Chat";
 import { IV2Beatmapset } from "./API/Servers/V2/V2Responses";
+import { OsuTrackResponse } from "./API/TrackAPI";
 
 function joinMods(mods: string[]) {
     return (mods.length ? "+" : "") + mods.join('');
@@ -225,4 +226,16 @@ export function MapInfoTemplate(map: IBeatmap, pp98: IPPResponse, pp99: IPPRespo
         - 99% = ${pp99.pp}
         - 100% = ${pp99.sspp}
     `;
+}
+
+export function TrackTemplate(response: OsuTrackResponse) {
+    return `
+        User ${response.username}:
+        Rank: ${formatChange(-response.rank)} (${formatChange(response.pp)} pp) in ${response.playcount} plays
+        View detailed data here: https://ameobea.me/osutrack/user/${encodeURI(response.username)}
+
+        ${response.highscores.length == 0 ? '' : `${response.highscores.length} new highscores:\n` 
+            + response.highscores.slice(0, 3).map(score => `#${score.place + 1} ${score.pp}pp https://osu.ppy.sh/b/${score.beatmapId}`).join('\n')
+            + (response.highscores.length > 3 ? ' and more...' : '')}
+    `
 }

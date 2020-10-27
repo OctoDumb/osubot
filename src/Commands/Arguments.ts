@@ -6,6 +6,8 @@ import { Mods } from "../Util";
 import NewsController from "../News/NewsController";
 import ChatCache from "../ChatCache";
 import PrivilegesManager from "../Privileges";
+import ScreenshotCreator from "../ScreenshotCreator";
+import TrackAPI from "../API/TrackAPI";
 
 export default interface ICommandArguments {
     message: Message;
@@ -16,6 +18,8 @@ export default interface ICommandArguments {
     chats: ChatCache;
     privileges: PrivilegesManager;
     uptime: number;
+    track: TrackAPI;
+    screenshot: ScreenshotCreator;
 }
 
 export interface IArgumentsWithMode {

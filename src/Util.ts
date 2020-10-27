@@ -51,8 +51,9 @@ export function defaultArguments(message: Message, {
     database, vk, 
     maps: mapAPI, 
     news, lastMaps: chats, 
-    privilegesManager: privileges, 
-    uptime
+    privilegesManager: privileges,
+    uptime, track,
+    screenshotCreator: screenshot
 }: Bot) {
     return { 
         message, 
@@ -60,7 +61,8 @@ export function defaultArguments(message: Message, {
         vk, mapAPI, 
         news, chats, 
         privileges,
-        uptime 
+        uptime, track,
+        screenshot 
     };
 }
 
@@ -234,6 +236,10 @@ export function formatTime(seconds: number) {
 export function formatDate(date: Date) {
     return `${fixNum(date.getDate())}.${fixNum(date.getMonth())}.${date.getFullYear()}`
         + ` ${fixNum(date.getMinutes())}:${fixNum(date.getSeconds())}`;
+}
+
+export function formatChange(num: number) {
+    return num < 0 ? String(num) : `+${num}`;
 }
 
 export function round(num: number, positions: number = 2) {
