@@ -37,6 +37,26 @@ class TypesCollection {
     indexOf(priv: string): number {
         return this.types.findIndex(t => t.name == priv);
     }
+
+    getAvailableStatuses(priv: string[]): string[] {
+        return priv.flatMap(p => this.getSetFor(p)).filter((s, i, a) => a.lastIndexOf(s) == i);
+    }
+
+    getDefaultStatus(priv: string): string {
+        return this.getType(priv).statuses[0] ?? "";
+    }
+
+    sortPrivileges(priv: string[]): string[] {
+        return priv.sort((a, b) => this.indexOf(a) - this.indexOf(b))
+    }
+
+    getHighestPrivilege(priv: string[]): string {
+        return this.sortPrivileges(priv).pop() ?? "None";
+    }
+
+    isHigher(priv1: string, priv2: string) {
+        return this.indexOf(priv1) > this.indexOf(priv2);
+    }
 }
 
 export interface IPrivileges {
@@ -48,7 +68,7 @@ export interface IPrivileges {
 export default class PrivilegesManager {
     private list: IPrivileges[];
 
-    private types = new TypesCollection();
+    types = new TypesCollection();
 
     constructor(file: string = "./privileges.json") {
         this.list = fs.existsSync(file) 
@@ -60,24 +80,8 @@ export default class PrivilegesManager {
         }, 2000);
     }
 
-    getAvailableStatuses(priv: string[]): string[] {
-        return priv.flatMap(p => this.types.getSetFor(p)).filter((s, i, a) => a.lastIndexOf(s) == i);
-    }
-
-    getDefaultStatus(priv: string): string {
-        return this.types.getType(priv).statuses[0] ?? "";
-    }
-
-    sortPrivileges(priv: string[]): string[] {
-        return priv.sort((a, b) => this.types.indexOf(a) - this.types.indexOf(b))
-    }
-
-    getHighestPrivilege(priv: string[]): string {
-        return this.sortPrivileges(priv).pop() ?? "None";
-    }
-
     getPrivileges(id: number): string[] {
-        return this.sortPrivileges(this.list.find(p => p.id == id)?.privileges ?? []);
+        return this.types.sortPrivileges(this.list.find(p => p.id == id)?.privileges ?? []);
     }
 
     hasPrivilege(id: number, priv: string): boolean {
@@ -88,15 +92,11 @@ export default class PrivilegesManager {
         return this.list.find(p => p.id == id)?.status ?? "";
     }
 
-    isHigher(priv1: string, priv2: string) {
-        return this.types.indexOf(priv1) > this.types.indexOf(priv2);
-    }
-
     getUserStatus(users: IDBUser[]): string {
-        let highestPriv = users.map(u => this.getHighestPrivilege(this.getPrivileges(u.id)));
+        let highestPriv = users.map(u => this.types.getHighestPrivilege(this.getPrivileges(u.id)));
         let i = 0;
         highestPriv.forEach((p, ii) => {
-            if(this.isHigher(p, highestPriv[i])) i = ii;
+            if(this.types.isHigher(p, highestPriv[i])) i = ii;
         });
 
         return this.getStatus(users[i].id);
@@ -107,7 +107,7 @@ export default class PrivilegesManager {
         if(i < 0) throw new Error("No privileges");
         let p = this.list[i];
 
-        if(!this.getAvailableStatuses(p.privileges).includes(status))
+        if(!this.types.getAvailableStatuses(p.privileges).includes(status))
             throw new Error("Not enought privileges");
 
         this.list[i].status = status;
@@ -139,11 +139,11 @@ export default class PrivilegesManager {
             let ii = this.list[i].privileges.indexOf(priv);
             this.list[i].privileges.splice(ii, 1);
             if(
-                !this
+                !this.types
                     .getAvailableStatuses(this.list[i].privileges)
                     .includes(this.list[i].status)
             )
-                this.list[i].status = this.getDefaultStatus(priv);
+                this.list[i].status = this.types.getDefaultStatus(priv);
         } else
             throw new Error("This user doesn't have this privilege");
     }

@@ -1,6 +1,5 @@
 import ICommandArguments from "../../../Commands/Arguments";
 import Command from "../../../Commands/Command";
-import { PrivilegesType } from "../../../Privileges";
 
 export default class PrivilegesCommand extends Command {
     name = "Privileges";
@@ -20,7 +19,7 @@ export default class PrivilegesCommand extends Command {
                 if(args.length < 2)
                     return message.reply("Недостаточно аргументов!");
                 try {
-                    privileges.addPrivilege(forwarded?.senderId ?? message.sender, <PrivilegesType>args[1]);
+                    privileges.addPrivilege(forwarded?.senderId ?? message.sender, args[1]);
                     message.reply(`Привилегия ${args[1]} добавлена`);
                 } catch(e) {
                     message.reply(`Ошибка: ${e.message}`);
@@ -32,7 +31,7 @@ export default class PrivilegesCommand extends Command {
                 if(args.length < 2)
                     return message.reply("Недостаточно аргументов!");
                 try {
-                    privileges.removePrivilege(forwarded?.senderId ?? message.sender, <PrivilegesType>args[1]);
+                    privileges.removePrivilege(forwarded?.senderId ?? message.sender, args[1]);
                     message.reply(`Привилегия ${args[1]} удалена`);
                 } catch(e) {
                     message.reply(`Ошибка: ${e.message}`);
