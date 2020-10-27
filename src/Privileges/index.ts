@@ -1,42 +1,55 @@
 import fs from "fs";
-import { IDBUser } from "./Database";
+import { IDBUser } from "../Database";
+import Types from "./types.json";
 
-export type PrivilegesType = "None" | "Donater" | "CoolDonater" | "Verified" | "Moderator" | "Owner";
+interface PrivilegesType {
+    name: string;
+    description: string;
+    inherits?: string[];
+    statuses: string[]
+}
 
-const StatusSets = {
-    Donater: [
-        "❤"
-    ],
-    CoolDonater: [
-        "💖"
-    ],
-    Verified: [
-        "✅"
-    ],
-    Moderator: [
-        "👁"
-    ],
-    Owner: [
-        "👑"
-    ]
-};
+class TypesCollection {
+    types: PrivilegesType[] = Types;
 
-export const Hierarchy: PrivilegesType[] = [
-    "Donater",
-    "CoolDonater",
-    "Verified",
-    "Moderator",
-    "Owner"
-];
+    getType(priv: string): PrivilegesType {
+        return this.types.find(t => t.name == priv);
+    }
+
+    getSetFor(priv: string): string[] {
+        let type = this.getType(priv);
+        if(!type) return [];
+
+        let statuses = [
+            ...type.statuses
+        ];
+
+        if(type.inherits)
+            statuses.unshift(
+                ...type.inherits.flatMap(t => 
+                    this.getType(t).statuses
+                )
+            );
+
+        return statuses;
+    }
+
+    indexOf(priv: string): number {
+        return this.types.findIndex(t => t.name == priv);
+    }
+}
 
 export interface IPrivileges {
     id: number;
-    privileges: PrivilegesType[];
+    privileges: string[];
     status: string | null;
 }
 
 export default class PrivilegesManager {
     private list: IPrivileges[];
+
+    private types = new TypesCollection();
+
     constructor(file: string = "./privileges.json") {
         this.list = fs.existsSync(file) 
             ? JSON.parse(fs.readFileSync(file).toString())
@@ -47,65 +60,27 @@ export default class PrivilegesManager {
         }, 2000);
     }
 
-    getSetForPrivilege(priv: PrivilegesType): string[] {
-        switch(priv) {
-            case "Donater":
-                return StatusSets.Donater;
-            case "CoolDonater":
-                return [
-                    ...StatusSets.Donater,
-                    ...StatusSets.CoolDonater
-                ];
-            case "Verified":
-                return StatusSets.Verified;
-            case "Moderator":
-                return StatusSets.Moderator;
-            case "Owner":
-                return [
-                    ...StatusSets.Donater,
-                    ...StatusSets.CoolDonater,
-                    ...StatusSets.Moderator,
-                    ...StatusSets.Owner
-                ];
-            default:
-                return [];
-        }
+    getAvailableStatuses(priv: string[]): string[] {
+        return priv.flatMap(p => this.types.getSetFor(p)).filter((s, i, a) => a.lastIndexOf(s) == i);
     }
 
-    getAvailableStatuses(priv: PrivilegesType[]): string[] {
-        return priv.flatMap(p => this.getSetForPrivilege(p)).filter((s, i, a) => a.lastIndexOf(s) == i);
+    getDefaultStatus(priv: string): string {
+        return this.types.getType(priv).statuses[0] ?? "";
     }
 
-    getDefaultStatus(priv: PrivilegesType): string {
-        switch(priv) {
-            case "None":
-                return "";
-            case "Donater":
-                return StatusSets.Donater[0];
-            case "CoolDonater":
-                return StatusSets.CoolDonater[0];
-            case "Verified":
-                return StatusSets.Verified[0];
-            case "Moderator":
-                return StatusSets.Moderator[0];
-            case "Owner":
-                return StatusSets.Owner[0];
-        }
+    sortPrivileges(priv: string[]): string[] {
+        return priv.sort((a, b) => this.types.indexOf(a) - this.types.indexOf(b))
     }
 
-    sortPrivileges(priv: PrivilegesType[]): PrivilegesType[] {
-        return priv.sort((a, b) => Hierarchy.indexOf(a) - Hierarchy.indexOf(b))
-    }
-
-    getHighestPrivilege(priv: PrivilegesType[]): PrivilegesType {
+    getHighestPrivilege(priv: string[]): string {
         return this.sortPrivileges(priv).pop() ?? "None";
     }
 
-    getPrivileges(id: number): PrivilegesType[] {
+    getPrivileges(id: number): string[] {
         return this.sortPrivileges(this.list.find(p => p.id == id)?.privileges ?? []);
     }
 
-    hasPrivilege(id: number, priv: PrivilegesType): boolean {
+    hasPrivilege(id: number, priv: string): boolean {
         return this.list.find(p => p.id == id)?.privileges.includes(priv) ?? false;
     }
 
@@ -113,8 +88,8 @@ export default class PrivilegesManager {
         return this.list.find(p => p.id == id)?.status ?? "";
     }
 
-    isHigher(priv1: PrivilegesType, priv2: PrivilegesType) {
-        return Hierarchy.indexOf(priv1) > Hierarchy.indexOf(priv2);
+    isHigher(priv1: string, priv2: string) {
+        return this.types.indexOf(priv1) > this.types.indexOf(priv2);
     }
 
     getUserStatus(users: IDBUser[]): string {
@@ -138,7 +113,7 @@ export default class PrivilegesManager {
         this.list[i].status = status;
     }
 
-    addPrivilege(id: number, priv: PrivilegesType) {
+    addPrivilege(id: number, priv: string) {
         let i = this.list.findIndex(p => p.id == id);
         if(i < 0 && priv == "None")
             throw new Error("This user doesn't have any privileges");
@@ -153,10 +128,10 @@ export default class PrivilegesManager {
         } else if(!this.list[i].privileges.includes(priv)) {
             this.list[i].privileges.push(priv);
         } else
-            throw new Error("This user already has thie privilege");
+            throw new Error("This user already has this privilege");
     }
 
-    removePrivilege(id: number, priv: PrivilegesType) {
+    removePrivilege(id: number, priv: string) {
         let i = this.list.findIndex(p => p.id == id);
         if(i < 0 || priv == "None")
             throw new Error("You can't remove None privileges");

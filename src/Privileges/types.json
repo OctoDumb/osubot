@@ -1,0 +1,44 @@
+[
+    {
+        "name": "Donater",
+        "description": "За бабосики",
+        "statuses": [
+            "❤"
+        ]
+    },
+    {
+        "name": "CoolDonater",
+        "description": "Донатер, но круче",
+        "inherits": [
+            "Donater"
+        ],
+        "statuses": [
+            "💖"
+        ]
+    },
+    {
+        "name": "Verified",
+        "description": "Галочка, хули",
+        "statuses": [
+            "✅"
+        ]
+    },
+    {
+        "name": "Moderator",
+        "description": "Может отпиздить",
+        "statuses": [
+            "👁"
+        ]
+    },
+    {
+        "name": "Owner",
+        "description": "Может изнасиловать",
+        "inherits": [
+            "Verified",
+            "Moderator"
+        ],
+        "statuses": [
+            "👑"
+        ]
+    }
+]
