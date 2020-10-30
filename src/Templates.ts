@@ -56,7 +56,7 @@ export function TopTemplate(server: ServerModule, nickname: string, scores: ITop
             let modsString = joinMods(modsToString(score.mods));
             return `${map.title} [${map.version}] ${modsString}
                 ${statsToString(map.mode, map.difficulty)} ${round(map.difficulty.stars)}✩
-                Grade: ${score.rank} > ${formatCombo(score.maxCombo, map.maxCombo)}x > ${length}
+                Grade: ${score.rank} > ${formatCombo(score.maxCombo, map.maxCombo)} > ${length}
                 Accuracy: ${round(score.accuracy * 100)}% > ${hitsToString(score.counts, score.mode)}
                 PP: ${score.pp}
                 ${formatDate(score.date)}
@@ -78,7 +78,7 @@ export function TopSingleTemplate(server: ServerModule, nickname: string, score:
         ${length} | ${statsToString(map.mode, map.difficulty)} BPM: ${formatBPM(map.bpm)} | ${round(map.difficulty.stars)}✩ ${modsString}
 
         ${formatDate(score.date)}
-        Score: ${score.score} | Combo: ${formatCombo(score.maxCombo, map.maxCombo)}x
+        Score: ${score.score} | Combo: ${formatCombo(score.maxCombo, map.maxCombo)}
         Accuracy: ${round(score.accuracy * 100)}%
         Hitcounts: ${hitsToString(score.counts, score.mode)}
         PP: ${score.pp} | Grade: ${score.rank}
@@ -98,7 +98,7 @@ export function RecentTemplate(server: ServerModule, recent: IRecentAPIResponse,
         ${map.artist} - ${map.title} [${map.version}] by ${map.creator}
         ${length} | ${statsToString(map.mode, map.difficulty)} BPM: ${formatBPM(map.bpm)} | ${round(map.difficulty.stars)}✩ ${modsString}
 
-        Score: ${recent.score} | Combo: ${formatCombo(recent.maxCombo, map.maxCombo)}x
+        Score: ${recent.score} | Combo: ${formatCombo(recent.maxCombo, map.maxCombo)}
         Accuracy: ${round(recent.accuracy * 100)}%
         ${formatPP(pp)}
         Hitcounts: ${hitsToString(recent.counts, recent.mode)}
@@ -120,7 +120,7 @@ export function CompareScoreTemplate(server: ServerModule, score: IScoreAPIRespo
         ${length} | ${statsToString(map.mode, map.difficulty)} BPM: ${formatBPM(map.bpm)} | ${round(map.difficulty.stars)}✩ ${modsString}
 
         ${formatDate(score.date)}
-        Score: ${score.score} | Combo: ${formatCombo(score.maxCombo, map.maxCombo)}x
+        Score: ${score.score} | Combo: ${formatCombo(score.maxCombo, map.maxCombo)}
         Accuracy: ${round(score.accuracy * 100)}%
         ${formatPP(pp)}
         Hitcounts: ${hitsToString(score.counts, score.mode)}
@@ -142,7 +142,7 @@ export function ChatTopTemplate(server: ServerModule, chat: number, users: IChat
         Топ${full ? '' : `-${users.length}`} беседы (ID ${chat}):
         ${users.sort((a, b) => b.stats.pp - a.stats.pp).map((u, i) => `
             #${i + 1} ${u.stats.nickname} ${u.status} | ${round(u.stats.pp, 1)} | Ранк ${u.stats.rank} | ${round(u.stats.acc)}%
-        `).join('\n')}
+        `).map(Message.fixString).join('\n')}
     `;
 }
 
@@ -183,7 +183,7 @@ export function ReplayTemplate(replay: IReplay, map: IBeatmap, pp: IPPResponse) 
         ${map.artist} - ${map.title} [${map.version}] by ${map.creator}
         ${length} | ${statsToString(replay.mode, map.difficulty)} | ${map.difficulty.stars} ${modsString}
 
-        Score: ${replay.score} | Combo: ${formatCombo(replay.combo, map.maxCombo)}x
+        Score: ${replay.score} | Combo: ${formatCombo(replay.combo, map.maxCombo)}
         Accuracy: ${round(replay.accuracy)}%
         ${formatPP(pp)}
         Hitcounts: ${hitsToString(replay.counts, replay.mode)}
@@ -197,7 +197,7 @@ export function MapTemplate(map: IBeatmap, pp: IPPResponse, mods: string[]) {
         ${map.artist} - ${map.title} [${map.version}] by ${map.creator}
         ${length} | ${statsToString(map.mode, map.difficulty)} | ${map.difficulty.stars} ${modsString}
         Accuracy: ${round(pp.param.acc)}%
-        Combo: ${formatCombo(pp.param.combo, map.maxCombo)}x | ${pp.param.miss} misses
+        Combo: ${formatCombo(pp.param.combo, map.maxCombo)} | ${pp.param.miss} misses
         - PP: ${round(pp.pp)}
     `;
 }
@@ -212,7 +212,7 @@ export function MapsetInfoTemplate(set: IV2Beatmapset) {
             return `
                 ${i + 1}) ${version} | ${stars}* | ${modeString}
             `;
-        }).map(s => s.replace(/\t/g, '').trim()).join("\n")}
+        }).map(Message.fixString).join("\n")}
     `;
 }
 

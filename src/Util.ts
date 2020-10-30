@@ -235,7 +235,7 @@ export function formatTime(seconds: number) {
 
 export function formatDate(date: Date) {
     return `${fixNum(date.getDate())}.${fixNum(date.getMonth())}.${date.getFullYear()}`
-        + ` ${fixNum(date.getMinutes())}:${fixNum(date.getSeconds())}`;
+        + ` ${fixNum(date.getHours())}:${fixNum(date.getMinutes())}`;
 }
 
 export function formatCombo(combo: number, maxCombo: number) {
