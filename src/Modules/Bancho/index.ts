@@ -7,6 +7,7 @@ import RecentCommand from "../ServerCommands/Recent";
 import CompareCommand from "../ServerCommands/Compare";
 import FindCommand from "../ServerCommands/Find";
 import ChatCommand from "../ServerCommands/Chat";
+import LeaderboardCommand from "../ServerCommands/Leaderboard";
 
 export default class Bancho extends ServerModule {
     name = "Bancho";
@@ -27,6 +28,7 @@ export default class Bancho extends ServerModule {
         new TopCommand(this),
         new RecentCommand(this),
         new CompareCommand(this),
+        new LeaderboardCommand(this),
         new FindCommand(this),
         new ChatCommand(this)
     ];

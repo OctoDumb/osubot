@@ -28,5 +28,5 @@ export interface IScoreRequestParams {
 export interface ILeaderboardRequestParams {
     beatmapId: number;
     users: IDBUser[];
-    mode?: number;
+    mods?: number;
 }

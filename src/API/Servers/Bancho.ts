@@ -87,8 +87,7 @@ export default class BanchoAPI extends API implements IServerAPI, IAPIWithScores
 
     async getLeaderboard({
         beatmapId,
-        users,
-        mode = 0
+        users
     }: ILeaderboardRequestParams): Promise<ILeaderboardAPIResponse[]> {
         let scores: ILeaderboardAPIResponse[] = [];
         try {
@@ -99,8 +98,7 @@ export default class BanchoAPI extends API implements IServerAPI, IAPIWithScores
                     let sc: (IScoreAPIResponse[] | Error | string)[] = await Promise.all(
                         lb.map(u => this.getScores({
                             username: u.user.nickname,
-                            beatmapId,
-                            mode
+                            beatmapId
                         }).catch(e => e))
                     );
                     for(let j = 0; j < lb.length; j++)

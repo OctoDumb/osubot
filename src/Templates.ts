@@ -149,14 +149,14 @@ export function ChatTopTemplate(server: ServerModule, chat: number, users: IChat
 /**
  * Message template for Leaderboard command 
  */
-export function LeaderboardTemplate(server: ServerModule, scores: {user: IDBUser, score: IScoreAPIResponse}[], map: IBeatmap) {
+export function LeaderboardTemplate(server: ServerModule, scores: {user: IDBUser, status: string, score: IScoreAPIResponse}[], map: IBeatmap) {
     return `
         [Server: ${server.name}]
         Топ беседы на карте ${map.artist} - ${map.title} [${map.version}] by ${map.creator}
         ${scores.map((s, i) => {
-            let { user, score } = s;
+            let { user, status, score } = s;
             return `
-                #${i + 1} ${user.nickname} | ${score.score} | ${score.maxCombo}x | ${round(score.accuracy)}% | ${round(0)}pp | ${score.date}
+                #${i + 1} ${user.nickname} ${status} | ${score.score} | ${score.maxCombo}x | ${round(score.accuracy)}% | ${round(0)}pp | ${score.date}
             `;
         }).map(Message.fixString).join('\n')}
     ` ;
