@@ -54,13 +54,15 @@ export function TopTemplate(server: ServerModule, nickname: string, scores: ITop
             let map = maps[i];
             let length = formatTime(~~(map.length / 1e3));
             let modsString = joinMods(modsToString(score.mods));
-            return `${map.title} [${map.version}] ${modsString}
+            return `
+                ${map.artist} - ${map.title} [${map.version}] ${modsString}
                 ${statsToString(map.mode, map.difficulty)} ${round(map.difficulty.stars)}✩
                 Grade: ${score.rank} > ${formatCombo(score.maxCombo, map.maxCombo)} > ${length}
                 Accuracy: ${round(score.accuracy * 100)}% > ${hitsToString(score.counts, score.mode)}
                 PP: ${score.pp}
                 ${formatDate(score.date)}
-                ${server.baseLink}b/${score.beatmapId}`;
+                ${server.baseLink}b/${score.beatmapId}
+            `;
         }).join("\n")}
     `;
 }
