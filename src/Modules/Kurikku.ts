@@ -11,7 +11,7 @@ export default class Kurikku extends ServerModule {
     name = "Kurikku";
     prefix = ["k", "л"];
 
-    baseLink = "";
+    baseLink = "https://kurikku.pw/";
 
     description = "";
 

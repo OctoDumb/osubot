@@ -11,7 +11,7 @@ export default class Gatari extends ServerModule {
     name = "Gatari";
     prefix = ["g", "п"];
 
-    baseLink = "";
+    baseLink = "https://osu.gatari.pw/";
 
     description = "";
 

@@ -12,7 +12,7 @@ export default class Enjuu extends ServerModule {
     name = "Enjuu";
     prefix = ["e", "у"];
 
-    baseLink = "";
+    baseLink = "https://enjuu.click/";
 
     description = "";
 

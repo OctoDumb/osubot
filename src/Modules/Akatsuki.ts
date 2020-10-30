@@ -12,7 +12,7 @@ export default class Akatsuki extends ServerModule {
     name = "Akatsuki";
     prefix = ["a", "ф"];
 
-    baseLink = "";
+    baseLink = "https://akatsuki.pw/";
 
     description = "";
 

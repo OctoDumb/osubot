@@ -7,7 +7,7 @@ export default class AkatsukiRelax extends ServerModule {
     name = "Akatsuki relax";
     prefix = ["ax", "фч"];
 
-    baseLink = "https://akatsuki.pw";
+    baseLink = "https://akatsuki.pw/";
 
     description = "";
 

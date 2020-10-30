@@ -11,7 +11,7 @@ export default class Ripple extends ServerModule {
     name = "Ripple";
     prefix = ["r", "к"];
 
-    baseLink = "";
+    baseLink = "https://ripple.moe/";
 
     description = "";
 
