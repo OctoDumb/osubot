@@ -49,7 +49,7 @@ export default class LeaderboardCommand extends ServerCommand {
         let leaderboard = await this.api.getLeaderboard({
             beatmapId: mapId,
             users,
-            mods: args.mods ?? null
+            mods: args.mods ?? 0
         });
 
         let scores = leaderboard.map(v => ({
