@@ -250,6 +250,10 @@ export function round(num: number, positions: number = 2) {
     return Math.round(num * (10 ** positions)) / (10 ** positions);
 }
 
+export function modeNumberToString(mode: number): string {
+    return ["Osu!", "Osu!Taiko", "Osu!Catch", "Osu!Mania"][mode];
+}
+
 export function changeKeyboardLayout(string: string): null | string {
     if(!/[а-яА-ЯёЁ]+/.test(string)) return null;
 
