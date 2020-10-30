@@ -1,5 +1,6 @@
 import ServerCommand from "../../Commands/Server/ServerCommand";
 import { IServerCommandArguments } from "../../Commands/Arguments";
+import { modeNumberToString } from "../../Util";
 
 export default class ModeCommand extends ServerCommand {
     name = "Mode";
@@ -14,11 +15,9 @@ export default class ModeCommand extends ServerCommand {
 
         this.database.setMode(message.sender, Number(mode));
 
-        let m = ["Osu!", "Osu!Taiko", "Osu!Catch", "Osu!Mania"][Number(mode)];
-
         message.reply(`
             [Server: ${this.module.name}]
-            Режим ${m} успешно установлен!
+            Режим ${modeNumberToString(Number(mode))} успешно установлен!
         `);
     }
 }

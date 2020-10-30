@@ -6,7 +6,7 @@ import {
 } from "./API/APIResponse";
 import ServerModule from "./Commands/Server/ServerModule";
 import { IBeatmap, IPPResponse } from "./API/MapAPI";
-import { statsToString, formatTime, formatBPM, modsToString, hitsToString, round, formatDate, formatPP, formatChange, formatCombo } from "./Util";
+import { statsToString, formatTime, formatBPM, modsToString, hitsToString, round, formatDate, formatPP, formatChange, formatCombo, modeNumberToString } from "./Util";
 import Message from "./Message";
 import { IDBUser, IDBUserStats } from "./Database";
 import IReplay from "./Replay/Replay";
@@ -73,7 +73,7 @@ export function TopSingleTemplate(server: ServerModule, nickname: string, score:
     let modsString = joinMods(modsToString(score.mods));
     return `
         [Server: ${server.name}]
-        Топ #${place} плей игрока ${nickname} ${status} (${score.mode})
+        Топ #${place} плей игрока ${nickname} ${status} (${modeNumberToString(score.mode)})
         ${map.artist} - ${map.title} [${map.version}] by ${map.creator}
         ${length} | ${statsToString(map.mode, map.difficulty)} BPM: ${formatBPM(map.bpm)} | ${round(map.difficulty.stars)}✩ ${modsString}
 
