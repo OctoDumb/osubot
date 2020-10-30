@@ -238,6 +238,10 @@ export function formatDate(date: Date) {
         + ` ${fixNum(date.getMinutes())}:${fixNum(date.getSeconds())}`;
 }
 
+export function formatCombo(combo: number, maxCombo: number) {
+    return `${combo}x${maxCombo == 0 ? '' : `/${maxCombo}x`}`;
+}
+
 export function formatChange(num: number) {
     return num < 0 ? String(num) : `+${num}`;
 }
