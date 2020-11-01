@@ -52,7 +52,7 @@ export function defaultArguments(message: Message, {
     maps: mapAPI, 
     news, lastMaps: chats, 
     privilegesManager: privileges,
-    uptime, track,
+    uptime, track, v2,
     screenshotCreator: screenshot
 }: Bot) {
     return { 
@@ -62,7 +62,7 @@ export function defaultArguments(message: Message, {
         news, chats, 
         privileges,
         uptime, track,
-        screenshot 
+        v2, screenshot 
     };
 }
 

@@ -241,3 +241,13 @@ export function TrackTemplate(response: OsuTrackResponse) {
             + (response.highscores.length > 3 ? ' and more...' : '')}
     `
 }
+
+export function SearchTemplate(maps: IV2Beatmapset[]) {
+    return `
+        Результат поиска:
+
+        ${maps.splice(0, 10).map(map => `
+            ${map.artist} - ${map.title} by ${map.creator} | https://osu.ppy.sh/s/${map.id}
+        `).map(Message.fixString).join("\n")}
+    `
+}
