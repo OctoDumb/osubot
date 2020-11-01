@@ -56,6 +56,6 @@ export default class Message {
     }
 
     static fixString(str?: string): string {
-        return str?.split("\n").map(s => s.replace(/\t/g, '').trim()).filter(s => s).join("\n");
+        return str?.split("\n").map(s => s.replace(/\t/g, '').trim()).join("\n");
     }
 }
