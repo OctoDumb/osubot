@@ -22,7 +22,7 @@ export default class MainNews extends Command {
                 if(!args[0])
                     throw `Укажите тип рассылки (${news.rules.map(rule => rule.name).join('/')})`;
 
-                let rule = news.rules.find(rule => rule.name == args.shift().toLowerCase());
+                let rule = news.rules.find(rule => rule.name == args.shift()?.toLowerCase());
 
                 if(!rule)
                     throw 'Неизвестный тип рассылки!';

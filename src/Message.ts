@@ -34,7 +34,7 @@ export default class Message {
     constructor(
         private ctx: MessageContext
     ) {
-        let args = ctx.text.split(" ");
+        let args = ctx.text?.split(" ") ?? [];
 
         this.clean = ctx.text;
         this.prefix = args.shift()?.toLowerCase();
