@@ -2,7 +2,7 @@ import ICommandArguments from "../../../Commands/Arguments";
 import Command from "../../../Commands/Command";
 import { SearchTemplate } from "../../../Templates";
 
-export default class SearchCommand extends Command {
+export default class MainSearch extends Command {
     name = "Search";
     command = [ "search", "ыуфкср" ];
 
