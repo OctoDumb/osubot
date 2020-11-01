@@ -176,6 +176,8 @@ export function modsEqual(score: number, arg: number) {
  */
 export function statsToString(mode: number, stats: { ar: number, cs: number, hp: number, od: number }): string {
     switch(mode) {
+        case 1:
+            return `OD:${stats.od} HP:${stats.hp}`;
         case 3:
             return `Keys:${stats.cs} OD:${stats.od} HP:${stats.hp}`;
         default:
