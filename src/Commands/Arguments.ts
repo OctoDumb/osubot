@@ -8,6 +8,7 @@ import ChatCache from "../ChatCache";
 import PrivilegesManager from "../Privileges";
 import ScreenshotCreator from "../ScreenshotCreator";
 import TrackAPI from "../API/TrackAPI";
+import BanchoV2API from "../API/Servers/BanchoV2";
 
 export default interface ICommandArguments {
     message: Message;
@@ -19,6 +20,7 @@ export default interface ICommandArguments {
     privileges: PrivilegesManager;
     uptime: number;
     track: TrackAPI;
+    v2: BanchoV2API;
     screenshot: ScreenshotCreator;
 }
 

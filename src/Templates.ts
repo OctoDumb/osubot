@@ -143,7 +143,7 @@ export function ChatTopTemplate(server: ServerModule, chat: number, users: IChat
         [Server: ${server.name}]
         Топ${full ? '' : `-${users.length}`} беседы (ID ${chat}):
         ${users.sort((a, b) => b.stats.pp - a.stats.pp).map((u, i) => `
-            #${i + 1} ${u.stats.nickname} ${u.status} | ${round(u.stats.pp, 1)} | Ранк ${u.stats.rank} | ${round(u.stats.acc)}%
+            #${i + 1} ${u.stats.nickname} ${u.status} | ${round(u.stats.pp, 1)}pp | Ранк ${u.stats.rank} | ${round(u.stats.acc)}%
         `).map(Message.fixString).join('\n')}
     `;
 }
@@ -158,7 +158,7 @@ export function LeaderboardTemplate(server: ServerModule, scores: {user: IDBUser
         ${scores.map((s, i) => {
             let { user, status, score } = s;
             return `
-                #${i + 1} ${user.nickname} ${status} | ${score.score} | ${score.maxCombo}x | ${round(score.accuracy)}% | ${round(0)}pp | ${score.date}
+                #${i + 1} ${user.nickname} ${status} | ${score.score} | ${score.maxCombo}x | ${round(score.accuracy)}% | ${round(0)}pp | ${formatDate(score.date)}
             `;
         }).map(Message.fixString).join('\n')}
     ` ;
@@ -183,7 +183,7 @@ export function ReplayTemplate(replay: IReplay, map: IBeatmap, pp: IPPResponse) 
         ${replay.player}'s replay
 
         ${map.artist} - ${map.title} [${map.version}] by ${map.creator}
-        ${length} | ${statsToString(replay.mode, map.difficulty)} | ${map.difficulty.stars} ${modsString}
+        ${length} | ${statsToString(replay.mode, map.difficulty)} | ${map.difficulty.stars}✩ ${modsString}
 
         Score: ${replay.score} | Combo: ${formatCombo(replay.combo, map.maxCombo)}
         Accuracy: ${round(replay.accuracy)}%
@@ -197,7 +197,7 @@ export function MapTemplate(map: IBeatmap, pp: IPPResponse, mods: string[]) {
     let modsString = joinMods(mods);
     return `
         ${map.artist} - ${map.title} [${map.version}] by ${map.creator}
-        ${length} | ${statsToString(map.mode, map.difficulty)} | ${map.difficulty.stars} ${modsString}
+        ${length} | ${statsToString(map.mode, map.difficulty)} | ${map.difficulty.stars}✩ ${modsString}
         Accuracy: ${round(pp.param.acc)}%
         Combo: ${formatCombo(pp.param.combo, map.maxCombo)} | ${pp.param.miss} misses
         - PP: ${round(pp.pp)}
@@ -222,7 +222,7 @@ export function MapInfoTemplate(map: IBeatmap, pp98: IPPResponse, pp99: IPPRespo
     let length = formatTime(~~(map.length / 1e3));
     return `
         ${map.artist} - ${map.title} [${map.version}] by ${map.creator}
-        ${length} | ${statsToString(map.mode, map.difficulty)} | ${map.difficulty.stars}*
+        ${length} | ${statsToString(map.mode, map.difficulty)} | ${map.difficulty.stars}✩
         PP:
         - 98% = ${pp98.pp}
         - 99% = ${pp99.pp}
@@ -239,5 +239,15 @@ export function TrackTemplate(response: OsuTrackResponse) {
         ${response.highscores.length == 0 ? '' : `${response.highscores.length} new highscores:\n` 
             + response.highscores.slice(0, 3).map(score => `#${score.place + 1} ${score.pp}pp https://osu.ppy.sh/b/${score.beatmapId}`).join('\n')
             + (response.highscores.length > 3 ? ' and more...' : '')}
+    `
+}
+
+export function SearchTemplate(maps: IV2Beatmapset[]) {
+    return `
+        Результат поиска:
+
+        ${maps.splice(0, 10).map(map => `
+            ${map.artist} - ${map.title} by ${map.creator} | https://osu.ppy.sh/s/${map.id}
+        `).map(Message.fixString).join("\n")}
     `
 }

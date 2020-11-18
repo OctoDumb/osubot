@@ -36,7 +36,7 @@ export default class MapCommand extends StandaloneCommand {
             acc: args.accuracy,
             combo: args.combo,
             miss: args.miss,
-            score: 1000000,
+            score: Number(clean),
             mods: mods.join(",")
         }));
 
