@@ -19,6 +19,7 @@
     "@types/node-cron": "^2.0.3",
     "@types/puppeteer": "^3.0.2",
     "axios": "^0.19.2",
+    "cors": "^2.8.5",
     "eventemitter3": "^4.0.7",
     "express": "^4.17.1",
     "int64-buffer": "^0.99.1007",

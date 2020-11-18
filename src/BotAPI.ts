@@ -1,5 +1,6 @@
 import express from "express";
 import bodyParser from "body-parser";
+import cors from "cors";
 import Bot from "./Bot";
 import md5 from "md5";
 
@@ -11,9 +12,11 @@ export default class BotAPI {
     constructor(
         private bot: Bot
     ) {
+        this.app.use(bodyParser.json());
         this.app.use(bodyParser.urlencoded({ extended: true }));
+        this.app.use(cors());
 
-        this.addAuthorization();
+        this.setContentType();
         this.createEndpoints();
 
         let { api: config } = bot.config;
@@ -24,13 +27,17 @@ export default class BotAPI {
         console.log("API listening!");
     }
 
-    addAuthorization() {
+    setContentType() {
         this.app.use((req, res, next) => {
             res.setHeader('Content-Type', 'application/json');
-            if(req.url.split('?')[0] == '/auth' && req.method == 'POST') return next();
-            if(req.query?.token != this.token) return res.status(401).send({ "error": "Unauthorized access. Wrong token" });
             next();
         });
+    }
+
+    auth(req, res, next) {
+        if(req.query?.token != this.token) 
+            return res.status(401).send({ "error": "Unauthorized access. Wrong token" });
+        next();
     }
 
     createEndpoints() {
@@ -47,7 +54,7 @@ export default class BotAPI {
             res.status(401).send({ "error": "Wrong password" });
         });
 
-        this.app.get('/db', async (_req, res) => {
+        this.app.get('/db', this.auth.bind(this), async (_req, res) => {
             let { database: db } = this.bot;
             res.send({
                 users: {
@@ -100,7 +107,7 @@ export default class BotAPI {
             });
         });
 
-        this.app.post('/db/get', async (req, res) => {
+        this.app.post('/db/get', this.auth.bind(this), async (req, res) => {
             if(req.body?.query == null) 
                 return res.status(400).send({ "error": "Missing query" });
             var row = await this.bot.database.get(req.body.query);
@@ -108,7 +115,7 @@ export default class BotAPI {
             res.send({ result: row });
         });
 
-        this.app.post('/db/all', async (req, res) => {
+        this.app.post('/db/all', this.auth.bind(this), async (req, res) => {
             if(req.body?.query == null) 
                 return res.status(400).send({ "error": "Missing query" });
             var rows = await this.bot.database.all(req.body.query);
@@ -116,7 +123,7 @@ export default class BotAPI {
             res.send({ result: rows });
         });
 
-        this.app.post('/db/run', async (req, res) => {
+        this.app.post('/db/run', this.auth.bind(this), async (req, res) => {
             if(req.body?.query == null) 
                 return res.status(400).send({ "error": "Missing query" });
             var result = await this.bot.database.run(req.body.query);
@@ -124,7 +131,7 @@ export default class BotAPI {
             res.send({ result });
         });
 
-        this.app.get('/uses', (_req, res) => {
+        this.app.get('/uses', this.auth.bind(this), (_req, res) => {
             res.send(this.bot.modules.map(m => ({
                 name: m.name,
                 commands: m.commands.map(({ name, uses }) => ({
