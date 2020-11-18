@@ -4,7 +4,7 @@ import MainStatus from "./Commands/Status";
 import MainUptime from "./Commands/Uptime";
 
 export default class Main extends Module {
-    name = "";
+    name = "Main";
     prefix = [ "osu", "щыг" ];
 
     description = "";
