@@ -5,6 +5,8 @@ export default class AdminVKScripts extends Command {
     name = "VKScripts";
     command = [ "script", "scripts" ];
 
+    delay = 0;
+
     description = "";
 
     async run({ message, vk }: ICommandArguments) {

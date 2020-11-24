@@ -30,13 +30,17 @@ class BanchoV2Data extends EventEmitter<APIV2Events> {
     }
 
     start() {
-        setInterval(() => this.update(), 5000);
+        setInterval(() => this.update(), 10000);
     }
 
     private async update() {
-        await this.updateChangelog();
-        await this.updateRanked();
-        await this.updateNews();
+        try {
+            await this.updateChangelog();
+            await this.updateRanked();
+            await this.updateNews();
+        } catch(e) {
+            console.log(e);
+        }
     }
 
     async updateChangelog() {
@@ -55,7 +59,7 @@ class BanchoV2Data extends EventEmitter<APIV2Events> {
             this.data.lastRanked = data[0].rankedDate.getTime();
         else {
             data = data.filter(s => s.rankedDate.getTime() > this.data.lastRanked);
-            if(!data.length)
+            if(!data.length) return;
             for(let set of data) {
                 this.emit('newranked', set);
             }
@@ -81,7 +85,7 @@ export default class BanchoV2API {
     private refresh_token: string;
     private api: AxiosInstance = Axios.create({
         baseURL: "https://osu.ppy.sh/api/v2",
-        timeout: 1e4
+        timeout: 3e4
     });
 
     async login(username: string, password: string) {
@@ -137,7 +141,7 @@ export default class BanchoV2API {
         return data.map(build => ({
             id: build.id,
             version: build.version,
-            entries: build.changeLog_entries.map(entry => ({
+            entries: build.changelog_entries.map(entry => ({
                 category: entry.category,
                 title: entry.title,
                 isMajor: entry.major

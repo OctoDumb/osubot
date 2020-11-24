@@ -11,6 +11,8 @@ export default class AdminSQL extends Command {
     name = "SQL";
     command = [ "sql" ];
 
+    delay = 0;
+
     description = "";
 
     async run({ message, database }: ICommandArguments) {

@@ -1,7 +1,6 @@
 import { MessageContext, MessagesSendParams } from "vk-io";
 import MessageForward from "vk-io/lib/structures/shared/message-forward";
 import MessageReply from "vk-io/lib/structures/shared/message-reply";
-import { timeStamp } from "console";
 
 export default class Message {
     static DefaultParams: MessagesSendParams = {

@@ -28,8 +28,9 @@ export default abstract class Module {
         if(!command) return;
         
         try {
+            command.use(message);
+            
             let args = command.parseArguments(message, bot);
-            command.use();
             await command.run(args);
         } catch(e) {
             message.reply(`Ошибка! ${e instanceof Error ? e.message : e}`);

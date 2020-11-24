@@ -5,6 +5,8 @@ export default class AdminNews extends Command {
     name = "News";
     command = ["news"];
 
+    delay = 0;
+
     description = "Рассылка";
 
     async run({ message, news }: ICommandArguments) {

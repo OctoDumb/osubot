@@ -5,6 +5,8 @@ export default class MainStatus extends Command {
     name = "Status";
     command = [ "status", "ыефегы" ];
 
+    delay = 0;
+
     description = "";
 
     async run({ message, privileges }: ICommandArguments) {

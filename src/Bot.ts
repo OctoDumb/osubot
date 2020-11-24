@@ -135,7 +135,7 @@ export default class Bot {
                     return this.mapLinkProcessor.process(message, mapLink);
 
                 for(let module of this.modules)
-                    module.run(message, this);
+                    await module.run(message, this);
                 
                 for(let command of this.commands) {
                     message.arguments.unshift(message.command);
@@ -143,8 +143,8 @@ export default class Bot {
                     if(command.command.includes(message.prefix)) {
                         try {
                             let args = command.parseArguments(message, this);
-                            command.use();
-                            command.run(args);
+                            command.use(message);
+                            await command.run(args);
                         } catch(e) {
                             message.reply(`Ошибка! ${e instanceof Error ? e.message : e}`);
                         }
@@ -164,9 +164,9 @@ export default class Bot {
             this.config.osu.password
         );
 
-        await this.screenshotCreator.launch();
+        // await this.screenshotCreator.launch();
 
-        /* this.v2.data.start(); */
+        this.v2.data.start();
 
         cron.schedule('*/5 * * * *', () => { this.updateUses() });
 

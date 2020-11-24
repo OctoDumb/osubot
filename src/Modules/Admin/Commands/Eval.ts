@@ -5,6 +5,8 @@ export default class AdminEval extends Command {
     name = "Eval";
     command = ["eval"];
 
+    delay = 0;
+
     description = "evaluate";
 
     async run({ 

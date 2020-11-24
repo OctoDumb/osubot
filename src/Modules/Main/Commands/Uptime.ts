@@ -5,6 +5,8 @@ export default class MainUptime extends Command {
     name = "Uptime";
     command = ["uptime"];
 
+    delay = 0;
+
     description = "Получить время работы бота";
 
     async run({ message, uptime }: ICommandArguments) {

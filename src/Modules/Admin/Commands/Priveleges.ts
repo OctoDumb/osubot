@@ -5,6 +5,8 @@ export default class PrivilegesCommand extends Command {
     name = "Privileges";
     command = [ "privileges", "privs", "зкшмы" ];
 
+    delay = 0;
+
     description = "";
 
     async run({ message, privileges }: ICommandArguments) {
