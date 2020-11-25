@@ -24,13 +24,14 @@ class BanchoV2Data extends EventEmitter<APIV2Events> {
     };
 
     constructor(
-        private api: BanchoV2API
+        private api: BanchoV2API,
+        public interval: number
     ) {
         super();
     }
 
     start() {
-        setInterval(() => this.update(), 10000);
+        setInterval(() => this.update(), this.interval);
     }
 
     private async update() {
@@ -79,7 +80,11 @@ class BanchoV2Data extends EventEmitter<APIV2Events> {
 }
 
 export default class BanchoV2API {
-    data = new BanchoV2Data(this);
+    data = new BanchoV2Data(this, 1e4);
+
+    public get logged(): boolean {
+        return !!this.access_token;
+    }
 
     private access_token: string;
     private refresh_token: string;

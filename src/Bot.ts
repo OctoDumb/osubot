@@ -35,6 +35,7 @@ import AkatsukiRelax from "./Modules/AkatsukiRelax";
 import BanchoV2API from "./API/Servers/BanchoV2";
 import ScreenshotCreator from "./ScreenshotCreator";
 import TrackAPI from "./API/TrackAPI";
+import Logger, { LogLevel } from "./Logger";
 
 export interface IBotConfig {
     vk: {
@@ -150,27 +151,39 @@ export default class Bot {
                         }
                     }
                 }
-            } catch(e) {console.log(e)}
+            } catch(e) {}
         });
     }
 
     async start() {
-        await this.vk.updates.start();
+        try {
+            await this.vk.updates.start();
 
-        this.startTime = Date.now();
+            this.startTime = Date.now();
+            Logger.log(LogLevel.MESSAGE, "[BOT] VK Long Poll listening");
+        } catch(e) {
+            Logger.log(LogLevel.ERROR, "[BOT] VK Long Poll connection failed");
+        }
 
-        await this.v2.login(
-            this.config.osu.username,
-            this.config.osu.password
-        );
+        try {
+            await this.v2.login(
+                this.config.osu.username,
+                this.config.osu.password
+            );
+
+            Logger.log(LogLevel.MESSAGE, "[V2] Successfully logged in!");
+        } catch(e) {
+            Logger.log(LogLevel.ERROR, "[V2] Login failed!");
+        }
 
         // await this.screenshotCreator.launch();
 
         this.v2.data.start();
+        Logger.assert(this.v2.logged, LogLevel.MESSAGE, `[V2] Updating V2 data every ${Math.floor(this.v2.data.interval / 1e3)} seconds`);
 
         cron.schedule('*/5 * * * *', () => { this.updateUses() });
 
-        console.log("Started!");
+        Logger.log(LogLevel.DEBUG, `[DEBUG] Initialized with ${this.modules.length} modules and ${this.modules.flatMap(m => m.commands).length + this.commands.length} commands`);
     }
 
     private updateUses() {

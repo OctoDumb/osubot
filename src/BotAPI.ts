@@ -3,6 +3,7 @@ import bodyParser from "body-parser";
 import cors from "cors";
 import Bot from "./Bot";
 import md5 from "md5";
+import Logger, { LogLevel } from "./Logger";
 
 export default class BotAPI {
     private app = express();
@@ -24,7 +25,8 @@ export default class BotAPI {
         this.token = md5(config.password);
 
         this.app.listen(config.port);
-        console.log("API listening!");
+
+        Logger.log(LogLevel.MESSAGE, `[API] Bot API listening on port ${config.port}`);
     }
 
     setContentType() {
@@ -47,7 +49,7 @@ export default class BotAPI {
         });
 
         this.app.post('/auth', (req, res) => {
-            console.log(req.body);
+            Logger.log(LogLevel.DEBUG, "Bot API authorization attempt");
             if(md5(req.body?.password as string ?? "") == this.token)
                 return res.send({ "token": this.token });
             
