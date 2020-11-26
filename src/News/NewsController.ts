@@ -60,6 +60,8 @@ export default class NewsController {
             ...await this.getUsers()
         ];
 
+        ids = ids.filter((id, i, a) => a.indexOf(id) == i);
+
         ids = ids.filter(id => this.getRule(id, rule.name).enabled);
 
         console.log(ids);
