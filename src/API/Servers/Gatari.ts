@@ -16,7 +16,7 @@ export default class GatariAPI extends API implements IServerAPI, IAPIWithScores
         mode = 0
     }: IUserRequestParams): Promise<IUserAPIResponse> {
         let { data: { users } } = await this.api.get(`/users/get?${stringify({ u: username })}`);
-        let { data: { stats } } = await this.api.get(`/user/stats?${stringify({ u: username, mode })}`);
+        let { data: { stats } } = await this.api.get(`/user/stats?${stringify({ u: username, mode: mode ?? 0 })}`);
         
         if(!users[0] || !stats)
             throw new APINotFoundError("User is not found!");
@@ -31,16 +31,16 @@ export default class GatariAPI extends API implements IServerAPI, IAPIWithScores
         mode = 0, 
         limit = 3 
     }: ITopRequestParams): Promise<ITopAPIResponse[]> {
-        let user = await this.getUser({ username, mode });
+        let user = await this.getUser({ username, mode: mode ?? 0 });
         let { data } = await this.api.get(`/user/scores/best?${stringify({
             id: user.id, 
-            mode, 
+            mode: mode ?? 0, 
             p: 1, 
             l: limit
         })}`);
 
         return data.scores.map(s => Object.assign(
-            this.adaptScore(s, mode), 
+            this.adaptScore(s, mode ?? 0), 
             { 
                 pp: Number(s.pp) 
             }
@@ -52,7 +52,7 @@ export default class GatariAPI extends API implements IServerAPI, IAPIWithScores
         mode = 0, 
         pass = false 
     }: IRecentRequestParams): Promise<IRecentAPIResponse[]> {
-        let user = await this.getUser({ username, mode });
+        let user = await this.getUser({ username, mode: mode ?? 0 });
         let { data } = await this.api.get(`/user/scores/recent?${stringify({
             id: user.id, 
             mode, 
@@ -61,7 +61,7 @@ export default class GatariAPI extends API implements IServerAPI, IAPIWithScores
             f: 1
         })}`);
 
-        return data.scores.filter(s => pass ? s.ranking != "F" : true).map(d => this.adaptScore(d, mode));
+        return data.scores.filter(s => pass ? s.ranking != "F" : true).map(d => this.adaptScore(d, mode ?? 0));
     }
 
     async getScores({
@@ -77,10 +77,10 @@ export default class GatariAPI extends API implements IServerAPI, IAPIWithScores
             mode
         })}`);
 
-        if (mods)
+        if (mods != null)
             data.scores = data.scores.filter(p => p.enabled_mods == mods);
         
-        return data.scores.map(d => this.adaptScore(d, mode));
+        return data.scores.map(d => this.adaptScore(d, mode ?? mode));
     }
 
     async getLeaderboard({
@@ -113,7 +113,6 @@ export default class GatariAPI extends API implements IServerAPI, IAPIWithScores
         scoreData, 
         mode: number
     ): IScoreAPIResponse {
-        //console.log(scoreData)
         let counts = {
             300: Number(scoreData.count_300),
             100: Number(scoreData.count_100),

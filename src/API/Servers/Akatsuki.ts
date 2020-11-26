@@ -31,13 +31,13 @@ export default class AkatsukiAPI extends API implements IServerAPI {
     }: ITopRequestParams): Promise<ITopAPIResponse[]> {
         let { data } = await this.api.get(`/users/scores/best?${stringify({ 
             name: username, 
-            mode: mode, 
+            mode: mode ?? 0, 
             l: limit, 
             rx: 0
         })}`);
 
         return data.map(s => Object.assign(
-            this.adaptScore(s, mode), 
+            this.adaptScore(s, mode ?? 0), 
             { 
                 pp: Number(s.pp) 
             }
@@ -50,12 +50,12 @@ export default class AkatsukiAPI extends API implements IServerAPI {
     }: IRecentRequestParams): Promise<IRecentAPIResponse[]> {
         let { data } = await this.api.get(`/users/scores/recent?${stringify({
             name: username, 
-            mode, 
+            mode: mode ?? 0, 
             l: 50, 
             rx: 0
         })}`);
 
-        return data.map(d => this.adaptScore(d, mode));
+        return data.map(d => this.adaptScore(d, mode ?? 0));
     }
 
     protected adaptScore(

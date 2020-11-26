@@ -23,7 +23,7 @@ export default class BanchoAPI extends API implements IServerAPI, IAPIWithScores
         let { data: [data] } = await this.api(`/get_user?${stringify({ 
             k: this.token,
             u: username, 
-            m: mode,
+            m: mode ?? 0,
         })}`);
         if(!data)
             throw new APINotFoundError("User is not found!");
@@ -39,12 +39,12 @@ export default class BanchoAPI extends API implements IServerAPI, IAPIWithScores
         let { data } = await this.api(`/get_user_best?${stringify({ 
             k: this.token,
             u: username, 
-            m: mode, 
+            m: mode ?? 0, 
             limit
         })}`);
 
         return data.map(s => Object.assign(
-            this.adaptScore(s, mode), 
+            this.adaptScore(s, mode ?? 0), 
             { 
                 pp: Number(s.pp) 
             }
@@ -59,11 +59,11 @@ export default class BanchoAPI extends API implements IServerAPI, IAPIWithScores
         let { data } = await this.api(`/get_user_recent?${stringify({
             k: this.token,
             u: username, 
-            m: mode, 
+            m: mode ?? 0,
             limit: 50
         })}`);
 
-        return data.filter(s => pass ? s.rank != "F" : true).map(d => this.adaptScore(d, mode));
+        return data.filter(s => pass ? s.rank != "F" : true).map(d => this.adaptScore(d, mode ?? 0));
     }
 
     async getScores({
@@ -76,13 +76,13 @@ export default class BanchoAPI extends API implements IServerAPI, IAPIWithScores
             k: this.token,
             u: username,
             b: beatmapId,
-            m: mode
+            m: mode ?? 0
         })}`);
 
-        if (mods)
+        if (mods != null)
             data = data.filter(p => p.enabled_mods == mods);
         
-        return data.map(d => this.adaptScore(d, mode));
+        return data.map(d => this.adaptScore(d, mode ?? 0));
     }
 
     async getLeaderboard({

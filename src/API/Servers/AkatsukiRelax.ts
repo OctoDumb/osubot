@@ -3,7 +3,7 @@ import { ITopAPIResponse, IRecentAPIResponse } from "../APIResponse";
 import { stringify } from "querystring";
 import AkatsukiAPI from "./Akatsuki";
 
-export default class AkatsukiRelaxAPI extends AkatsukiAPI{
+export default class AkatsukiRelaxAPI extends AkatsukiAPI {
     async getTop({
         username, 
         mode = 0, 
@@ -11,13 +11,13 @@ export default class AkatsukiRelaxAPI extends AkatsukiAPI{
     }: ITopRequestParams): Promise<ITopAPIResponse[]> {
         let { data } = await this.api.get(`/users/scores/best?${stringify({ 
             name: username, 
-            mode: mode, 
+            mode: mode ?? 0, 
             l: limit, 
             rx: 1
         })}`);
 
         return data.map(s => Object.assign(
-            this.adaptScore(s, mode), 
+            this.adaptScore(s, mode ?? 0), 
             { 
                 pp: Number(s.pp) 
             }
@@ -30,11 +30,11 @@ export default class AkatsukiRelaxAPI extends AkatsukiAPI{
     }: IRecentRequestParams): Promise<IRecentAPIResponse[]> {
         let { data } = await this.api.get(`/users/scores/recent?${stringify({
             name: username, 
-            mode, 
+            mode: mode ?? 0, 
             l: 50, 
             rx: 1
         })}`);
 
-        return data.map(d => this.adaptScore(d, mode));
+        return data.map(d => this.adaptScore(d, mode ?? 0));
     }
 }

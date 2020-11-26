@@ -16,7 +16,7 @@ export default class EnjuuAPI extends API implements IServerAPI, IAPIWithScores 
     }: IUserRequestParams): Promise<IUserAPIResponse> {
         let { data: [data] } = await this.api(`/get_user?${stringify({ 
             u: username, 
-            m: mode,
+            m: mode ?? 0,
         })}`);
         
         if(!data)
@@ -32,7 +32,7 @@ export default class EnjuuAPI extends API implements IServerAPI, IAPIWithScores 
     }: ITopRequestParams): Promise<ITopAPIResponse[]> {
         let { data } = await this.api(`/get_user_best?${stringify({ 
             u: username, 
-            m: mode, 
+            m: mode ?? 0, 
             limit
         })}`);
 
@@ -51,11 +51,11 @@ export default class EnjuuAPI extends API implements IServerAPI, IAPIWithScores 
     }: IRecentRequestParams): Promise<IRecentAPIResponse[]> {
         let { data } = await this.api(`/get_user_recent?${stringify({
             u: username, 
-            m: mode, 
+            m: mode ?? 0, 
             limit: 50
         })}`);
 
-        return data.filter(s => pass ? s.rank != "F" : true).map(d => this.adaptScore(d, mode));
+        return data.filter(s => pass ? s.rank != "F" : true).map(d => this.adaptScore(d, mode ?? 0));
     }
 
     async getScores({
@@ -67,13 +67,13 @@ export default class EnjuuAPI extends API implements IServerAPI, IAPIWithScores 
         let { data } = await this.api(`/get_scores?${stringify({
             u: username,
             b: beatmapId,
-            m: mode
+            m: mode ?? 0
         })}`);
 
-        if (mods)
+        if (mods != null)
             data = data.filter(p => p.enabled_mods == mods);
         
-        return data.map(d => this.adaptScore(d, mode));
+        return data.map(d => this.adaptScore(d, mode ?? 0));
     }
 
     async getLeaderboard({
