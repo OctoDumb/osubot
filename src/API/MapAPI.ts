@@ -1,5 +1,6 @@
 import Axios, { AxiosInstance } from "axios";
 import * as qs from "querystring";
+import Logger, { LogLevel } from "../Logger";
 
 export interface IBeatmap {
     title: string
@@ -43,7 +44,7 @@ export default class MapAPI {
         private port: number
     ) {
         this.api = Axios.create({
-            baseURL: `http://localhost:${port}`
+            baseURL: `http://localhost:${this.port}`
         });
     }
 
@@ -58,7 +59,9 @@ export default class MapAPI {
     }
 
     async getPP(id: number, args?: IPPArguments): Promise<IPPResponse> {
+        Logger.log(LogLevel.DEBUG, `[MapAPI] PPArguments: ${JSON.stringify(args)}`);
         let { data } = await this.api(`/getScorePP?${qs.stringify({ id, ...args })}`);
+        Logger.log(LogLevel.DEBUG, `[MapAPI] PPResponse: ${JSON.stringify(data)}`);
         return data;
     }
 }
