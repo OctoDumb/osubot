@@ -36,6 +36,7 @@ import BanchoV2API from "./API/Servers/BanchoV2";
 import ScreenshotCreator from "./ScreenshotCreator";
 import TrackAPI from "./API/TrackAPI";
 import Logger, { LogLevel } from "./Logger";
+import Banlist from "./Banlist";
 
 export interface IBotConfig {
     vk: {
@@ -142,6 +143,7 @@ export default class Bot {
                     message.arguments.unshift(message.command);
 
                     if(command.command.includes(message.prefix)) {
+                        if(Banlist.isBanned(message.sender) && !command.ignoreBan) return;
                         try {
                             let args = command.parseArguments(message, this);
                             command.use(message);

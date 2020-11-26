@@ -1,6 +1,15 @@
 import Command from "./Command";
 import Message from "../Message";
 import Bot from "../Bot";
+import Banlist from "../Banlist";
+import dateformat from "dateformat";
+
+dateformat.i18n = {
+    monthNames: [
+        'Янв', 'Фев', 'Мар', 'Апр', 'Май', 'Июн', 'Июл', 'Авг', 'Сен', 'Окт', 'Нов', 'Дек',
+        'Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'
+    ]
+}
 
 export default abstract class Module {
     abstract name: string;
@@ -26,6 +35,20 @@ export default abstract class Module {
 
         let command = this.commands.find(c => c.command.includes(message.command));
         if(!command) return;
+
+        let ban = Banlist.getBanStatus(message.sender);
+        if(Banlist.isBanned(message.sender)) {
+            if(!ban.notified) {
+                message.reply(`
+                    Вы были забанены!
+                    Время окончания бана: ${dateformat(new Date(ban.until), "dd mmm yyyy HH:MM:ss 'MSK'")}
+                    Причина бана: ${ban.reason ?? "не указана"}
+                `);
+                Banlist.setNotified(message.sender);
+            }
+
+            if(!command.ignoreBan) return;
+        }
         
         try {
             command.use(message);

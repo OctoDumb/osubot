@@ -20,6 +20,8 @@ export default abstract class Command {
 
     uses: number[] = [ 0 ];
 
+    ignoreBan: boolean = false;
+
     use(message: Message) {
         let i = this.usages.findIndex(u => u.user == message.sender);
         if(i >= 0) {

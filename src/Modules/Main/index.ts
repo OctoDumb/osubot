@@ -1,4 +1,5 @@
 import Module from "../../Commands/Module";
+import MainBan from "./Commands/Ban";
 import MainNews from "./Commands/News";
 import MainSearch from "./Commands/Search";
 import MainStatus from "./Commands/Status";
@@ -14,6 +15,7 @@ export default class Main extends Module {
         new MainNews(),
         new MainStatus(),
         new MainSearch(),
-        new MainUptime()
+        new MainUptime(),
+        new MainBan()
     ];
 }

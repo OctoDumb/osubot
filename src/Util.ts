@@ -3,6 +3,7 @@ import Bot from "./Bot";
 import { IHitCounts } from "./API/APIResponse";
 import Database, { IDBUser, Server } from "./Database";
 import { IPPResponse } from "./API/MapAPI";
+import Logger, { LogLevel } from "./Logger";
 
 /**
  * Mods bitwise enum
@@ -285,4 +286,14 @@ export function clearObject(a: object) {
             delete a[key];
     }
     return a;
+}
+
+export function stringDateToMs(s: string): number {
+    let r = /(?<w>\d+[нw])?(?<d>\d+[дd])?(?<h>\d+[чh])?(?<m>\d+[мm])?/i;
+    let m = s.match(r);
+    Logger.log(LogLevel.DEBUG, `[stringDateToMs] ${JSON.stringify(m.groups)}`);
+    return ((parseInt(m.groups.w ?? "0")) * 7 * 24 * 60 +
+        (parseInt(m.groups.d ?? "0")) * 24 * 60 +
+        (parseInt(m.groups.h ?? "0")) * 60 +
+        (parseInt(m.groups.m ?? "0"))) * 60 * 1e3;
 }
