@@ -12,5 +12,5 @@ export default abstract class StandaloneCommand extends Command {
         };
     }
 
-    abstract async run(args: IStandaloneCommandArguments<any>): Promise<void>;
+    abstract run(args: IStandaloneCommandArguments<any>): Promise<void>;
 }

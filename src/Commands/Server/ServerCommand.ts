@@ -8,7 +8,7 @@ import Bot from "../../Bot";
 import { defaultArguments } from "../../Util";
 
 export default abstract class ServerCommand extends Command {
-    abstract async run(args: IServerCommandArguments<any>): Promise<void>;
+    abstract run(args: IServerCommandArguments<any>): Promise<void>;
 
     protected database: Server;
     protected api: IServerAPI;

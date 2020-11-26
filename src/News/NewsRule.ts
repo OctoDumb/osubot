@@ -23,7 +23,7 @@ export default abstract class NewsRule<T> {
     abstract userDefault: boolean;
     abstract chatDefault: boolean;
 
-    public abstract async createMessage(obj: T): Promise<INewsSendParams>;
+    public abstract createMessage(obj: T): Promise<INewsSendParams>;
 
     processCommand(id: number, args: string[]): string | null {
         let command = args.shift();
