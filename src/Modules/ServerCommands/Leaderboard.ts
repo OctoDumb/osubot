@@ -6,6 +6,7 @@ import { defaultArguments } from "../../Util";
 import { IDBUser } from "../../Database";
 import { IAPIWithScores } from "../../API/ServerAPI";
 import { LeaderboardTemplate } from "../../Templates";
+import { ServerConnection } from "@prisma/client";
 
 export default class LeaderboardCommand extends ServerCommand {
     api: IAPIWithScores;
@@ -27,7 +28,8 @@ export default class LeaderboardCommand extends ServerCommand {
     async run({
         message, args,
         mapAPI, chats,
-        vk, privileges
+        vk, privileges,
+        database
     }: IServerCommandArguments<IArgumentsWithMods>) {
         if(!message.chatId)
             throw "Команду можно использовать только в беседах!";
@@ -39,9 +41,13 @@ export default class LeaderboardCommand extends ServerCommand {
             peer_id: message.peerId
         });
 
-        let users: IDBUser[] = [];
+        let users: ServerConnection[] = [];
         for(let profile of profiles) {
-            let user = await this.database.getUser(profile.id);
+            let user = await database.serverConnection.findFirst({
+                where: {
+                    userId: profile.id
+                }
+            })
             if(user.id && !users.some(u => u.id == user.id))
                 users.push(user);
         }

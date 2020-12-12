@@ -8,12 +8,20 @@ export default class ModeCommand extends ServerCommand {
 
     description = "Установить геймод по умолчанию";
 
-    async run({ message }: IServerCommandArguments<null>) {
+    async run({ message, database }: IServerCommandArguments<null>) {
         let mode = message.arguments[0];
 
         if(mode == null) throw "Некорректный режим!";
 
-        this.database.setMode(message.sender, Number(mode));
+        // this.database.setMode(message.sender, Number(mode));
+        database.serverConnection.updateMany({
+            data: {
+                mode: Number(mode)
+            },
+            where: {
+                userId: message.sender
+            }
+        })
 
         message.reply(`
             [Server: ${this.module.name}]

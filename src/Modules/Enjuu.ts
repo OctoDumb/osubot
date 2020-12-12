@@ -18,8 +18,6 @@ export default class Enjuu extends ServerModule {
 
     api = this.apilist.enjuu;
 
-    db = this.database.servers.enjuu;
-
     commands = [
         new NickCommand(this),
         new ModeCommand(this),

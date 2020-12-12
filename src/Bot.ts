@@ -37,6 +37,7 @@ import ScreenshotCreator from "./ScreenshotCreator";
 import TrackAPI from "./API/TrackAPI";
 import Logger, { LogLevel } from "./Logger";
 import Banlist from "./Banlist";
+import { PrismaClient } from "@prisma/client";
 
 export interface IBotConfig {
     vk: {
@@ -78,7 +79,7 @@ export default class Bot {
         pollingGroupId: this.config.vk.groupId
     });
 
-    database = new Database(this.vk);
+    database = new PrismaClient();
     screenshotCreator = new ScreenshotCreator();
     api: IAPIList = {
         bancho: new BanchoAPI(this.config.osu.token),

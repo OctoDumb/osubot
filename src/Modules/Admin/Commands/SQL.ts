@@ -3,7 +3,6 @@ import Command from "../../../Commands/Command";
 
 enum DBCommandType {
     get = "get",
-    all = "all",
     run = "run"
 }
 
@@ -22,16 +21,18 @@ export default class AdminSQL extends Command {
 
         switch (type) {
             case DBCommandType.get:
-                res = await database.get(stmt);
-                break;
-            case DBCommandType.all:
-                res = await database.all(stmt);
+                res = await database.$queryRaw(stmt);
+                message.reply(`
+                    Результат:
+                    ${JSON.stringify(res, null)}
+                `);
                 break;
             case DBCommandType.run:
-                res = await database.run(stmt);
+                res = await database.$executeRaw(stmt);
+                message.reply(`
+                    Выполнено! Затронуто ${res} строк
+                `);
                 break;
         }
-
-        return message.reply(JSON.stringify(res, null, 2));
     }
 }

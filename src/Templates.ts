@@ -14,6 +14,7 @@ import { UsersGetResponse } from "vk-io";
 import { IChatTopUser } from "./Modules/ServerCommands/Chat";
 import { IV2Beatmapset } from "./API/Servers/V2/V2Responses";
 import { OsuTrackResponse } from "./API/TrackAPI";
+import { ServerConnection } from "@prisma/client";
 
 function joinMods(mods: string[]) {
     return (mods.length ? "+" : "") + mods.join('');
@@ -143,7 +144,7 @@ export function ChatTopTemplate(server: ServerModule, chat: number, users: IChat
         [Server: ${server.name}]
         Топ${full ? '' : `-${users.length}`} беседы (ID ${chat}):
         ${users.sort((a, b) => b.stats.pp - a.stats.pp).map((u, i) => `
-            #${i + 1} ${u.stats.nickname} ${u.status} | ${round(u.stats.pp, 1)}pp | Ранк ${u.stats.rank} | ${round(u.stats.acc)}%
+            #${i + 1} ${u.nickname} ${u.status} | ${round(u.stats.pp, 1)}pp | Ранк ${u.stats.rank} | ${round(u.stats.accuracy)}%
         `).map(Message.fixString).join('\n')}
     `;
 }
@@ -151,7 +152,7 @@ export function ChatTopTemplate(server: ServerModule, chat: number, users: IChat
 /**
  * Message template for Leaderboard command 
  */
-export function LeaderboardTemplate(server: ServerModule, scores: {user: IDBUser, status: string, score: IScoreAPIResponse}[], map: IBeatmap) {
+export function LeaderboardTemplate(server: ServerModule, scores: {user: ServerConnection, status: string, score: IScoreAPIResponse}[], map: IBeatmap) {
     return `
         [Server: ${server.name}]
         Топ беседы на карте ${map.artist} - ${map.title} [${map.version}] by ${map.creator}

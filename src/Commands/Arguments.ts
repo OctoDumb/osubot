@@ -1,5 +1,4 @@
 import Message from "../Message";
-import Database from "../Database";
 import VK from "vk-io";
 import MapAPI from "../API/MapAPI";
 import { Mods } from "../Util";
@@ -9,10 +8,11 @@ import PrivilegesManager from "../Privileges";
 import ScreenshotCreator from "../ScreenshotCreator";
 import TrackAPI from "../API/TrackAPI";
 import BanchoV2API from "../API/Servers/BanchoV2";
+import { PrismaClient } from "@prisma/client";
 
 export default interface ICommandArguments {
     message: Message;
-    database: Database;
+    database: PrismaClient;
     mapAPI: MapAPI;
     news: NewsController;
     vk: VK;

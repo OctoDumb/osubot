@@ -1,9 +1,11 @@
 import Message from "./Message";
 import Bot from "./Bot";
-import { IHitCounts } from "./API/APIResponse";
+import { IHitCounts, IUserAPIResponse } from "./API/APIResponse";
 import Database, { IDBUser, Server } from "./Database";
 import { IPPResponse } from "./API/MapAPI";
 import Logger, { LogLevel } from "./Logger";
+import { PrismaClient } from "@prisma/client";
+import { VK } from "vk-io";
 
 /**
  * Mods bitwise enum
@@ -67,16 +69,65 @@ export function defaultArguments(message: Message, {
     };
 }
 
-export async function getUserInfo(message: Message, db: Server, clean: string, args?: { mode?: number }) {
-    let { nickname: username = "", mode = 0 } = await db.getUser(message.sender);
+export async function getUserInfo(message: Message, server: string, db: PrismaClient, clean: string, args?: { mode?: number }) {
+    let { nickname: username, mode = 0 } = await db.serverConnection.findFirst({
+        where: {
+            id: message.sender,
+            server
+        }
+    });
     if(message.forwarded)
-        username = (await db.getUser(message.forwarded.senderId)).nickname;
+        username ??= (await db.serverConnection.findFirst({
+            where: {
+                id: message.forwarded.senderId,
+                server
+            }
+        }))?.nickname;
     if(clean)
         username = clean;
-    if(args?.mode != undefined)
-        mode = args.mode;
+    mode ??= args.mode;
 
     return { username, mode };
+}
+
+export async function updateInfo(database: PrismaClient, server: string, user: IUserAPIResponse, mode: number): Promise<void> {
+    let where = { playerId: user.id, mode, server };
+    let data = { rank: user.rank.total, pp: user.pp, accuracy: user.accuracy };
+
+    let i = await database.stats.findFirst({ where });
+
+    if(!i)
+        await database.stats.create({ data: { ...where, ...data } });
+    else
+        await database.stats.updateMany({ where, data });
+}
+
+export async function getCover(database: PrismaClient, vk: VK, id: number): Promise<string> {
+    let cover = await database.cover.findUnique({
+        where: { id }
+    });
+    if(!cover) {
+        try {
+            let photo = await vk.upload.messagePhoto({
+                source: `https://assets.ppy.sh/beatmaps/${id}/covers/cover.jpg?1`
+            });
+            await database.cover.create({
+                data: {
+                    id, attachment: photo.toString()
+                }
+            });
+            return photo.toString();
+        } catch(e) {
+            await database.cover.create({
+                data: {
+                    id, attachment: ""
+                }
+            })
+            return "";
+        }
+
+    } else
+        return cover.attachment;
 }
 
 /**

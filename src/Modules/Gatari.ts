@@ -17,8 +17,6 @@ export default class Gatari extends ServerModule {
 
     api = this.apilist.gatari;
 
-    db = this.database.servers.gatari;
-
     commands = [
         new NickCommand(this),
         new ModeCommand(this),

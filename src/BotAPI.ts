@@ -58,79 +58,42 @@ export default class BotAPI {
 
         this.app.get('/db', this.auth.bind(this), async (_req, res) => {
             let { database: db } = this.bot;
+            await db.serverConnection.count({ where: { server: "Bancho" } })
             res.send({
                 users: {
-                    bancho: await db.getCountAt("bancho"),
-                    gatari: await db.getCountAt("gatari"),
-                    ripple: await db.getCountAt("ripple"),
-                    akatsuki: await db.getCountAt("akatsuki"),
-                    kurikku: await db.getCountAt("kurikku"),
-                    enjuu: await db.getCountAt("enjuu")
+                    bancho: await db.serverConnection.count({ where: { server: "Bancho" } }),
+                    gatari: await db.serverConnection.count({ where: { server: "Gatari" } }),
+                    ripple: await db.serverConnection.count({ where: { server: "Ripple" } }),
+                    akatsuki: await db.serverConnection.count({ where: { server: "Akatsuki" } }),
+                    kurikku: await db.serverConnection.count({ where: { server: "Kurikku" } }),
+                    enjuu: await db.serverConnection.count({ where: { server: "Enjuu" } })
                 },
                 stats: {
-                    bancho: await db.getCountsAt([
-                        "bancho_stats_0",
-                        "bancho_stats_1",
-                        "bancho_stats_2",
-                        "bancho_stats_3"
-                    ]),
-                    gatari: await db.getCountsAt([
-                        "gatari_stats_0",
-                        "gatari_stats_1",
-                        "gatari_stats_2",
-                        "gatari_stats_3"
-                    ]),
-                    ripple: await db.getCountsAt([
-                        "ripple_stats_0",
-                        "ripple_stats_1",
-                        "ripple_stats_2",
-                        "ripple_stats_3"
-                    ]),
-                    akatsuki: await db.getCountsAt([
-                        "akatsuki_stats_0",
-                        "akatsuki_stats_1",
-                        "akatsuki_stats_2",
-                        "akatsuki_stats_3"
-                    ]),
-                    kurikku: await db.getCountsAt([
-                        "kurikku_stats_0",
-                        "kurikku_stats_1",
-                        "kurikku_stats_2",
-                        "kurikku_stats_3"
-                    ]),
-                    enjuu: await db.getCountsAt([
-                        "enjuu_stats_0",
-                        "enjuu_stats_1",
-                        "enjuu_stats_2",
-                        "enjuu_stats_3"
-                    ])
+                    bancho: await db.stats.count({ where: { server: "Bancho" } }),
+                    gatari: await db.stats.count({ where: { server: "Gatari" } }),
+                    ripple: await db.stats.count({ where: { server: "Ripple" } }),
+                    akatsuki: await db.stats.count({ where: { server: "Akatsuki" } }),
+                    kurikku: await db.stats.count({ where: { server: "Kurikku" } }),
+                    enjuu: await db.stats.count({ where: { server: "Enjuu" } })
                 },
-                covers: await db.getCountAt("covers")
+                covers: await db.cover.count()
             });
         });
 
         this.app.post('/db/get', this.auth.bind(this), async (req, res) => {
             if(req.body?.query == null) 
                 return res.status(400).send({ "error": "Missing query" });
-            var row = await this.bot.database.get(req.body.query);
+            var result = await this.bot.database.$queryRaw(req.body.query);
 
-            res.send({ result: row });
-        });
-
-        this.app.post('/db/all', this.auth.bind(this), async (req, res) => {
-            if(req.body?.query == null) 
-                return res.status(400).send({ "error": "Missing query" });
-            var rows = await this.bot.database.all(req.body.query);
-
-            res.send({ result: rows });
+            res.send({ result })
         });
 
         this.app.post('/db/run', this.auth.bind(this), async (req, res) => {
             if(req.body?.query == null) 
                 return res.status(400).send({ "error": "Missing query" });
-            var result = await this.bot.database.run(req.body.query);
+            var result = await this.bot.database.$executeRaw(req.body.query);
 
-            res.send({ result });
+            res.send({ result })
         });
 
         this.app.get('/uses', this.auth.bind(this), (_req, res) => {

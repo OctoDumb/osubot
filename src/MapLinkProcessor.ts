@@ -5,6 +5,7 @@ import ServerModule from "./Commands/Server/ServerModule";
 import { MapInfoTemplate, MapsetInfoTemplate } from "./Templates";
 import { IV2Beatmapset } from "./API/Servers/V2/V2Responses";
 import Message from "./Message";
+import { getCover } from "./Util";
 
 interface IMapLink {
     beatmapsetId?: number;
@@ -55,22 +56,22 @@ export default class MapLinkProcessor {
         
         if (beatmapsetId) {
             let mapset = await this.api.getBeatmapset({ beatmapsetId });
-            let cover = await this.bot.database.covers.getCover(beatmapsetId);
+            let attachment = await getCover(this.bot.database, this.bot.vk, beatmapsetId);
             mapset = this.cutBeatmapset(mapset);
 
             message.reply(MapsetInfoTemplate(mapset), {
-                attachment: cover
+                attachment
             });
         } else if (beatmapId) {
             let map = await this.bot.maps.getBeatmap(beatmapId);
             let pp98 = await this.bot.maps.getPP(beatmapId, { acc: 98 });
             let pp99 = await this.bot.maps.getPP(beatmapId, { acc: 99 });
-            let cover = await this.bot.database.covers.getCover(map.beatmapsetID);
+            let attachment = await getCover(this.bot.database, this.bot.vk, map.beatmapsetID);
 
             this.bot.lastMaps.setChatMap(message.peerId, beatmapId);
 
             message.reply(MapInfoTemplate(map, pp98, pp99), {
-                attachment: cover
+                attachment
             });
         } else {
             message.reply("Некорректная ссылка");

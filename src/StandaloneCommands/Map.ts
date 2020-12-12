@@ -3,7 +3,7 @@ import { IMapCommandArguments, IStandaloneCommandArguments, parseArguments, Pars
 import StandaloneCommand from "../Commands/StandaloneCommand";
 import Message from "../Message";
 import { MapTemplate } from "../Templates";
-import { clearObject, defaultArguments, modsToString } from "../Util";
+import { clearObject, defaultArguments, getCover, modsToString } from "../Util";
 
 export default class MapCommand extends StandaloneCommand {
     name = "Map";
@@ -23,7 +23,7 @@ export default class MapCommand extends StandaloneCommand {
         }
     }
 
-    async run({ message, database, chats, mapAPI, args, clean }: IStandaloneCommandArguments<IMapCommandArguments>) {
+    async run({ message, database, chats, mapAPI, args, vk, clean }: IStandaloneCommandArguments<IMapCommandArguments>) {
         let id = chats.getChatMap(message.peerId);
         if(!id)
             throw "Отправьте карту!";
@@ -40,7 +40,7 @@ export default class MapCommand extends StandaloneCommand {
             mods: mods.join(",")
         }));
 
-        let cover = await database.covers.getCover(map.beatmapsetID);
+        let cover = await getCover(database, vk, map.beatmapsetID);
 
         let msg = MapTemplate(map, pp, mods);
 

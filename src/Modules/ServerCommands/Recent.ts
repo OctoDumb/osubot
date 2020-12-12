@@ -2,7 +2,7 @@ import ServerCommand from "../../Commands/Server/ServerCommand";
 import { IServerCommandArguments, parseArguments, Parsers, IRecentCommandArguments } from "../../Commands/Arguments";
 import Message from "../../Message";
 import Bot from "../../Bot";
-import { defaultArguments, getUserInfo, hitsToFail, modsToString } from "../../Util";
+import { defaultArguments, getCover, getUserInfo, hitsToFail, modsToString } from "../../Util";
 import { RecentTemplate } from "../../Templates";
 
 export default class RecentCommand extends ServerCommand {
@@ -23,8 +23,8 @@ export default class RecentCommand extends ServerCommand {
         };
     }
 
-    async run({ message, database, mapAPI, clean, args, chats }: IServerCommandArguments<IRecentCommandArguments>) {
-        let { username, mode } = await getUserInfo(message, this.database, clean, args);
+    async run({ message, database, mapAPI, clean, args, vk, chats }: IServerCommandArguments<IRecentCommandArguments>) {
+        let { username, mode } = await getUserInfo(message, this.module.name, database, clean, args);
 
         let recents = await this.api.getRecent({ 
             username, 
@@ -42,7 +42,7 @@ export default class RecentCommand extends ServerCommand {
         let map = await mapAPI.getBeatmap(recent.beatmapId, mods);
         chats.setChatMap(message.peerId, recent.beatmapId);
 
-        let cover = await database.covers.getCover(map.beatmapsetID);
+        let attachment = await getCover(database, vk, map.beatmapsetID);
 
         let pp = await mapAPI.getPP(recent.beatmapId, {
             combo: recent.maxCombo,
@@ -56,7 +56,7 @@ export default class RecentCommand extends ServerCommand {
         let msg = RecentTemplate(this.module, recent, map, pp);
 
         message.reply(msg, {
-            attachment: cover
+            attachment
         });
     }
 }

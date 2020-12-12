@@ -1,3 +1,4 @@
+import { ServerConnection } from "@prisma/client";
 import fs from "fs";
 import { IDBUser } from "../Database";
 import Types from "./types.json";
@@ -92,14 +93,14 @@ export default class PrivilegesManager {
         return this.list.find(p => p.id == id)?.status ?? "";
     }
 
-    getUserStatus(users: IDBUser[]): string {
-        let highestPriv = users.map(u => this.types.getHighestPrivilege(this.getPrivileges(u.id)));
+    getUserStatus(users: ServerConnection[]): string {
+        let highestPriv = users.map(u => this.types.getHighestPrivilege(this.getPrivileges(u.userId)));
         let i = 0;
         highestPriv.forEach((p, ii) => {
             if(this.types.isHigher(p, highestPriv[i])) i = ii;
         });
 
-        return this.getStatus(users[i].id);
+        return this.getStatus(users[i].userId);
     }
 
     setStatus(id: number, status: string) {

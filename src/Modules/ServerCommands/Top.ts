@@ -2,7 +2,7 @@ import ServerCommand from "../../Commands/Server/ServerCommand";
 import Message from "../../Message";
 import Bot from "../../Bot";
 import { IServerCommandArguments, ITopCommandArguments, parseArguments, Parsers } from "../../Commands/Arguments";
-import { defaultArguments, getUserInfo, modsToString } from "../../Util";
+import { defaultArguments, getCover, getUserInfo, modsToString, updateInfo } from "../../Util";
 import { TopTemplate, TopSingleTemplate } from "../../Templates";
 
 export default class TopCommand extends ServerCommand {
@@ -25,14 +25,18 @@ export default class TopCommand extends ServerCommand {
         };
     }
 
-    async run({ message, database, privileges, mapAPI, clean, args }: IServerCommandArguments<ITopCommandArguments>) {
-        let { username, mode } = await getUserInfo(message, this.database, clean, args);
+    async run({ message, database, privileges, mapAPI, clean, vk, args }: IServerCommandArguments<ITopCommandArguments>) {
+        let { username, mode } = await getUserInfo(message, this.module.name, database, clean, args);
 
         let user = await this.api.getUser({ username, mode });
 
-        await this.database.updateInfo(user, mode);
+        await updateInfo(database, this.module.name, user, mode);
 
-        let users = await this.database.findByUserId(user.id);
+        let users = await database.serverConnection.findMany({
+            where: {
+                playerId: user.id
+            }
+        });
         let status = privileges.getUserStatus(users);
         
         let top = await this.api.getTop({ 
@@ -55,12 +59,12 @@ export default class TopCommand extends ServerCommand {
 
             let map = await mapAPI.getBeatmap(t.beatmapId, modsToString(t.mods));
 
-            let cover = await database.covers.getCover(map.beatmapsetID);
+            let attachment = await getCover(database, vk, map.beatmapsetID);
 
             let msg = TopSingleTemplate(this.module, user.username, t, args.place, map, status);
             
             message.reply(msg, {
-                attachment: cover
+                attachment
             });
         } else {
             if(args.mods != undefined)

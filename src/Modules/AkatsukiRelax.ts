@@ -13,8 +13,6 @@ export default class AkatsukiRelax extends ServerModule {
 
     api = this.apilist.akatsukiRelax;
 
-    db = this.database.servers.akatsuki;
-
     commands = [
         new UserCommand(this),
         new TopCommand(this),
