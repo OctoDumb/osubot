@@ -1,0 +1,66 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Ban {
+  id         Int     @id @default(autoincrement())
+  user       User    @relation(fields: [userId], references: [id])
+  userId     Int
+  until      Int
+  reason     String?
+  isNotified Boolean   @default(false)
+
+  @@map("bans")
+}
+
+model ServerConnection {
+  id       Int    @id @default(autoincrement())
+  server   String
+  user     User   @relation(fields: [userId], references: [id])
+  userId   Int
+  playerId Int
+  nickname String
+
+  @@map("connections")
+}
+
+model NewsRules {
+  id      Int    @id @default(autoincrement())
+  peerId  Int
+  type    String
+  enabled Boolean  @default(false)
+  filters String @default("")
+
+  @@map("newsrules")
+}
+
+model Role {
+  id          Int    @id @default(autoincrement())
+  name        String
+  permissions String @default("")
+
+  @@map("roles")
+}
+
+model Stats {
+  id       Int   @id @default(autoincrement())
+  playerId Int
+  rank     Int   @default(9999999)
+  pp       Float @default(0)
+  accuracy Float @default(100)
+
+  @@map("stats")
+}
+
+model User {
+  id     Int  @id @default(autoincrement())
+  role   Role @relation(fields: [roleId], references: [id])
+  roleId Int  @default(1)
+
+  @@map("users")
+}
