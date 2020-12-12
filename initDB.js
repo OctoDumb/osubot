@@ -11,7 +11,7 @@ async function run(stmt, ...opts) {
 
 async function initDB() {
     await run(`
-    CREATE TABLE "users" (
+    CREATE TABLE IF NOT EXISTS "users" (
         "id"	INTEGER NOT NULL,
         "roleId"	INTEGER NOT NULL DEFAULT 1,
         PRIMARY KEY("id")
@@ -19,7 +19,7 @@ async function initDB() {
     `);
 
     await run(`
-    CREATE TABLE "roles" (
+    CREATE TABLE IF NOT EXISTS "roles" (
         "id"	INTEGER NOT NULL,
         "name"	TEXT NOT NULL,
         "permissions"	TEXT NOT NULL DEFAULT '',
@@ -28,7 +28,7 @@ async function initDB() {
     `);
 
     await run(`
-    CREATE TABLE "connections" (
+    CREATE TABLE IF NOT EXISTS "connections" (
         "id"	INTEGER NOT NULL,
         "server"	TEXT NOT NULL,
         "userId"	INTEGER NOT NULL,
@@ -39,18 +39,20 @@ async function initDB() {
     `);
 
     await run(`
-    CREATE TABLE "stats" (
+    CREATE TABLE IF NOT EXISTS "stats" (
         "id"	INTEGER NOT NULL,
+        "server"	TEXT NOT NULL,
         "playerId"	INTEGER NOT NULL,
+        "mode"	INTEGER NOT NULL,
         "rank"	INTEGER NOT NULL DEFAULT 9999999,
         "pp"	REAL NOT NULL DEFAULT 0,
         "accuracy"	REAL NOT NULL DEFAULT 100,
         PRIMARY KEY("id" AUTOINCREMENT)
-    )
+    );
     `);
 
     await run(`
-    CREATE TABLE "bans" (
+    CREATE TABLE IF NOT EXISTS "bans" (
         "id"	INTEGER NOT NULL,
         "userId"	INTEGER NOT NULL,
         "until"	INTEGER NOT NULL,
@@ -61,7 +63,7 @@ async function initDB() {
     `);
 
     await run(`
-    CREATE TABLE "newsrules" (
+    CREATE TABLE IF NOT EXISTS "newsrules" (
         "id"	INTEGER NOT NULL,
         "peerId"	INTEGER NOT NULL,
         "type"	TEXT NOT NULL,
@@ -72,13 +74,17 @@ async function initDB() {
     `);
 
     await run(`
-    INSERT INTO "roles" (
-        name, 
-        permissions
-    ) VALUES (
-        'Default',
-        ''
+    CREATE TABLE IF NOT EXISTS "covers" (
+        "id"	INTEGER NOT NULL,
+        "attachment"	TEXT,
+        PRIMARY KEY("id")
     )
+    `)
+
+    await run(`
+    INSERT INTO "roles" ( name, permissions )
+    SELECT 'Default', ''
+    WHERE NOT EXISTS(SELECT 1 FROM "roles" WHERE id = 1)
     `);
 }
 

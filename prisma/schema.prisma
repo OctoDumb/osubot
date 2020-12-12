@@ -18,6 +18,13 @@ model Ban {
   @@map("bans")
 }
 
+model Cover {
+  id         Int @id
+  attachment String?
+
+  @@map("covers")
+}
+
 model ServerConnection {
   id       Int    @id @default(autoincrement())
   server   String
@@ -25,6 +32,7 @@ model ServerConnection {
   userId   Int
   playerId Int
   nickname String
+  mode     Int    @default(0)
 
   @@map("connections")
 }
@@ -49,7 +57,9 @@ model Role {
 
 model Stats {
   id       Int   @id @default(autoincrement())
+  server   String
   playerId Int
+  mode     Int
   rank     Int   @default(9999999)
   pp       Float @default(0)
   accuracy Float @default(100)
