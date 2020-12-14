@@ -57,7 +57,7 @@ async function initDB() {
         "userId"	INTEGER NOT NULL,
         "until"	INTEGER NOT NULL,
         "reason"	TEXT,
-        "isNotified"	NUMERIC NOT NULL DEFAULT 'FALSE',
+        "isNotified"	INTEGER NOT NULL DEFAULT 0,
         PRIMARY KEY("id" AUTOINCREMENT)
     )
     `);
@@ -67,7 +67,7 @@ async function initDB() {
         "id"	INTEGER NOT NULL,
         "peerId"	INTEGER NOT NULL,
         "type"	TEXT NOT NULL,
-        "enabled"	NUMERIC NOT NULL DEFAULT 'FALSE',
+        "enabled"	INTEGER NOT NULL DEFAULT 0,
         "filters"	TEXT NOT NULL DEFAULT '',
         PRIMARY KEY("id" AUTOINCREMENT)
     )
