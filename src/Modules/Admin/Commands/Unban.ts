@@ -12,7 +12,7 @@ export default class UnbanCommand extends Command {
     delay = 0;
     description = "";
 
-    async run({ message, vk }: ICommandArguments) {
+    async run({ message, database, vk }: ICommandArguments) {
         let id = message.forwarded?.senderId;
         if(message.arguments.length < 1) return message.reply("Недостаточно аргументов!");
         if(mention.test(message.arguments[0])) {
@@ -20,12 +20,12 @@ export default class UnbanCommand extends Command {
         }
         if(!id)
             return message.reply("Не указан пользователь!");
+        
+        let d = await database.ban.deleteMany({ where: { userId: id } })
 
-        let unbanned = Banlist.removeBan(id);
+        message.reply(`[id${id}|Пользователь] ${d.count > 0 ? "был разбанен" : "не был в бане"}`);
 
-        message.reply(`[id${id}|Пользователь] ${unbanned ? "был разбанен" : "не был в бане"}`);
-
-        if(unbanned) {
+        if(d.count > 0) {
             try {
                 await vk.api.messages.send({
                     peer_id: id,

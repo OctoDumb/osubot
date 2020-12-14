@@ -1,3 +1,4 @@
+import { Ban, PrismaClient } from "@prisma/client";
 import fs from "fs";
 
 interface IBan {
@@ -5,6 +6,19 @@ interface IBan {
     reason?: string;
     until: number;
     notified: boolean;
+}
+
+export class BanUtil {
+    public static isBanned(ban?: Ban): boolean {
+        return ban?.until < Date.now() ?? false;
+    }
+
+    public static async addBan(database: PrismaClient, id: number, duration: number, reason?: string) {
+        await database.ban.deleteMany({ where: { userId: id } });
+        let until = Date.now() + duration;
+        await database.ban.create({ data: { userId: id, until, reason } });
+        return until;
+    }
 }
 
 export default class Banlist {

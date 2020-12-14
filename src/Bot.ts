@@ -36,7 +36,7 @@ import BanchoV2API from "./API/Servers/BanchoV2";
 import ScreenshotCreator from "./ScreenshotCreator";
 import TrackAPI from "./API/TrackAPI";
 import Logger, { LogLevel } from "./Logger";
-import Banlist from "./Banlist";
+import Banlist, { BanUtil } from "./Banlist";
 import { PrismaClient } from "@prisma/client";
 
 export interface IBotConfig {
@@ -144,7 +144,10 @@ export default class Bot {
                     message.arguments.unshift(message.command);
 
                     if(command.command.includes(message.prefix)) {
-                        if(Banlist.isBanned(message.sender) && !command.ignoreBan) return;
+                        let ban = await this.database.ban.findFirst({
+                            where: { userId: message.sender }
+                        });
+                        if(BanUtil.isBanned(ban) && !command.ignoreBan) return;
                         try {
                             let args = command.parseArguments(message, this);
                             command.use(message);

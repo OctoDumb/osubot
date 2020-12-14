@@ -1,4 +1,4 @@
-import Banlist from "../../../Banlist";
+import Banlist, { BanUtil } from "../../../Banlist";
 import ICommandArguments from "../../../Commands/Arguments";
 import Command from "../../../Commands/Command";
 import Message from "../../../Message";
@@ -14,7 +14,7 @@ export default class BanCommand extends Command {
     delay = 0;
     description = "";
 
-    async run({ message, vk }: ICommandArguments) {
+    async run({ message, database, vk }: ICommandArguments) {
         let id = message.forwarded?.senderId;
         if(message.arguments.length < 1) return message.reply("Недостаточно аргументов!");
         if(mention.test(message.arguments[0])) {
@@ -27,7 +27,7 @@ export default class BanCommand extends Command {
 
         let reason = message.arguments.join(" ");
 
-        let until = Banlist.addBan(id, duration, reason);
+        let until = BanUtil.addBan(database, id, duration, reason);
 
         message.reply(`[id${id}|Пользователь] забанен!`);
 
@@ -41,7 +41,10 @@ export default class BanCommand extends Command {
                 `),
                 ...Message.DefaultParams
             });
-            Banlist.setNotified(id);
+            await database.ban.updateMany({
+                where: { userId: id },
+                data: { isNotified: true }
+            });
         } catch(e) {}
     }
 }

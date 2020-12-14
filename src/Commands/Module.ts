@@ -1,7 +1,7 @@
 import Command from "./Command";
 import Message from "../Message";
 import Bot from "../Bot";
-import Banlist from "../Banlist";
+import Banlist, { BanUtil } from "../Banlist";
 import dateformat from "dateformat";
 
 dateformat.i18n = {
@@ -36,15 +36,20 @@ export default abstract class Module {
         let command = this.commands.find(c => c.command.includes(message.command));
         if(!command) return;
 
-        let ban = Banlist.getBanStatus(message.sender);
-        if(Banlist.isBanned(message.sender)) {
-            if(!ban.notified) {
+        let ban = await this.database.ban.findFirst({
+            where: { userId: message.sender }
+        });
+        if(BanUtil.isBanned(ban)) {
+            if(!ban.isNotified) {
                 message.reply(`
                     Вы были забанены!
                     Время окончания бана: ${dateformat(new Date(ban.until), "dd mmm yyyy HH:MM:ss 'MSK'")}
                     Причина бана: ${ban.reason ?? "не указана"}
                 `);
-                Banlist.setNotified(message.sender);
+                await this.database.ban.update({
+                    where: { id: ban.id },
+                    data: { isNotified: true }
+                });
             }
 
             if(!command.ignoreBan) return;
