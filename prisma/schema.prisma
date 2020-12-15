@@ -66,7 +66,7 @@ model Stats {
 }
 
 model User {
-  id     Int  @id @default(autoincrement())
+  id     Int  @id
   role   Role @relation(fields: [roleId], references: [id])
   roleId Int  @default(1)
 
