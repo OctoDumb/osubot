@@ -13,13 +13,13 @@ export default class ModeCommand extends ServerCommand {
 
         if(mode == null) throw "Некорректный режим!";
 
-        // this.database.setMode(message.sender, Number(mode));
-        database.serverConnection.updateMany({
+        await database.serverConnection.updateMany({
             data: {
                 mode: Number(mode)
             },
             where: {
-                userId: message.sender
+                userId: message.sender,
+                server: this.module.name
             }
         })
 

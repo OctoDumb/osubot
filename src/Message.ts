@@ -1,3 +1,4 @@
+import { Role, User } from "@prisma/client";
 import { MessageContext, MessagesSendParams } from "vk-io";
 import MessageForward from "vk-io/lib/structures/shared/message-forward";
 import MessageReply from "vk-io/lib/structures/shared/message-reply";
@@ -31,7 +32,8 @@ export default class Message {
     };
 
     constructor(
-        private ctx: MessageContext
+        private ctx: MessageContext,
+        public user: User & { role: Role }
     ) {
         let args = ctx.text?.split(" ") ?? [];
 
@@ -42,12 +44,12 @@ export default class Message {
         this.arguments = args;
     }
 
-    reply(message: string | MessagesSendParams, params: MessagesSendParams = {}) {
+    async reply(message: string | MessagesSendParams, params: MessagesSendParams = {}) {
         if(typeof message == "string")
-            this.ctx.send(Message.fixString(message), { ...Message.DefaultParams, ...params });
+            await this.ctx.send(Message.fixString(message), { ...Message.DefaultParams, ...params });
 
         else
-            this.ctx.send({ 
+            await this.ctx.send({ 
                 ...Message.DefaultParams, 
                 ...message, 
                 message: Message.fixString(message.message) 

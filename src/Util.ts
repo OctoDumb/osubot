@@ -1,10 +1,10 @@
 import Message from "./Message";
-import Bot from "./Bot";
+import Bot, { IBotConfig } from "./Bot";
 import { IHitCounts, IUserAPIResponse } from "./API/APIResponse";
 import Database, { IDBUser, Server } from "./Database";
 import { IPPResponse } from "./API/MapAPI";
 import Logger, { LogLevel } from "./Logger";
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient, Role, Status, User } from "@prisma/client";
 import { VK } from "vk-io";
 
 /**
@@ -70,27 +70,87 @@ export function defaultArguments(message: Message, {
 }
 
 export async function getUserInfo(message: Message, server: string, db: PrismaClient, clean: string, args?: { mode?: number }) {
-    let { nickname: username, mode = 0 } = await db.serverConnection.findFirst({
+    let connection = await db.serverConnection.findFirst({
         where: {
-            id: message.sender,
+            userId: message.sender,
             server
         }
     });
-    if(message.forwarded)
-        username ??= (await db.serverConnection.findFirst({
+    let username = connection?.nickname ?? "";
+    let mode = connection?.mode ?? 0;
+    if(message.forwarded) {
+        let forwarded = await db.serverConnection.findFirst({
             where: {
-                id: message.forwarded.senderId,
+                userId: message.forwarded.senderId,
                 server
             }
-        }))?.nickname;
+        });
+        if(forwarded)
+            username = forwarded.nickname;
+    }
     if(clean)
         username = clean;
-    mode ??= args.mode;
+    if(mode != null)
+        mode = args.mode;
 
     return { username, mode };
 }
 
-export async function updateInfo(database: PrismaClient, server: string, user: IUserAPIResponse, mode: number): Promise<void> {
+export async function getDBUser(config: IBotConfig, database: PrismaClient, id: number): Promise<User & { role: Role }> {
+    let user = await database.user.findUnique({ where: { id }, include: { role: true } });
+    if(!user)
+        return await database.user.create({ 
+            data: { 
+                id, role: { 
+                    connect: { 
+                        id: config.vk.ownerId == id ? 2 : 1 
+                    } 
+                } 
+            }, 
+            include: { role: true } 
+        });
+    return user;
+}
+
+export async function getStatus(database: PrismaClient, playerId: number): Promise<Status> {
+    let connections = await database.serverConnection.findMany({
+        where: { playerId }
+    });
+    let users = await database.$transaction(
+        connections.map(c => database.user.findUnique({
+            where: { id: c.userId }
+        }))
+    );
+    users = users.filter(u => u.statusId);
+    return await database.status.findUnique({
+        where: {
+            id: users[0]?.statusId ?? 0
+        }
+    });
+}
+
+export async function addNotification(vk: VK, database: PrismaClient, to: number, message: string): Promise<boolean> {
+    message = Message.fixString(message);
+    let notification = await database.notification.create({
+        data: {
+            userId: to,
+            message
+        }
+    });
+    try {
+        await vk.api.messages.send({
+            user_id: to,
+            message
+        });
+        notification = await database.notification.update({
+            where: { id: notification.id },
+            data: { delivered: true }
+        });
+    } catch(e) {}
+    return notification.delivered;
+}
+
+export async function updateInfo(database: PrismaClient, server: string, user: IUserAPIResponse, mode: number = 0): Promise<void> {
     let where = { playerId: user.id, mode, server };
     let data = { rank: user.rank.total, pp: user.pp, accuracy: user.accuracy };
 

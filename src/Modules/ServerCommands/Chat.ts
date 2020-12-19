@@ -1,14 +1,14 @@
-import { PrismaClient, Stats } from "@prisma/client";
+import { PrismaClient, Stats, Status } from "@prisma/client";
 import Bot from "../../Bot";
 import { IArgumentsWithMode, IServerCommandArguments, parseArguments, Parsers } from "../../Commands/Arguments";
 import ServerCommand from "../../Commands/Server/ServerCommand";
 import Message from "../../Message";
 import PrivilegesManager from "../../Privileges";
 import { ChatTopTemplate } from "../../Templates";
-import { defaultArguments, getUserInfo } from "../../Util";
+import { defaultArguments, getStatus, getUserInfo } from "../../Util";
 
 export interface IChatTopUser {
-    status: string;
+    status: Status;
     nickname: string;
     stats: Stats;
 }
@@ -64,7 +64,7 @@ export default class ChatCommand extends ServerCommand {
         if(!conn)
             return null;
         return {
-            status: privileges.getStatus(id),
+            status: await getStatus(database, conn.playerId),
             nickname: conn.nickname,
             stats: await database.stats.findFirst({
                 where: {

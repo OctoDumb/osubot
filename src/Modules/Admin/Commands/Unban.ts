@@ -2,6 +2,7 @@ import Banlist from "../../../Banlist";
 import ICommandArguments from "../../../Commands/Arguments";
 import Command from "../../../Commands/Command";
 import Message from "../../../Message";
+import { Permission } from "../../../Permissions";
 
 const mention = /\[id(?<id>\d+)|.+\]/i;
 
@@ -11,6 +12,8 @@ export default class UnbanCommand extends Command {
 
     delay = 0;
     description = "";
+
+    permission = Permission.BAN;
 
     async run({ message, database, vk }: ICommandArguments) {
         let id = message.forwarded?.senderId;

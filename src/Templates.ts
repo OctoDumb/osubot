@@ -14,7 +14,7 @@ import { UsersGetResponse } from "vk-io";
 import { IChatTopUser } from "./Modules/ServerCommands/Chat";
 import { IV2Beatmapset } from "./API/Servers/V2/V2Responses";
 import { OsuTrackResponse } from "./API/TrackAPI";
-import { ServerConnection } from "@prisma/client";
+import { ServerConnection, Status } from "@prisma/client";
 
 function joinMods(mods: string[]) {
     return (mods.length ? "+" : "") + mods.join('');
@@ -23,7 +23,7 @@ function joinMods(mods: string[]) {
 /**
  * Message template for User command 
  */
-export function UserTemplate(server: ServerModule, user: IUserAPIResponse, status: string) {
+export function UserTemplate(server: ServerModule, user: IUserAPIResponse, status: Status) {
     let { 
         username, id, 
         country, rank, 
@@ -34,7 +34,7 @@ export function UserTemplate(server: ServerModule, user: IUserAPIResponse, statu
     
     return `
         [Server: ${server.name}]
-        Player ${username} ${status}
+        Player ${username} ${status?.emoji ?? ''}
         Rank: #${rank.total} (${country}#${rank.country})
         Playcount: ${playcount} (Lv${Math.floor(level)})
         PP: ${Math.round(pp)}
@@ -47,10 +47,10 @@ export function UserTemplate(server: ServerModule, user: IUserAPIResponse, statu
 /**
  * Message template for Top command 
  */
-export function TopTemplate(server: ServerModule, nickname: string, scores: ITopAPIResponse[], maps: IBeatmap[], status: string) {
+export function TopTemplate(server: ServerModule, nickname: string, scores: ITopAPIResponse[], maps: IBeatmap[], status: Status) {
     return `
         [Server: ${server.name}]
-        Топ скоры игрока ${nickname} ${status} [${scores[0].mode}]
+        Топ скоры игрока ${nickname} ${status?.emoji ?? ''} [${scores[0].mode}]
         ${scores.map((score, i) => {
             let map = maps[i];
             let length = formatTime(~~(map.length / 1e3));
@@ -71,12 +71,12 @@ export function TopTemplate(server: ServerModule, nickname: string, scores: ITop
 /**
  * Message template for Top command with `place` argument
  */
-export function TopSingleTemplate(server: ServerModule, nickname: string, score: ITopAPIResponse, place: number, map: IBeatmap, status: string) {
+export function TopSingleTemplate(server: ServerModule, nickname: string, score: ITopAPIResponse, place: number, map: IBeatmap, status: Status) {
     let length = formatTime(~~(map.length / 1e3));
     let modsString = joinMods(modsToString(score.mods));
     return `
         [Server: ${server.name}]
-        Топ #${place} плей игрока ${nickname} ${status} (${modeNumberToString(score.mode)})
+        Топ #${place} плей игрока ${nickname} ${status?.emoji ?? ''} (${modeNumberToString(score.mode)})
         ${map.artist} - ${map.title} [${map.version}] by ${map.creator}
         ${length} | ${statsToString(map.mode, map.difficulty)} BPM: ${formatBPM(map.bpm)} | ${round(map.difficulty.stars)}✩ ${modsString}
 
@@ -144,7 +144,7 @@ export function ChatTopTemplate(server: ServerModule, chat: number, users: IChat
         [Server: ${server.name}]
         Топ${full ? '' : `-${users.length}`} беседы (ID ${chat}):
         ${users.sort((a, b) => b.stats.pp - a.stats.pp).map((u, i) => `
-            #${i + 1} ${u.nickname} ${u.status} | ${round(u.stats.pp, 1)}pp | Ранк ${u.stats.rank} | ${round(u.stats.accuracy)}%
+            #${i + 1} ${u.nickname} ${u.status?.emoji ?? ''} | ${round(u.stats.pp, 1)}pp | Ранк ${u.stats.rank} | ${round(u.stats.accuracy)}%
         `).map(Message.fixString).join('\n')}
     `;
 }

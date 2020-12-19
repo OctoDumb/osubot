@@ -3,7 +3,7 @@ import Bot from "../../Bot";
 import ServerCommand from "../../Commands/Server/ServerCommand";
 import { IArgumentsWithMode, IServerCommandArguments, IRecentCommandArguments, Parsers, parseArguments } from "../../Commands/Arguments";
 import { UserTemplate } from "../../Templates";
-import { defaultArguments, getUserInfo, updateInfo } from "../../Util";
+import { defaultArguments, getStatus, getUserInfo, updateInfo } from "../../Util";
 
 export default class UserCommand extends ServerCommand {
     name = "User";
@@ -29,13 +29,7 @@ export default class UserCommand extends ServerCommand {
 
         await updateInfo(database, this.module.name, user, mode);
 
-        let users = await database.serverConnection.findMany({
-            where: {
-                playerId: user.id
-            }
-        });
-        let status = users.length !== 0 ? privileges.getUserStatus(users) : "";
-        
+        let status = await getStatus(database, user.id);
 
         message.reply(UserTemplate(this.module, user, status));
     }

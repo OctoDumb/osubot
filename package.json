@@ -36,6 +36,7 @@
   },
   "devDependencies": {
     "@prisma/cli": "^2.13.0",
+    "@types/dateformat": "^3.0.1",
     "@types/sqlite3": "^3.1.6",
     "ts-node": "^9.0.0",
     "ts-node-dev": "^1.0.0",

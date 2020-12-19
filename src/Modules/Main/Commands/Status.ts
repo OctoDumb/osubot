@@ -6,39 +6,85 @@ export default class MainStatus extends Command {
     command = [ "status", "ыефегы" ];
 
     delay = 0;
-
     description = "";
 
-    async run({ message, privileges }: ICommandArguments) {
-        let { sender, arguments: args } = message;
+    async run({ message, database }: ICommandArguments) {
+        let args = message.arguments;
+        
+        if(!args[0])
+            return message.reply("nope.");
 
-        if(args.length == 0) {
-            let msg = `
-                Ваши привилегии:
-                ${privileges.getPrivileges(sender).map(
-                    p => privileges.types.getType(p)).map(
-                    p => `${p.name} - ${p.description}`).join("\n")}
-            `;
+        switch(args.shift().toLowerCase()) {
+            case "list": {
+                let [ page = 1 ] = args.map(Number);
+                if(page < 1)
+                    return message.reply("Некорректная страница");
+                let owned = await database.statusOwned.findMany({
+                    where: {
+                        userId: message.sender
+                    },
+                    take: 10,
+                    skip: 10 * (page - 1)
+                });
 
-            return message.reply(msg);
-        }
+                let ownedCount = await database.statusOwned.count({ where: { userId: message.sender } });
+                if(!owned.length)
+                    if(ownedCount == 0)
+                        return message.reply("У вас нет статусов!");
+                    else
+                        return message.reply("Страница не найдена");
 
-        switch(args[0].toLowerCase()) {
-            case "set":
-                if(args.length < 2)
-                    return message.reply("Недостаточно аргументов!");
-                privileges.setStatus(sender, args[1]);
+                let statuses = await database.$transaction(owned.map(o => database.status.findUnique({ where: { id: o.statusId } })));
+                message.reply(`
+                    Доступные статусы:
+                    ${statuses.map(s => `[ID:${s.id}] ${s.name} (${s.emoji})`)}
+                    Страница ${page} из ${Math.ceil(ownedCount / 10)}
+                `);
                 break;
-
-            case "list":
-                let privs = privileges.getPrivileges(sender);
-                let statuses = privileges.types.getAvailableStatuses(privs);
-
-                message.reply(`Доступные статусы:\n${statuses.join(" , ")}`);
+            }
+            case "set": {
+                let [ st ] = args;
+                let status = await database.status.findFirst({
+                    where: {
+                        OR: [
+                            { id: Number(st) },
+                            { emoji: st }
+                        ]
+                    }
+                });
+                let owned = await database.statusOwned.findFirst({
+                    where: { userId: message.sender, statusId: status.id }
+                });
+                if(!owned)
+                    return message.reply("У вас нет этого статуса!");
+                await database.user.updateMany({
+                    where: { id: message.sender },
+                    data: { statusId: status.id }
+                });
+                message.reply(`
+                    Установлен статус ${status.name} (${status.emoji})
+                `);
                 break;
-
-            default: 
-                throw "Неизвестная команда!";
+            }
+            case "info": {
+                let [ st ] = args;
+                let status = await database.status.findFirst({
+                    where: {
+                        OR: [
+                            { id: Number(st) },
+                            { emoji: st }
+                        ]
+                    }
+                });
+                message.reply(`
+                    [ID:${status.id}] ${status.name} (${status.emoji})
+                    - ${status.description}
+                `);
+                break;
+            }
+            default: {
+                //
+            }
         }
     }
 }

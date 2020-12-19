@@ -38,6 +38,7 @@ import TrackAPI from "./API/TrackAPI";
 import Logger, { LogLevel } from "./Logger";
 import Banlist, { BanUtil } from "./Banlist";
 import { PrismaClient } from "@prisma/client";
+import { getDBUser } from "./Util";
 
 export interface IBotConfig {
     vk: {
@@ -130,7 +131,21 @@ export default class Bot {
     constructor() {
         this.vk.updates.on("message", async ctx => {
             try {
-                let message = new Message(ctx);
+                let user = await getDBUser(this.config, this.database, ctx.senderId);
+                let message = new Message(ctx, user);
+                
+                let notifications = await this.database.notification.findMany({
+                    where: { userId: user.id, delivered: false },
+                    orderBy: { id: "asc" }
+                });
+                await this.database.notification.updateMany({
+                    where: {
+                        id: { in: notifications.map(n => n.id) }
+                    },
+                    data: { delivered: true }
+                });
+                for(let notification of notifications)
+                    await message.reply(notification.message);
 
                 let mapLink = this.mapLinkProcessor.checkLink(message, ctx);
 
@@ -184,10 +199,10 @@ export default class Bot {
 
         // await this.screenshotCreator.launch();
 
-        this.v2.data.start();
+        // this.v2.data.start();
         Logger.assert(this.v2.logged, LogLevel.MESSAGE, `[V2] Updating V2 data every ${Math.floor(this.v2.data.interval / 1e3)} seconds`);
 
-        cron.schedule('*/5 * * * *', () => { this.updateUses() });
+        // cron.schedule('*/5 * * * *', () => { this.updateUses() });
 
         Logger.log(LogLevel.DEBUG, `[DEBUG] Initialized with ${this.modules.length} modules and ${this.modules.flatMap(m => m.commands).length + this.commands.length} commands`);
     }

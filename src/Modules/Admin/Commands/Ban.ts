@@ -4,6 +4,7 @@ import Command from "../../../Commands/Command";
 import Message from "../../../Message";
 import { stringDateToMs } from "../../../Util";
 import dateformat from "dateformat";
+import { Permission } from "../../../Permissions";
 
 const mention = /\[id(?<id>\d+)|.+\]/i;
 
@@ -13,6 +14,8 @@ export default class BanCommand extends Command {
 
     delay = 0;
     description = "";
+
+    permission = Permission.BAN;
 
     async run({ message, database, vk }: ICommandArguments) {
         let id = message.forwarded?.senderId;
@@ -27,24 +30,8 @@ export default class BanCommand extends Command {
 
         let reason = message.arguments.join(" ");
 
-        let until = BanUtil.addBan(database, id, duration, reason);
+        let until = await BanUtil.addBan(vk, database, id, duration, reason);
 
         message.reply(`[id${id}|Пользователь] забанен!`);
-
-        try {
-            await vk.api.messages.send({
-                peer_id: id,
-                message: Message.fixString(`
-                    Вы были забанены!
-                    Время окончания бана: ${dateformat(until, "dd mmm yyyy HH:MM:ss 'MSK'")}
-                    Причина бана: ${reason ? reason : "не указана"}
-                `),
-                ...Message.DefaultParams
-            });
-            await database.ban.updateMany({
-                where: { userId: id },
-                data: { isNotified: true }
-            });
-        } catch(e) {}
     }
 }

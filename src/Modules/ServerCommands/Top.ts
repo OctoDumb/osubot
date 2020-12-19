@@ -2,7 +2,7 @@ import ServerCommand from "../../Commands/Server/ServerCommand";
 import Message from "../../Message";
 import Bot from "../../Bot";
 import { IServerCommandArguments, ITopCommandArguments, parseArguments, Parsers } from "../../Commands/Arguments";
-import { defaultArguments, getCover, getUserInfo, modsToString, updateInfo } from "../../Util";
+import { defaultArguments, getCover, getStatus, getUserInfo, modsToString, updateInfo } from "../../Util";
 import { TopTemplate, TopSingleTemplate } from "../../Templates";
 
 export default class TopCommand extends ServerCommand {
@@ -37,7 +37,7 @@ export default class TopCommand extends ServerCommand {
                 playerId: user.id
             }
         });
-        let status = privileges.getUserStatus(users);
+        let status = await getStatus(database, user.id);
         
         let top = await this.api.getTop({ 
             username, 

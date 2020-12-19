@@ -1,5 +1,6 @@
 import ICommandArguments from "../../../Commands/Arguments";
 import Command from "../../../Commands/Command";
+import { Permission } from "../../../Permissions";
 
 enum DBCommandType {
     get = "get",
@@ -13,6 +14,8 @@ export default class AdminSQL extends Command {
     delay = 0;
 
     description = "";
+
+    permission = Permission.ADMIN;
 
     async run({ message, database }: ICommandArguments) {
         let type = message.arguments.shift();

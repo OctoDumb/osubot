@@ -1,5 +1,6 @@
 import ICommandArguments from "../../../Commands/Arguments";
 import Command from "../../../Commands/Command";
+import { Permission } from "../../../Permissions";
 
 export default class PrivilegesCommand extends Command {
     name = "Privileges";
@@ -8,6 +9,8 @@ export default class PrivilegesCommand extends Command {
     delay = 0;
 
     description = "";
+
+    permission = Permission.ADMIN;
 
     async run({ message, privileges }: ICommandArguments) {
         let { forwarded, arguments: args } = message;
