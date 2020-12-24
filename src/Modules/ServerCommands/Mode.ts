@@ -6,7 +6,7 @@ export default class ModeCommand extends ServerCommand {
     name = "Mode";
     command = [ "m", "mode", "ь", "ьщву" ];
 
-    description = "Установить геймод по умолчанию";
+    description = "Установить/проверить геймод по умолчанию";
 
     async run({ message, database, vk }: IServerCommandArguments<null>) {
         const forwarded = message.forwarded
