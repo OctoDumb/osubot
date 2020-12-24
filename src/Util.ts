@@ -365,7 +365,7 @@ export function round(num: number, positions: number = 2) {
 }
 
 export function modeNumberToString(mode: number): string {
-    return ["Osu!", "Osu!Taiko", "Osu!Catch", "Osu!Mania"][mode];
+    return ["osu!", "osu!Taiko", "osu!Catch", "osu!Mania"][mode];
 }
 
 export function changeKeyboardLayout(string: string): null | string {
