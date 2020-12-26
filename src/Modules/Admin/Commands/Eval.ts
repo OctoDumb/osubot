@@ -1,5 +1,6 @@
 import ICommandArguments from "../../../Commands/Arguments";
 import Command from "../../../Commands/Command";
+import { Permission } from "../../../Permissions";
 
 export default class AdminEval extends Command {
     name = "Eval";
@@ -8,6 +9,8 @@ export default class AdminEval extends Command {
     delay = 0;
 
     description = "evaluate";
+
+    permission = Permission.ADMIN;
 
     async run({ 
         message,

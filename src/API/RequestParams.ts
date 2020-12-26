@@ -1,4 +1,4 @@
-import { IDBUser } from "../Database";
+import { ServerConnection } from "@prisma/client";
 
 export interface IUserRequestParams {
     username: string;
@@ -27,6 +27,6 @@ export interface IScoreRequestParams {
 
 export interface ILeaderboardRequestParams {
     beatmapId: number;
-    users: IDBUser[];
+    users: ServerConnection[];
     mods?: number;
 }

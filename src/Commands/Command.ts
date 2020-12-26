@@ -2,6 +2,7 @@ import Message from "../Message";
 import ICommandArguments from "./Arguments";
 import Bot from "../Bot";
 import { defaultArguments, round } from "../Util";
+import { Permission } from "../Permissions";
 
 export interface ICommandUsage {
     user: number;
@@ -13,6 +14,8 @@ export default abstract class Command {
     abstract command: string[];
 
     abstract description: string;
+
+    permission: Permission = null;
 
     delay: number = 5;
 

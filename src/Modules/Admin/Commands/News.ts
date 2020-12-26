@@ -1,5 +1,6 @@
 import ICommandArguments from "../../../Commands/Arguments";
 import Command from "../../../Commands/Command";
+import { Permission } from "../../../Permissions";
 
 export default class AdminNews extends Command {
     name = "News";
@@ -8,6 +9,8 @@ export default class AdminNews extends Command {
     delay = 0;
 
     description = "Рассылка";
+
+    permission = Permission.ADMIN;
 
     async run({ message, news }: ICommandArguments) {
         if(!message.forwarded)

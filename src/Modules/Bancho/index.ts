@@ -20,8 +20,6 @@ export default class Bancho extends ServerModule {
 
     api = this.apilist.bancho;
 
-    db = this.database.servers.bancho;
-
     commands = [
         new NickCommand(this),
         new ModeCommand(this),

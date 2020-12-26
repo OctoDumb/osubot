@@ -22,9 +22,10 @@ export default class BanchoTrack extends ServerCommand {
 
     async run({
         message, args,
-        clean, track
+        clean, track,
+        database
     }: IServerCommandArguments<IArgumentsWithMode>) {
-        let { username, mode } = await getUserInfo(message, this.database, clean, args);
+        let { username, mode } = await getUserInfo(message, this.module.name, database, clean, args);
         
         let update = await track.getChanges(username, mode);
 

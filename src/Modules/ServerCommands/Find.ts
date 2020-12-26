@@ -10,10 +10,14 @@ export default class FindCommand extends ServerCommand {
 
     description = `Найти вк человека, играющего на ${this.module.name}`;
 
-    async run({ message, vk, clean }: IServerCommandArguments<null>) {
-        let { username } = await getUserInfo(message, this.database, clean);
+    async run({ message, database, vk, clean }: IServerCommandArguments<null>) {
+        let { username } = await getUserInfo(message, this.module.name, database, clean);
         let u = await this.api.getUser({ username });
-        let dbusers = await this.database.findByUserId(u.id);
+        let dbusers = await database.serverConnection.findMany({
+            where: {
+                playerId: u.id
+            }
+        });
 
         if(!dbusers[0])
             return message.reply(`

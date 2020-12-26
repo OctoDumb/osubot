@@ -1,4 +1,3 @@
-import Banlist from "../../../Banlist";
 import ICommandArguments from "../../../Commands/Arguments";
 import Command from "../../../Commands/Command";
 import dateformat from "dateformat";
@@ -10,8 +9,8 @@ export default class MainBan extends Command {
     delay = 0;
     description = "";
 
-    async run({ message }: ICommandArguments) {
-        let ban = Banlist.getBanStatus(message.sender);
+    async run({ message, database }: ICommandArguments) {
+        let ban = await database.ban.findFirst({ where: { userId: message.sender } });
 
         if(!ban)
             return message.reply("У вас нет бана!");

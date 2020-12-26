@@ -7,6 +7,7 @@ import fs from "fs";
 import OsuNewsRule from "./Rules/OsuNews";
 import Message from "../Message";
 import NewRankedRule from "./Rules/NewRanked";
+import { PrismaClient } from "@prisma/client";
 
 interface IChatRule {
     enabled: boolean;
@@ -21,13 +22,18 @@ interface IRuleCollection {
     id: number;
     rules: IChatRules
 }
+interface IRule {
+    id?: number;
+    peerId: number;
+    type: string;
+    enabled: boolean;
+    filters: string;
+}
 
 export default class NewsController {
     rules: NewsRule<any>[];
 
-    settings: IRuleCollection[];
-
-    step = 25;
+    step: 25;
 
     constructor(
         private bot: Bot
@@ -38,48 +44,44 @@ export default class NewsController {
             new OsuNewsRule(this, this.bot, this.bot.v2.data, 'osunews'),
             new NewRankedRule(this, this.bot, this.bot.v2.data, 'newranked')
         ];
-
-        this.settings = fs.existsSync("./news_rules.json") 
-            ? JSON.parse(fs.readFileSync("./news_rules.json").toString()) 
-            : [];
-
-        setInterval(() => this.save(), 5000);
     }
 
-    save() {
-        fs.writeFileSync("./news_rules.json", JSON.stringify(this.settings));
+    private get db(): PrismaClient {
+        return this.bot.database;
     }
 
-    async send(r: NewsRule<any> | string, object: any) {
-        let rule = typeof r == "string"
-            ? this.rules.find(rl => rl.name == r)
-            : r;
-        
+    private async asyncFilter<T>(arr: T[], f: (value: T, index: number, array: T[]) => Promise<boolean>) {
+        let values = await Promise.all(arr.map((value, index, array) => f(value, index, array)));
+
+        return arr.filter((_, index) => values[index]);
+    }
+
+    async send<T>(r: NewsRule<T> | string, o: T) {
+        let rule = typeof r == "string" 
+            ? this.getNewsRule(r) : r;
+
         let ids = [
             ...this.getChats(),
             ...await this.getUsers()
         ];
 
         ids = ids.filter((id, i, a) => a.indexOf(id) == i);
-
-        ids = ids.filter(id => this.getRule(id, rule.name).enabled);
-
-        console.log(ids);
-
+        ids = await this.asyncFilter(ids, async (id) => this.getRule(id, rule.name).then(rr => rr.enabled));
+        
         if(rule.hasFilters) {
-            ids = ids.filter(id => {
-                let filters = this.getRule(id, rule.name).filters.map(f => NewsRule.parseFilters(f));
+            ids = await this.asyncFilter(ids, async (id) => {
+                let filters = (await this.getRule(id, rule.name)).filters
+                    .split(";;").map(f => NewsRule.parseFilters(f));
                 if(!filters.length) return true;
 
-                let r = false;
+                let res = false;
                 for(let filter of filters)
-                    r ||= filter.every(f => rule.useFilter(object, f));
-
-                return r;
+                    res ||= filter.every(f => rule.useFilter(o, f));
+                return res;
             });
         }
 
-        let { message, attachment } = await rule.createMessage(object);
+        let { message, attachment } = await rule.createMessage(o);
 
         while(ids.length > 0) {
             try {
@@ -87,12 +89,10 @@ export default class NewsController {
                     .splice(0, this.step)
                     .map(id =>
                         `API.messages.send(${JSON.stringify({ peer_id: id, message: Message.fixString(message), random_id: Math.ceil(Math.random() * (2 ** 20)), attachment: attachment ?? "", dont_parse_links: 1 })});`)
-                    .join('\n');
+                    .join('\n') + "\nreturn true;";
                 await this.bot.vk.api.execute({ code });
             } catch(e) {}
         }
-        
-        console.log("Done!");
     }
 
     private getChats() {
@@ -121,60 +121,62 @@ export default class NewsController {
         return <Array<number>>rawIds.flat(1);
     }
 
-    isChat(id: number): boolean {
-        return id > 200000000;
+    private getNewsRule(rule: string): NewsRule<any> {
+        return this.rules.find(r => r.name == rule);
     }
 
-    getRules(id: number): IChatRules {
-        let rules = this.settings.find(s => s.id == id)?.rules ?? {};
-
-        let df = {};
-
-        for(let rule of this.rules)
-            df[rule.name] = {
-                enabled: this.isChat(id) ? rule.chatDefault : rule.userDefault,
-                filters: []
-            };
-
-        return Object.assign(df, rules);
+    private async upsert(r: IRule, data: object): Promise<void> {
+        if(r.id)
+            await this.db.newsRules.update({
+                where: { id: r.id }, data
+            });
+        else
+            await this.db.newsRules.create({
+                data: { ...r, ...data }
+            });
     }
 
-    getRule(id: number, type: string): IChatRule {
-        let rules = this.getRules(id);
+    async getRule(id: number, rule: string): Promise<IRule> {
+        let r = this.getNewsRule(rule);
+        let rules = await this.db.newsRules.findFirst({
+            where: {
+                peerId: id,
+                type: rule
+            }
+        }) ?? { peerId: id, type: rule, enabled: r.getDefault(id), filters: "" };
 
-        return rules[type];
+        return rules;
     }
 
-    setRule(id: number, type: string, rule: boolean): void {
-        let i = this.settings.findIndex(s => s.id == id);
-        let rules = this.getRules(id);
-        rules[type].enabled = rule;
-        if(i == -1)
-            this.settings.push({ id, rules });
-        else {
-            this.settings[i].rules = rules;
-        }
+    async setRule(id: number, rule: string, enabled: boolean): Promise<boolean> {
+        let r = await this.getRule(id, rule);
+        await this.upsert(r, { enabled });
+        return enabled;
     }
 
-    switchRule(id: number, type: string): boolean {
-        let rule = this.getRule(id, type);
-
-        let r = !rule.enabled;
-
-        this.setRule(id, type, r);
-
-        return r;
+    async switchRule(id: number, rule: string): Promise<boolean> {
+        let nr = this.getNewsRule(rule);
+        let r = await this.getRule(id, rule);
+        let value = r.id ? !r.enabled : !nr.getDefault(id);
+        await this.upsert(r, { enabled: value });
+        return value;
     }
 
-    addFilter(id: number, type: string, filter: string): void {
-        let i = this.settings.findIndex(s => s.id == id);
-
-        this.settings[i].rules[type].filters.push(filter);
+    async addFilter(id: number, rule: string, filter: string): Promise<void> {
+        let r = await this.getRule(id, rule);
+        let filters = r.filters.split(";;");
+        filters.push(filter);
+        await this.upsert(r, { filters: filters.join(";;") });
     }
 
-    removeFilter(id: number, type: string, i2: number): void {
-        let i = this.settings.findIndex(s => s.id == id);
-
-        this.settings[i].rules[type].filters.splice(i2, 1);
+    async removeFilter(id: number, rule: string, i2: number): Promise<void> {
+        let r = await this.getRule(id, rule);
+        let filters = r.filters.split(";;");
+        if(i2 < 0)
+            throw "FUCK YOU";
+        if(filters.length < i2)
+            throw "ALSO FUCK YOU";
+        filters.splice(i2 - 1, 1);
+        await this.upsert(r, { filters: filters.join(";;") });
     }
 }

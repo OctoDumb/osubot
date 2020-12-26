@@ -24,8 +24,8 @@ export default class CompareCommand extends ServerCommand {
         };
     }
 
-    async run({ message, mapAPI, clean, args, chats }: IServerCommandArguments<ICompareCommandArguments>) {
-        let { username } = await getUserInfo(message, this.database, clean, args);
+    async run({ message, database, mapAPI, clean, args, chats }: IServerCommandArguments<ICompareCommandArguments>) {
+        let { username } = await getUserInfo(message, this.module.name, database, clean, args);
 
         let beatmapId = chats.getChatMap(message.peerId);
         if(!beatmapId)

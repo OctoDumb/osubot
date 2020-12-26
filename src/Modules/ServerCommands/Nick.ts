@@ -7,12 +7,28 @@ export default class NickCommand extends ServerCommand {
 
     description = "Привязать аккаунт";
 
-    async run({ message }: IServerCommandArguments<null>) {
+    async run({ message, database }: IServerCommandArguments<null>) {
         let username = message.arguments.join(" ");
         
         let user = await this.api.getUser({ username });
 
-        this.database.setNickname(message.sender, user.id, user.username);
+        let data = {
+            userId: message.sender,
+            playerId: user.id,
+            server: this.module.name,
+            nickname: user.username
+        };
+
+        let exists = (await database.serverConnection.count({ where: { playerId: user.id, server: this.module.name, nickname: user.username } })) > 0;
+        if(exists)
+            await database.serverConnection.updateMany({
+                data, where: {
+                    userId: message.sender,
+                    server: this.module.name
+                }
+            });
+        else
+            await database.serverConnection.create({ data })
         
         message.reply(`
             [Server: ${this.module.name}]

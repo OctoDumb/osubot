@@ -1,5 +1,4 @@
-import { IDBUser } from "../Database";
-import { IBeatmap } from "./MapAPI";
+import { ServerConnection } from "@prisma/client";
 
 export interface IUserAPIResponse {
     id: number,
@@ -43,6 +42,6 @@ export interface IScoreAPIResponse {
 }
 
 export interface ILeaderboardAPIResponse {
-    user: IDBUser,
+    user: ServerConnection,
     scores: IScoreAPIResponse[]
 }

@@ -1,15 +1,9 @@
 import Command from "./Command";
 import Message from "../Message";
 import Bot from "../Bot";
-import Banlist from "../Banlist";
+import { BanUtil } from "../Banlist";
 import dateformat from "dateformat";
-
-dateformat.i18n = {
-    monthNames: [
-        'Янв', 'Фев', 'Мар', 'Апр', 'Май', 'Июн', 'Июл', 'Авг', 'Сен', 'Окт', 'Нов', 'Дек',
-        'Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'
-    ]
-}
+import PermissionManager, { Permission } from "../Permissions";
 
 export default abstract class Module {
     abstract name: string;
@@ -23,12 +17,13 @@ export default abstract class Module {
         private bot: Bot,
     ) {}
 
+    permission: Permission = null;
+
     protected get database() { return this.bot.database; }
     protected get apilist() { return this.bot.api; }
 
     async run(message: Message, bot: Bot) {
         if(!this.prefix.includes(message.prefix)) return;
-        if(!this.isPermitted(message, bot)) return;
 
         if(message.command == "help"
             || message.command == "рудз") return this.help(message);
@@ -36,18 +31,15 @@ export default abstract class Module {
         let command = this.commands.find(c => c.command.includes(message.command));
         if(!command) return;
 
-        let ban = Banlist.getBanStatus(message.sender);
-        if(Banlist.isBanned(message.sender)) {
-            if(!ban.notified) {
-                message.reply(`
-                    Вы были забанены!
-                    Время окончания бана: ${dateformat(new Date(ban.until), "dd mmm yyyy HH:MM:ss 'MSK'")}
-                    Причина бана: ${ban.reason ?? "не указана"}
-                `);
-                Banlist.setNotified(message.sender);
-            }
+        if(this.permission || command.permission)
+            if(!PermissionManager.hasPermission(message.user.role.permissions, command.permission ?? this.permission)) return;
 
-            if(!command.ignoreBan) return;
+        let ban = await this.database.ban.findFirst({
+            where: { userId: message.sender }
+        });
+        if(BanUtil.isBanned(ban)) {
+            if(!command.ignoreBan 
+                && PermissionManager.hasPermission(message.user.role.permissions, Permission.IGNOREBAN)) return;
         }
         
         try {
@@ -67,9 +59,5 @@ export default abstract class Module {
 
             ${this.commands.map(c => `${c.name} - (${c.command.join(', ')}) - ${c.description}`).join('\n')}
         `);
-    }
-
-    isPermitted(message: Message, bot: Bot) {
-        return true;
     }
 }

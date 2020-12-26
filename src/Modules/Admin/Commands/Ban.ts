@@ -1,9 +1,10 @@
-import Banlist from "../../../Banlist";
+import Banlist, { BanUtil } from "../../../Banlist";
 import ICommandArguments from "../../../Commands/Arguments";
 import Command from "../../../Commands/Command";
 import Message from "../../../Message";
 import { stringDateToMs } from "../../../Util";
 import dateformat from "dateformat";
+import { Permission } from "../../../Permissions";
 
 const mention = /\[id(?<id>\d+)|.+\]/i;
 
@@ -14,7 +15,9 @@ export default class BanCommand extends Command {
     delay = 0;
     description = "";
 
-    async run({ message, vk }: ICommandArguments) {
+    permission = Permission.BAN;
+
+    async run({ message, database, vk }: ICommandArguments) {
         let id = message.forwarded?.senderId;
         if(message.arguments.length < 1) return message.reply("Недостаточно аргументов!");
         if(mention.test(message.arguments[0])) {
@@ -27,21 +30,8 @@ export default class BanCommand extends Command {
 
         let reason = message.arguments.join(" ");
 
-        let until = Banlist.addBan(id, duration, reason);
+        let until = await BanUtil.addBan(vk, database, id, duration, reason);
 
         message.reply(`[id${id}|Пользователь] забанен!`);
-
-        try {
-            await vk.api.messages.send({
-                peer_id: id,
-                message: Message.fixString(`
-                    Вы были забанены!
-                    Время окончания бана: ${dateformat(until, "dd mmm yyyy HH:MM:ss 'MSK'")}
-                    Причина бана: ${reason ? reason : "не указана"}
-                `),
-                ...Message.DefaultParams
-            });
-            Banlist.setNotified(id);
-        } catch(e) {}
     }
 }
