@@ -5,6 +5,7 @@ import Database, { IDBUser, Server } from "./Database";
 import { IPPResponse } from "./API/MapAPI";
 import Logger, { LogLevel } from "./Logger";
 import { PrismaClient, Role, Status, User } from "@prisma/client";
+import Config from "./Config";
 import { VK } from "vk-io";
 
 /**
@@ -96,14 +97,14 @@ export async function getUserInfo(message: Message, server: string, db: PrismaCl
     return { username, mode };
 }
 
-export async function getDBUser(config: IBotConfig, database: PrismaClient, id: number): Promise<User & { role: Role }> {
+export async function getDBUser(database: PrismaClient, id: number): Promise<User & { role: Role }> {
     let user = await database.user.findUnique({ where: { id }, include: { role: true } });
     if(!user)
         return await database.user.create({ 
             data: { 
                 id, role: { 
                     connect: { 
-                        id: config.vk.ownerId == id ? 2 : 1 
+                        id: Config.data.vk.ownerId == id ? 2 : 1 
                     } 
                 } 
             }, 

@@ -38,6 +38,7 @@ import TrackAPI from "./API/TrackAPI";
 import Logger, { LogLevel } from "./Logger";
 import Banlist, { BanUtil } from "./Banlist";
 import { PrismaClient } from "@prisma/client";
+import Config from "./Config";
 import { getDBUser } from "./Util";
 
 export interface IBotConfig {
@@ -73,17 +74,15 @@ interface IMapLink {
 }
 
 export default class Bot {
-    config: IBotConfig = JSON.parse(readFileSync("./config.json").toString());
-
     vk = new VK({
-        token: this.config.vk.token,
-        pollingGroupId: this.config.vk.groupId
+        token: Config.data.vk.token,
+        pollingGroupId: Config.data.vk.groupId
     });
 
     database = new PrismaClient();
     screenshotCreator = new ScreenshotCreator();
     api: IAPIList = {
-        bancho: new BanchoAPI(this.config.osu.token),
+        bancho: new BanchoAPI(Config.data.osu.token),
         gatari: new GatariAPI(),
         kurikku: new KurikkuAPI(),
         enjuu: new EnjuuAPI(),
@@ -131,7 +130,7 @@ export default class Bot {
     constructor() {
         this.vk.updates.on("message", async ctx => {
             try {
-                let user = await getDBUser(this.config, this.database, ctx.senderId);
+                let user = await getDBUser(this.database, ctx.senderId);
                 let message = new Message(ctx, user);
                 
                 let notifications = await this.database.notification.findMany({
@@ -188,8 +187,8 @@ export default class Bot {
 
         try {
             await this.v2.login(
-                this.config.osu.username,
-                this.config.osu.password
+                Config.data.osu.username,
+                Config.data.osu.password
             );
 
             Logger.log(LogLevel.MESSAGE, "[V2] Successfully logged in!");
