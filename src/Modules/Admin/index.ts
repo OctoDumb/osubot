@@ -1,5 +1,6 @@
 import Bot from "../../Bot";
 import Module from "../../Commands/Module";
+import Config from "../../Config";
 import Message from "../../Message";
 import BanCommand from "./Commands/Ban";
 import AdminEval from "./Commands/Eval";
@@ -28,7 +29,7 @@ export default class Admin extends Module {
     ];
 
     isPermitted(message: Message, bot: Bot) {
-        const { ownerId } = bot.config.vk;
+        const { ownerId } = Config.data.vk;
         const { sender } = message;
         return sender === ownerId || bot.privilegesManager.hasPrivilege(sender, "Owner");
     }

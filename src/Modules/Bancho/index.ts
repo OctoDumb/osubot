@@ -8,7 +8,7 @@ import CompareCommand from "../ServerCommands/Compare";
 import FindCommand from "../ServerCommands/Find";
 import ChatCommand from "../ServerCommands/Chat";
 import LeaderboardCommand from "../ServerCommands/Leaderboard";
-import TrackCommand from "./Track.ts";
+import TrackCommand from "./Track";
 
 export default class Bancho extends ServerModule {
     name = "Bancho";

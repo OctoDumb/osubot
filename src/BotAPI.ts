@@ -4,6 +4,7 @@ import cors from "cors";
 import Bot from "./Bot";
 import md5 from "md5";
 import Logger, { LogLevel } from "./Logger";
+import Config from "./Config";
 
 export default class BotAPI {
     private app = express();
@@ -20,7 +21,7 @@ export default class BotAPI {
         this.setContentType();
         this.createEndpoints();
 
-        let { api: config } = bot.config;
+        let { api: config } = Config.data;
 
         this.token = md5(config.password);
 
