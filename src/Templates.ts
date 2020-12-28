@@ -48,6 +48,8 @@ export function UserTemplate(server: ServerModule, user: IUserAPIResponse, statu
  * Message template for Top command 
  */
 export function TopTemplate(server: ServerModule, nickname: string, scores: ITopAPIResponse[], maps: IBeatmap[], status: Status) {
+    if(scores.length == 0)
+        return "Нет скоров!";
     return `
         [Server: ${server.name}]
         Топ скоры игрока ${nickname} ${status?.emoji ?? ''} [${scores[0].mode}]
