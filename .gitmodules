@@ -1,0 +1,3 @@
+[submodule "osubot-card-frontend"]
+	path = src/CardsFrontend
+	url = https://github.com/OctoDumb/osubot-card-frontend.git
