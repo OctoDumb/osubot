@@ -1,0 +1,78 @@
+@import "./_vars";
+
+* {
+    font-family: Torus;
+    box-sizing: border-box;
+}
+
+.star {
+    color: $grade-S;
+}
+
+@mixin grade($color) {
+    color: $color;
+    text-shadow: 0px 0px 5px $color;
+}
+
+.grade {
+    &-XH {
+        @include grade($grade-XH);
+    }
+    &-X {
+        @include grade($grade-X);
+    }
+    &-SH {
+        @include grade($grade-SH);
+    }
+    &-S {
+        @include grade($grade-S);
+    }
+    &-B {
+        @include grade($grade-B);
+    }
+    &-C {
+        @include grade($grade-C);
+    }
+    &-F {
+        @include grade($grade-F);
+    }
+}
+
+.hit {
+    &--320 {
+        &::after {
+            background: #0011ff;
+            box-shadow: 0px 0px 5px 2px#0011ff;
+        }
+    }
+    &--300 {
+        &::after {
+            background: #224bd4;
+            box-shadow: 0px 0px 5px 2px#224bd4;
+        }
+    }
+    &--200 {
+        &::after {
+            background: #b10af3;
+            box-shadow: 0px 0px 5px 2px#b10af3;
+        }
+    }
+    &--100 {
+        &::after {
+            background: #2cad18;
+            box-shadow: 0px 0px 5px 2px#2cad18;
+        }
+    }
+    &--50 {
+        &::after {
+            background: #cac827;
+            box-shadow: 0px 0px 5px 2px#cac827;
+        }
+    }
+    &--0 {
+        &::after {
+            background: #ff1414;
+            box-shadow: 0px 0px 5px 2px#ff1414;
+        }
+    }
+}

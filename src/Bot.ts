@@ -196,7 +196,7 @@ export default class Bot {
             Logger.log(LogLevel.ERROR, "[V2] Login failed!");
         }
 
-        // await this.screenshotCreator.launch();
+        await this.screenshotCreator.launch();
 
         // this.v2.data.start();
         Logger.assert(this.v2.logged, LogLevel.MESSAGE, `[V2] Updating V2 data every ${Math.floor(this.v2.data.interval / 1e3)} seconds`);

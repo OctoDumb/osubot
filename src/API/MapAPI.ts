@@ -3,6 +3,7 @@ import * as qs from "querystring";
 import Logger, { LogLevel } from "../Logger";
 
 export interface IBeatmap {
+    status: string;
     title: string
     artist: string
     creator: string

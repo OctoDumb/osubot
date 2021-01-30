@@ -1,0 +1,50 @@
+.diff {
+    &--std {
+        font-family: osu-modes;
+        &::before {
+            content: "\e902";
+        }
+    }
+    &--taiko {
+        font-family: osu-modes;
+        &::before {
+            content: "\e903";
+        }
+    }
+    &--ctb {
+        font-family: osu-modes;
+        &::before {
+            content: "\e904";
+        }
+    }
+    &--mania {
+        font-family: osu-modes;
+        &::before {
+            content: "\e901";
+        }
+    }
+}
+
+.diff-easy {
+    color: #88B300;
+}
+
+.diff-normal {
+    color: #66CCFF;
+}
+
+.diff-hard {
+    color: #FFCC22;
+}
+
+.diff-insane {
+    color: #FF66AA;
+}
+
+.diff-expert {
+    color: #8866EE;
+}
+
+.diff-expertplus {
+    color: #000000;
+}

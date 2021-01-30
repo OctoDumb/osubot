@@ -1,0 +1,247 @@
+@import "../../../globalStyles/index";
+
+.card {
+    width: 1570px;
+    height: 600px;
+    padding: 40px 20px;
+    background-color: $color1;
+    color: $color4;
+    font-size: 36px;
+    font-weight: 700;
+}
+
+.top {
+    position: relative;
+    display: flex;
+    flex-direction: row;
+    justify-content: center; 
+    align-items: center;
+    margin-bottom: 45px;
+}
+
+.top-left {
+    height: 100%;
+    padding-right: 30px;
+    display: flex;
+    flex-direction: column;
+    align-items:flex-end; 
+}
+
+.top-country {
+    color: $color5;
+    font-size: 24px;
+    font-weight: 600;
+    padding-top: 25px;
+    display: flex;
+    align-items:center; 
+}
+
+.top-country-img {
+    width: 70px;
+    height: 47px;
+    margin-left: 17px;
+    border-radius: 8px;
+    background: url("https://osu.ppy.sh/images/flags/DE.png") $color3;
+    background-position: center center;
+    background-size: contain;
+}
+
+.top-avatar {
+    position: relative;
+    box-sizing: content-box;
+    border: 8px solid $color2; 
+    width: 160px;
+    height: 160px;
+    padding: 1px;
+    border-radius: 15px;
+    background: url("https://a.ppy.sh/4504101?1604248526.jpeg") $color3;
+    background-position: center center;
+    background-size: contain;
+    &__mode {
+        position: absolute;
+        bottom: -30px;
+        left: -30px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 60px;
+        height: 60px;
+        border-radius: 50px;
+        background: $color2;
+        font-size: 44px;
+    }
+}
+
+.top-right {
+    height: 100%;
+    display: flex;
+    padding-left: 30px;
+    flex-direction: column;
+    align-items:flex-start;
+    font-weight: 600;
+    &--title {
+        font-size:32px;
+    }
+    &--value {
+        font-size:52px;       
+    }
+    &::before {
+        top: 28px;
+        position: absolute;
+        content: "";
+        width: 240px;
+        height: 4px;
+        background: $color3;
+        border-radius: 50px;
+        box-shadow: 0px 0px 5px 2px$color3;
+    }
+}   
+
+.scores {
+    display: flex;
+    flex-direction: column;
+}
+
+.score {
+    position: relative;
+    width:1416px;
+    height:100px;
+    background: url("https://assets.ppy.sh/beatmaps/1242733/covers/cover.jpg?1603546235") $color3;
+    background-position: center center;
+    background-size: cover;
+    border-radius: 15px;
+    display: flex;
+    justify-content: space-between;
+    &::before {
+        content: "";
+        position: absolute;
+        top: 0px;
+        left: 0px;
+        width: 100%;
+        height: 100%;
+        border-radius: 15px;
+        background-color:rgba(0,0,0,.7);
+        z-index: 2;
+    }
+    * {
+        position: relative;
+        z-index: 4;
+    }
+}
+
+.score-left {
+    width:204px;
+    background-color:$color2;
+    display: flex;
+    flex-direction: row;
+    align-items:center;
+    justify-content: space-around;
+    border-top-left-radius: 15px;
+    border-bottom-left-radius: 15px;
+    &::after {
+        content: "";
+        width: 20px;
+        height: 100%;
+        position: absolute;
+        right: -20px;
+        top: 0;
+        background-color: $color2;
+        clip-path: polygon(0% 0%, 100% 0%, 0% 50%, 0% 100%, 100% 100%, 0% 50%);
+    } 
+}
+
+.score-mods {
+    margin-right: 40px;
+    &__item {
+        transform: rotate(-15deg) scale(1.5);
+        margin-right: 20px;
+    }
+}
+
+.score-grade {
+    display: flex;
+    align-items: center;
+    padding-bottom: 14px;
+    font-size: 100px;
+    font-weight: 300;
+}
+
+.score-accuracy {
+    font-size: 36px;
+    font-weight: 700;
+}
+
+.score-container {
+    display: flex;
+    flex: 1;
+    padding-left: 30px;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.score-map {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    flex: 1;
+    &__name {
+        font-size: 38px;
+        font-weight: 500;
+    }
+    &__diff {
+        font-size: 30px;
+        font-weight: 500;
+        color: $color3;
+    }
+}
+
+.score-pp {
+    width:169px;
+    background-color:$color2;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border-top-right-radius: 15px;
+    border-bottom-right-radius: 15px;
+    &::after {
+        content: "";
+        width: 20px;
+        height: 100%;
+        position: absolute;
+        left: -20px;
+        top: 0;
+        background-color: $color2;
+        clip-path: polygon(100% 50%, 100% 100%, 0% 100%,100% 50%, 100% 0%, 0% 0%);
+    } 
+    &__mode {
+        position: absolute;
+        top: -20px;
+        left: -50px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 80px;
+        height: 35px;
+        border-radius: 5px;
+        background: $color2;
+        font-size: 44px;
+        transform: rotate(-8deg);
+        border-bottom: 3px solid #4c585d;
+        border-right: 3px solid #4c585d;
+    }
+    &__weight {
+        font-size: 24px;
+        font-weight: 600;
+    }
+    &__weighted {
+        font-size: 40px;
+        font-weight: 700;
+    }
+    &__full {
+        font-size: 24px;
+        font-weight: 700;
+        color:$color5;
+    }
+}

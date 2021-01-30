@@ -41,6 +41,7 @@ export interface ITopCommandArguments extends IArgumentsWithMode, IArgumentsWith
 export interface IRecentCommandArguments extends IArgumentsWithMode {
     pass?: boolean;
     place?: number;
+    card?: boolean;
 }
 
 export interface ICompareCommandArguments extends IArgumentsWithMode, IArgumentsWithMods {}
@@ -146,6 +147,12 @@ export const Parsers = {
         arg: "top",
         prefix: "-",
         parser: Number
+    },
+    card: {
+        arg: "card",
+        prefix: "-",
+        suffix: "card",
+        parser: Boolean
     }
 };
 

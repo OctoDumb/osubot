@@ -16,6 +16,7 @@ export default class ScreenshotCreator {
         await page.setContent(html, {
             waitUntil: "networkidle0"
         });
+
         const image = await page.screenshot({
             type: "jpeg",
             quality: 95,

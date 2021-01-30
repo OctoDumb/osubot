@@ -4,10 +4,14 @@ import Message from "../../Message";
 import Bot from "../../Bot";
 import { defaultArguments, getCover, getUserInfo, hitsToFail, modsToString } from "../../Util";
 import { RecentTemplate } from "../../Templates";
+import RecentCard from "../../Cards/Recent";
+import ScreenshotCreator from "../../ScreenshotCreator";
 
 export default class RecentCommand extends ServerCommand {
     name = "Recent";
     command = [ "r", "rp", "recent", "к", "кз", "кусуте" ];
+
+    card = new RecentCard("./CardsFrontend/cards/recent");
 
     description = "Последний плей";
 
@@ -18,12 +22,13 @@ export default class RecentCommand extends ServerCommand {
             ...parseArguments(message.arguments, [
                 Parsers.mode,
                 Parsers.place,
-                Parsers.pass
+                Parsers.pass,
+                Parsers.card
             ])
         };
     }
 
-    async run({ message, database, mapAPI, clean, args, vk, chats }: IServerCommandArguments<IRecentCommandArguments>) {
+    async run({ message, database, mapAPI, clean, args, vk, chats, screenshot }: IServerCommandArguments<IRecentCommandArguments>) {
         let { username, mode } = await getUserInfo(message, this.module.name, database, clean, args);
 
         let recents = await this.api.getRecent({ 
@@ -53,10 +58,25 @@ export default class RecentCommand extends ServerCommand {
             fail: hitsToFail(recent.counts, recent.mode)
         });
 
-        let msg = RecentTemplate(this.module, recent, map, pp);
+        if (args.card) {
+            const { id: playerId } = await this.api.getUser({ username, mode});
+            const card = this.card.create({ playerId, username,recent, map, pp });
 
-        message.reply(msg, {
-            attachment
-        });
+            const image = await screenshot.create(card, [500, 510]);
+            const uploadedImage = await vk.upload.messagePhoto({
+                source: image,
+                peer_id: message.peerId
+            })
+
+            message.reply("", {
+                attachment: uploadedImage.toString()
+            });
+        } else {
+            let msg = RecentTemplate(this.module, recent, map, pp);
+
+            message.reply(msg, {
+                attachment
+            });
+        }
     }
 }
