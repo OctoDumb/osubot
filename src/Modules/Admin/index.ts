@@ -9,6 +9,7 @@ import PrivilegesCommand from "./Commands/Priveleges";
 import AdminSQL from "./Commands/SQL";
 import AdminStatus from "./Commands/Status";
 import UnbanCommand from "./Commands/Unban";
+import AdminUsage from "./Commands/Usage";
 import AdminVKScripts from "./Commands/VKScripts";
 
 export default class Admin extends Module {
@@ -22,10 +23,11 @@ export default class Admin extends Module {
         new AdminEval(),
         new AdminSQL(),
         new AdminVKScripts(),
+        new AdminUsage(),
         new PrivilegesCommand(),
         new BanCommand(),
         new UnbanCommand(),
-        new AdminStatus()
+        new AdminStatus(),
     ];
 
     isPermitted(message: Message, bot: Bot) {
