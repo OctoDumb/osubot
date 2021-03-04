@@ -4,7 +4,7 @@ export default class ScreenshotCreator {
     browser: Browser;
 
     async launch() {
-        this.browser = await launch({ args: ["--no-sandbox"] });
+        this.browser = await launch({ args: [ "--no-sandbox" ] });
     }
 
     async create(
@@ -12,7 +12,7 @@ export default class ScreenshotCreator {
         size: [number, number]
     ): Promise<Buffer> {
         const page = await this.browser.newPage();
-        const [width, height] = size;
+        const [ width, height ] = size;
         await page.setContent(html, {
             waitUntil: "networkidle0"
         });

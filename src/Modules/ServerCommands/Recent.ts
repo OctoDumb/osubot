@@ -58,25 +58,23 @@ export default class RecentCommand extends ServerCommand {
             fail: hitsToFail(recent.counts, recent.mode)
         });
 
-        if (args.card) {
-            const { id: playerId } = await this.api.getUser({ username, mode});
-            const card = this.card.create({ playerId, username,recent, map, pp });
+        if(args.card) {
+            const { id: playerId } = await this.api.getUser({ username, mode });
+            const card = this.card.create({ playerId, username, recent, map, pp });
 
-            const image = await screenshot.create(card, [500, 510]);
+            const image = await screenshot.create(card, [ 500, 510 ]);
             const uploadedImage = await vk.upload.messagePhoto({
                 source: image,
                 peer_id: message.peerId
-            })
+            });
 
-            message.reply("", {
+            message.reply({
                 attachment: uploadedImage.toString()
             });
         } else {
             let msg = RecentTemplate(this.module, recent, map, pp);
 
-            message.reply(msg, {
-                attachment
-            });
+            message.reply(msg, { attachment });
         }
     }
 }

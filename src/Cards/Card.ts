@@ -25,16 +25,7 @@ export default abstract class Card<T> {
     }
 
     protected getGradeClassName(grade: string) {
-        switch (grade) {
-            case "XH": return "grade-XH";
-            case "X": return "grade-X";
-            case "SH": return "grade-SH";
-            case "S": return "grade-S";
-            case "A": return "grade-A";
-            case "B": return "grade-B";
-            case "C": return "grade-C";
-            case "F": return "grade-F";
-        }
+        return `grade-${grade}`;
     }
 
     protected convertGrade(grade: string) {

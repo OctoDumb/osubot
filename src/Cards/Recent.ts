@@ -1,7 +1,6 @@
 import Card from "./Card";
 import { IRecentAPIResponse } from "../API/APIResponse";
 import { IBeatmap, IPPResponse } from "../API/MapAPI";
-import { access } from "fs";
 
 export interface IRecentCardArgs {
     playerId: number;
@@ -14,7 +13,7 @@ export interface IRecentCardArgs {
 export default class RecentCard extends Card<IRecentCardArgs> {
     private modifyHeader(cardData: IRecentCardArgs) {
         this.document.querySelector(".beatmap-header__bg").setAttribute("style", `background-image: url(https://assets.ppy.sh/beatmaps/${cardData.map.beatmapsetID}/covers/cover.jpg?1)`);
-        const [status, keymode] = this.document.querySelectorAll(".beatmap-bubbles__item");
+        const [ status, keymode ] = this.document.querySelectorAll(".beatmap-bubbles__item");
         status.innerHTML = `${cardData.map.status}`;
 
         if (cardData.recent.mode === 3) {
@@ -23,7 +22,7 @@ export default class RecentCard extends Card<IRecentCardArgs> {
             keymode.setAttribute("style", "display: none");
         }
 
-        const [title, artist] = this.document.querySelectorAll(".beatmap-metadata__item");
+        const [ title, artist ] = this.document.querySelectorAll(".beatmap-metadata__item");
         title.innerHTML = cardData.map.title;
         artist.innerHTML = cardData.map.artist;
 
@@ -55,7 +54,7 @@ export default class RecentCard extends Card<IRecentCardArgs> {
     }
 
     private modifyStats(cardData: IRecentCardArgs) {
-        const [OD, AR, HP, CS] = this.document.querySelectorAll(".stat");
+        const [ OD, AR, HP, CS ] = this.document.querySelectorAll(".stat");
         OD.innerHTML = `OD: ${cardData.map.difficulty.od.toFixed(1)}`;
         AR.innerHTML = `AR: ${cardData.map.difficulty.ar.toFixed(1)}`;
         HP.innerHTML = `HP: ${cardData.map.difficulty.hp.toFixed(1)}`;
@@ -89,12 +88,12 @@ export default class RecentCard extends Card<IRecentCardArgs> {
         grade.classList.remove("grade-S");
         grade.classList.add(this.getGradeClassName(cardData.recent.rank));
 
-        const [acc, combo, score] = this.document.querySelectorAll(".score-data-stats__values span");
+        const [ acc, combo, score ] = this.document.querySelectorAll(".score-data-stats__values span");
         acc.innerHTML = `${(cardData.recent.accuracy * 100).toFixed(2)}%`;
         combo.innerHTML = `${cardData.recent.maxCombo}x`;
         score.innerHTML = `${cardData.recent.score}`;
 
-        const [h320, h300, h200, h100, h50, h0] = this.document.querySelectorAll(".hitcounts-col__item");
+        const [ h320, h300, h200, h100, h50, h0 ] = this.document.querySelectorAll(".hitcounts-col__item");
         h320.innerHTML = String(cardData.recent.counts.geki);
         h300.innerHTML = String(cardData.recent.counts[300]);
         h200.innerHTML = String(cardData.recent.counts.katu);
@@ -107,7 +106,7 @@ export default class RecentCard extends Card<IRecentCardArgs> {
     }
 
     private modifyFooter(cardData: IRecentCardArgs) {
-        const [PP, FC, SS] = this.document.querySelectorAll(".beatmap-pp__item--value");
+        const [ PP, FC, SS ] = this.document.querySelectorAll(".beatmap-pp__item--value");
         PP.innerHTML = `${cardData.pp.pp.toFixed(0)}`;
         FC.innerHTML = `${cardData.pp.fcpp.toFixed(0)}`;
         SS.innerHTML = `${cardData.pp.sspp.toFixed(0)}`;
