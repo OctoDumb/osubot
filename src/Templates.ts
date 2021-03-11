@@ -60,7 +60,7 @@ export function TopTemplate(server: ServerModule, nickname: string, scores: ITop
             return `
                 ${map.artist} - ${map.title} [${map.version}] ${modsString}
                 ${statsToString(map.mode, map.difficulty)} ${round(map.difficulty.stars)}✩
-                Grade: ${score.rank} > ${formatCombo(score.maxCombo, map.maxCombo)} > ${length}
+                Grade: ${score.rank.replace('X', 'SS')} > ${formatCombo(score.maxCombo, map.maxCombo)} > ${length}
                 Accuracy: ${round(score.accuracy * 100)}% > ${hitsToString(score.counts, score.mode)}
                 PP: ${score.pp}
                 ${formatDate(score.date)}
@@ -86,7 +86,7 @@ export function TopSingleTemplate(server: ServerModule, nickname: string, score:
         Score: ${score.score} | Combo: ${formatCombo(score.maxCombo, map.maxCombo)}
         Accuracy: ${round(score.accuracy * 100)}%
         Hitcounts: ${hitsToString(score.counts, score.mode)}
-        PP: ${score.pp} | Grade: ${score.rank}
+        PP: ${score.pp} | Grade: ${score.rank.replace('X', 'SS')}
 
         ${server.baseLink}b/${score.beatmapId}
     `
@@ -107,7 +107,7 @@ export function RecentTemplate(server: ServerModule, recent: IRecentAPIResponse,
         Accuracy: ${round(recent.accuracy * 100)}%
         ${formatPP(pp)}
         Hitcounts: ${hitsToString(recent.counts, recent.mode)}
-        Grade: ${recent.rank} ${recent.rank == "F" ? `(${round(pp.progress * 100)}%)` : ''}
+        Grade: ${recent.rank.replace('X', 'SS')} ${recent.rank == "F" ? `(${round(pp.progress * 100)}%)` : ''}
 
         Beatmap: ${server.baseLink}b/${recent.beatmapId}
     `;
@@ -129,7 +129,7 @@ export function CompareScoreTemplate(server: ServerModule, score: IScoreAPIRespo
         Accuracy: ${round(score.accuracy * 100)}%
         ${formatPP(pp)}
         Hitcounts: ${hitsToString(score.counts, score.mode)}
-        Grade: ${score.rank}
+        Grade: ${score.rank.replace('X', 'SS')}
     `;
 }
 
