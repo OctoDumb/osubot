@@ -20,23 +20,23 @@ export default class MapLinkProcessor {
     api = this.bot.v2;
 
     checkLink(message: Message, ctx: MessageContext): IMapLink | null {
-        let variations = [
-            'beatmapsets/(?<setId>[0-9]+)#\d+/(?<mapId>[0-9]+)',
-            'b/(?<mapId>[0-9]+)',
-            's/(?<setId>[0-9]+)'
+        let regExps = [
+            /beatmapsets\/(?<setId>\d+)#\D+\/(?<mapId>\d+)/,
+            /b\/(?<mapId>\d+)/,
+            /s\/(?<setId>\d+)/,
         ];
-        let rx = this.bot.modules
-            .filter(m => m instanceof ServerModule)
-            .flatMap ((m: ServerModule) => variations.map(v => new RegExp(`${m.baseLink}${v}`)));
 
-        for(let r of rx) {
-            if(r.exec(message.clean)) {
-                let g = message.clean.match(r).groups;
+        for(let r of regExps) {
+            let [firstLine] = message.clean.split("\n");
+
+            if(r.test(firstLine)) {
+                let g = firstLine.match(r).groups;
                 return {
                     beatmapsetId: Number(g.setId),
                     beatmapId: Number(g.mapId)
                 }
             }
+
             for(let a of ctx.getAttachments(AttachmentType.LINK)) {
                 if(r.exec(a.url)) {
                     let g = a.url.match(r).groups;
@@ -54,7 +54,7 @@ export default class MapLinkProcessor {
     async process(message: Message, mapLink: IMapLink) {
         let { beatmapsetId, beatmapId } = mapLink;
         
-        if (beatmapsetId) {
+        if (beatmapsetId && !beatmapId) {
             let mapset = await this.api.getBeatmapset({ beatmapsetId });
             let attachment = await getCover(this.bot.database, this.bot.vk, beatmapsetId);
             mapset = this.cutBeatmapset(mapset);
