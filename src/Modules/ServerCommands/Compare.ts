@@ -1,4 +1,4 @@
-import { IAPIWithScores } from "../../API/ServerAPI";
+import { APIWithScores } from "../../API/ServerAPI";
 import Bot from "../../Bot";
 import { ICompareCommandArguments, IServerCommandArguments, parseArguments, Parsers } from "../../Commands/Arguments";
 import ServerCommand from "../../Commands/Server/ServerCommand";
@@ -7,7 +7,7 @@ import { CompareScoreTemplate } from "../../Templates";
 import { defaultArguments, getUserInfo, modsEqual, modsToString } from "../../Util";
 
 export default class CompareCommand extends ServerCommand {
-    api: IAPIWithScores;
+    api: APIWithScores;
 
     name = "Compare";
     command = ["c", "compare"];
@@ -35,8 +35,6 @@ export default class CompareCommand extends ServerCommand {
             username,
             beatmapId
         });
-
-        console.log(args);
 
         let score = args.mods !== undefined
             ? scores.find(s => modsEqual(s.mods, args.mods))

@@ -1,11 +1,11 @@
-import IServerAPI, { IAPIWithScores, API } from "../ServerAPI";
-import Axios from "axios";
-import { IUserRequestParams, ITopRequestParams, IRecentRequestParams, IScoreRequestParams, ILeaderboardRequestParams } from "../RequestParams";
-import { IUserAPIResponse, ITopAPIResponse, IRecentAPIResponse, IScoreAPIResponse, ILeaderboardAPIResponse } from "../APIResponse";
+import { APIWithScores } from "../ServerAPI";
+import { IUserRequestParams, ITopRequestParams, IRecentRequestParams, IScoreRequestParams } from "../RequestParams";
+import { IUserAPIResponse, ITopAPIResponse, IRecentAPIResponse, IScoreAPIResponse } from "../APIResponse";
 import { stringify } from "querystring";
 import { APINotFoundError } from "../APIErrors";
+import Axios from "axios";
 
-export default class EnjuuAPI extends API implements IServerAPI, IAPIWithScores {
+export default class EnjuuAPI extends APIWithScores {
     api = Axios.create({
         baseURL: "https://enjuu.click/api"
     });
@@ -74,31 +74,5 @@ export default class EnjuuAPI extends API implements IServerAPI, IAPIWithScores 
             data = data.filter(p => p.enabled_mods == mods);
         
         return data.map(d => this.adaptScore(d, mode ?? 0));
-    }
-
-    async getLeaderboard({
-        beatmapId,
-        users
-    }: ILeaderboardRequestParams): Promise<ILeaderboardAPIResponse[]> {
-        let scores: ILeaderboardAPIResponse[] = [];
-        try {
-            let lim = Math.ceil(users.length / 5);
-            for(var i = 0; i < lim; i++) {
-                try {
-                    let lb: ILeaderboardAPIResponse[] = users.splice(0, 5).map(user => ({ user, scores: [] }));
-                    let sc: (IScoreAPIResponse[] | Error | string)[] = await Promise.all(
-                        lb.map(u => this.getScores({
-                            username: u.user.nickname,
-                            beatmapId
-                        }).catch(e => e))
-                    );
-                    for(let j = 0; j < lb.length; j++)
-                        lb[j].scores = <IScoreAPIResponse[]>sc[j];
-                    scores.push(...lb.filter(s => typeof s.scores != "string" && !(s.scores instanceof Error)))
-                } catch(e) {}
-            }
-        } catch(e) {}
-
-        return scores;
     }
 }

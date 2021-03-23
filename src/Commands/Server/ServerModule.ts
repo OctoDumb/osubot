@@ -1,9 +1,9 @@
 import Module from "../Module";
 import ServerCommand from "./ServerCommand";
-import IServerAPI from "../../API/ServerAPI";
+import { API, APIWithScores } from "../../API/ServerAPI";
 
 export default abstract class ServerModule extends Module {
-    api: IServerAPI;
+    api: API;
 
     abstract baseLink: string;
 

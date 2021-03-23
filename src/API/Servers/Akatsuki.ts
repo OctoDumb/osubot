@@ -1,12 +1,12 @@
-import IServerAPI, { API } from "../ServerAPI";
-import Axios from "axios";
+import { API } from "../ServerAPI";
 import { IUserRequestParams, ITopRequestParams, IRecentRequestParams } from "../RequestParams";
 import { IUserAPIResponse, ITopAPIResponse, IRecentAPIResponse } from "../APIResponse";
 import { stringify } from "querystring";
 import { APINotFoundError } from "../APIErrors";
 import { getAccuracy } from "../../Util";
+import Axios from "axios";
 
-export default class AkatsukiAPI extends API implements IServerAPI {
+export default class AkatsukiAPI extends API {
     api = Axios.create({
         baseURL: "https://akatsuki.pw/api/v1"
     });

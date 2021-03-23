@@ -4,12 +4,12 @@ import { IServerCommandArguments, parseArguments, Parsers, IArgumentsWithMods } 
 import Bot from "../../Bot";
 import { defaultArguments } from "../../Util";
 import { IDBUser } from "../../Database";
-import { IAPIWithScores } from "../../API/ServerAPI";
+import { APIWithScores } from "../../API/ServerAPI";
 import { LeaderboardTemplate } from "../../Templates";
 import { ServerConnection } from "@prisma/client";
 
 export default class LeaderboardCommand extends ServerCommand {
-    api: IAPIWithScores;
+    api: APIWithScores;
     
     name = "Leaderboard";
     command = [ "leaderboard", "lb", "дуфвукищфкв", "ди" ];

@@ -1,4 +1,4 @@
-import { AxiosInstance } from "axios";
+import Axios, { AxiosInstance } from "axios";
 import { 
     IUserRequestParams,
     ITopRequestParams,
@@ -15,19 +15,13 @@ import {
 } from "./APIResponse";
 import { getAccuracy } from "../Util";
 
-export default interface IServerAPI {
-    api: AxiosInstance;
-    getUser(params: IUserRequestParams): Promise<IUserAPIResponse>;
-    getTop(params: ITopRequestParams): Promise<ITopAPIResponse[]>;
-    getRecent(params: IRecentRequestParams): Promise<IRecentAPIResponse[]>;
-}
-
-export interface IAPIWithScores extends IServerAPI {
-    getScores(params: IScoreRequestParams): Promise<IScoreAPIResponse[]>;
-    getLeaderboard(params: ILeaderboardRequestParams): Promise<ILeaderboardAPIResponse[]>;
-}
-
 export abstract class API {
+    abstract api: AxiosInstance;
+
+    abstract getUser(params: IUserRequestParams): Promise<IUserAPIResponse>;
+    abstract getTop(params: ITopRequestParams): Promise<ITopAPIResponse[]>;
+    abstract getRecent(params: IRecentRequestParams): Promise<IRecentAPIResponse[]>;
+
     protected adaptScore(
         scoreData, 
         mode: number
@@ -71,5 +65,35 @@ export abstract class API {
             accuracy: Number(userData.accuracy),
             level: Number(userData.level)
         }
+    }
+}
+
+export abstract class APIWithScores extends API {
+    abstract getScores(params: IScoreRequestParams): Promise<IScoreAPIResponse[]>;
+
+    async getLeaderboard({
+        beatmapId,
+        users
+    }: ILeaderboardRequestParams): Promise<ILeaderboardAPIResponse[]> {
+        let scores: ILeaderboardAPIResponse[] = [];
+        try {
+            let lim = Math.ceil(users.length / 5);
+            for(var i = 0; i < lim; i++) {
+                try {
+                    let lb: ILeaderboardAPIResponse[] = users.splice(0, 5).map(user => ({ user, scores: [] }));
+                    let sc: (IScoreAPIResponse[] | Error | string)[] = await Promise.all(
+                        lb.map(u => this.getScores({
+                            username: u.user.nickname,
+                            beatmapId
+                        }).catch(e => e))
+                    );
+                    for(let j = 0; j < lb.length; j++)
+                        lb[j].scores = <IScoreAPIResponse[]>sc[j];
+                    scores.push(...lb.filter(s => typeof s.scores != "string" && !(s.scores instanceof Error)))
+                } catch(e) {}
+            }
+        } catch(e) {}
+
+        return scores;
     }
 }

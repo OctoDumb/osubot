@@ -171,7 +171,9 @@ export default class Bot {
                         }
                     }
                 }
-            } catch(e) {}
+            } catch(e) {
+                console.log(e)
+            }
         });
     }
 
