@@ -8,11 +8,11 @@ import PrivilegesManager from "../Privileges";
 import ScreenshotCreator from "../ScreenshotCreator";
 import TrackAPI from "../API/TrackAPI";
 import BanchoV2API from "../API/Servers/BanchoV2";
-import { PrismaClient } from "@prisma/client";
+import { Connection } from "typeorm";
 
 export default interface ICommandArguments {
     message: Message;
-    database: PrismaClient;
+    database: Connection;
     mapAPI: MapAPI;
     news: NewsController;
     vk: VK;

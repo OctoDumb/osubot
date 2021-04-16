@@ -1,3 +1,5 @@
+import "reflect-metadata";
+
 import Bot from "./src/Bot";
 import Logger, { LogLevel } from "./src/Logger";
 

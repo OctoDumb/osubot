@@ -5,6 +5,9 @@ import Bot from "./Bot";
 import md5 from "md5";
 import Logger, { LogLevel } from "./Logger";
 import Config from "./Config";
+import { ServerConnection } from "./Database/entity/ServerConnection";
+import { Stats } from "./Database/entity/Stats";
+import { Cover } from "./Database/entity/Cover";
 
 export default class BotAPI {
     private app = express();
@@ -58,44 +61,44 @@ export default class BotAPI {
         });
 
         this.app.get('/db', this.auth.bind(this), async (_req, res) => {
-            let { database: db } = this.bot;
-            await db.serverConnection.count({ where: { server: "Bancho" } })
+            // let { database: db } = this.bot;
+            await ServerConnection.findAndCount({ where: { server: "Bancho" } });
             res.send({
                 users: {
-                    bancho: await db.serverConnection.count({ where: { server: "Bancho" } }),
-                    gatari: await db.serverConnection.count({ where: { server: "Gatari" } }),
-                    ripple: await db.serverConnection.count({ where: { server: "Ripple" } }),
-                    akatsuki: await db.serverConnection.count({ where: { server: "Akatsuki" } }),
-                    kurikku: await db.serverConnection.count({ where: { server: "Kurikku" } }),
-                    enjuu: await db.serverConnection.count({ where: { server: "Enjuu" } })
+                    bancho: await ServerConnection.count({ where: { server: "Bancho" } }),
+                    gatari: await ServerConnection.count({ where: { server: "Gatari" } }),
+                    ripple: await ServerConnection.count({ where: { server: "Ripple" } }),
+                    akatsuki: await ServerConnection.count({ where: { server: "Akatsuki" } }),
+                    kurikku: await ServerConnection.count({ where: { server: "Kurikku" } }),
+                    enjuu: await ServerConnection.count({ where: { server: "Enjuu" } })
                 },
                 stats: {
-                    bancho: await db.stats.count({ where: { server: "Bancho" } }),
-                    gatari: await db.stats.count({ where: { server: "Gatari" } }),
-                    ripple: await db.stats.count({ where: { server: "Ripple" } }),
-                    akatsuki: await db.stats.count({ where: { server: "Akatsuki" } }),
-                    kurikku: await db.stats.count({ where: { server: "Kurikku" } }),
-                    enjuu: await db.stats.count({ where: { server: "Enjuu" } })
+                    bancho: await Stats.count({ where: { server: "Bancho" } }),
+                    gatari: await Stats.count({ where: { server: "Gatari" } }),
+                    ripple: await Stats.count({ where: { server: "Ripple" } }),
+                    akatsuki: await Stats.count({ where: { server: "Akatsuki" } }),
+                    kurikku: await Stats.count({ where: { server: "Kurikku" } }),
+                    enjuu: await Stats.count({ where: { server: "Enjuu" } })
                 },
-                covers: await db.cover.count()
+                covers: await Cover.count()
             });
         });
 
-        this.app.post('/db/get', this.auth.bind(this), async (req, res) => {
-            if(req.body?.query == null) 
-                return res.status(400).send({ "error": "Missing query" });
-            var result = await this.bot.database.$queryRaw(req.body.query);
+        // this.app.post('/db/get', this.auth.bind(this), async (req, res) => {
+        //     if(req.body?.query == null) 
+        //         return res.status(400).send({ "error": "Missing query" });
+        //     var result = await this.bot.database.$queryRaw(req.body.query);
 
-            res.send({ result })
-        });
+        //     res.send({ result })
+        // });
 
-        this.app.post('/db/run', this.auth.bind(this), async (req, res) => {
-            if(req.body?.query == null) 
-                return res.status(400).send({ "error": "Missing query" });
-            var result = await this.bot.database.$executeRaw(req.body.query);
+        // this.app.post('/db/run', this.auth.bind(this), async (req, res) => {
+        //     if(req.body?.query == null) 
+        //         return res.status(400).send({ "error": "Missing query" });
+        //     var result = await this.bot.database.$executeRaw(req.body.query);
 
-            res.send({ result })
-        });
+        //     res.send({ result })
+        // });
 
         this.app.get('/uses', this.auth.bind(this), (_req, res) => {
             res.send(this.bot.modules.map(m => ({
