@@ -22,8 +22,6 @@ import EnjuuAPI from "./API/Servers/Enjuu";
 import RippleAPI from "./API/Servers/Ripple";
 import AkatsukiAPI from "./API/Servers/Akatsuki";
 import AkatsukiRelaxAPI from "./API/Servers/AkatsukiRelax";
-//import "./Modules/Akatsuki.module";
-import AkatsukiRelax from "./Modules/AkatsukiRelax.module";
 import BanchoV2API from "./API/Servers/BanchoV2";
 import ScreenshotCreator from "./ScreenshotCreator";
 import TrackAPI from "./API/TrackAPI";
