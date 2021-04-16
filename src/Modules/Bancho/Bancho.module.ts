@@ -9,7 +9,9 @@ import FindCommand from "../ServerCommands/Find";
 import ChatCommand from "../ServerCommands/Chat";
 import LeaderboardCommand from "../ServerCommands/Leaderboard";
 import TrackCommand from "./Track";
+import { ModuleDecorator } from "..";
 
+@ModuleDecorator
 export default class Bancho extends ServerModule {
     name = "Bancho";
     prefix = ["s", "ы"];

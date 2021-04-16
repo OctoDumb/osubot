@@ -6,16 +6,18 @@ import ModeCommand from "./ServerCommands/Mode";
 import RecentCommand from "./ServerCommands/Recent";
 import CompareCommand from "./ServerCommands/Compare";
 import FindCommand from "./ServerCommands/Find";
+import { ModuleDecorator } from ".";
 
-export default class Ripple extends ServerModule {
-    name = "Ripple";
-    prefix = ["r", "к"];
+@ModuleDecorator
+export default class Kurikku extends ServerModule {
+    name = "Kurikku";
+    prefix = ["k", "л"];
 
-    baseLink = "https://ripple.moe/";
+    baseLink = "https://kurikku.pw/";
 
     description = "";
 
-    api = this.apilist.ripple;
+    api = this.apilist.kurikku;
 
     commands = [
         new NickCommand(this),

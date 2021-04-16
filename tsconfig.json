@@ -6,6 +6,8 @@
         "target": "ES2019",
         "skipLibCheck": true,
         "sourceMap": true,
-        "esModuleInterop": true
+        "esModuleInterop": true,
+        "experimentalDecorators": true,
+        "emitDecoratorMetadata": true
     }
 }

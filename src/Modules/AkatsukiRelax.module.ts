@@ -2,7 +2,9 @@ import ServerModule from "../Commands/Server/ServerModule";
 import UserCommand from "./ServerCommands/User";
 import TopCommand from "./ServerCommands/Top";
 import RecentCommand from "./ServerCommands/Recent";
+import { ModuleDecorator } from ".";
 
+@ModuleDecorator
 export default class AkatsukiRelax extends ServerModule {
     name = "Akatsuki relax";
     prefix = ["ax", "фч"];

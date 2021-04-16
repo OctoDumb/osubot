@@ -4,7 +4,9 @@ import MainNews from "./Commands/News";
 import MainSearch from "./Commands/Search";
 import MainStatus from "./Commands/Status";
 import MainUptime from "./Commands/Uptime";
+import { ModuleDecorator } from "..";
 
+@ModuleDecorator
 export default class Main extends Module {
     name = "Main";
     prefix = [ "osu", "щыг" ];

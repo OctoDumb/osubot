@@ -6,16 +6,19 @@ import ModeCommand from "./ServerCommands/Mode";
 import RecentCommand from "./ServerCommands/Recent";
 import CompareCommand from "./ServerCommands/Compare";
 import FindCommand from "./ServerCommands/Find";
+import ChatCommand from "./ServerCommands/Chat";
+import { ModuleDecorator } from ".";
 
-export default class Gatari extends ServerModule {
-    name = "Gatari";
-    prefix = ["g", "п"];
+@ModuleDecorator
+export default class Enjuu extends ServerModule {
+    name = "Enjuu";
+    prefix = ["e", "у"];
 
-    baseLink = "https://osu.gatari.pw/";
+    baseLink = "https://enjuu.click/";
 
     description = "";
 
-    api = this.apilist.gatari;
+    api = this.apilist.enjuu;
 
     commands = [
         new NickCommand(this),
@@ -24,6 +27,7 @@ export default class Gatari extends ServerModule {
         new TopCommand(this),
         new RecentCommand(this),
         new CompareCommand(this),
-        new FindCommand(this)
+        new FindCommand(this),
+        new ChatCommand(this)
     ];
 }

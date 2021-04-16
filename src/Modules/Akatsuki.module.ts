@@ -7,7 +7,9 @@ import RecentCommand from "./ServerCommands/Recent";
 import CompareCommand from "./ServerCommands/Compare";
 import FindCommand from "./ServerCommands/Find";
 import ChatCommand from "./ServerCommands/Chat";
+import { ModuleDecorator } from ".";
 
+@ModuleDecorator
 export default class Akatsuki extends ServerModule {
     name = "Akatsuki";
     prefix = ["a", "ф"];

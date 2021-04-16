@@ -13,15 +13,7 @@ import StandaloneCommand from "./Commands/StandaloneCommand";
 import MapCommand from "./StandaloneCommands/Map";
 import MapLinkProcessor from "./MapLinkProcessor";
 
-import Admin from "./Modules/Admin";
-import Main from "./Modules/Main";
-
 import Module from "./Commands/Module";
-import Bancho from "./Modules/Bancho";
-import Gatari from "./Modules/Gatari"
-import Kurikku from "./Modules/Kurikku";
-import Ripple from "./Modules/Ripple";
-import Enjuu from "./Modules/Enjuu";
 
 import BanchoAPI from "./API/Servers/Bancho";
 import GatariAPI from "./API/Servers/Gatari";
@@ -30,8 +22,8 @@ import EnjuuAPI from "./API/Servers/Enjuu";
 import RippleAPI from "./API/Servers/Ripple";
 import AkatsukiAPI from "./API/Servers/Akatsuki";
 import AkatsukiRelaxAPI from "./API/Servers/AkatsukiRelax";
-import Akatsuki from "./Modules/Akatsuki";
-import AkatsukiRelax from "./Modules/AkatsukiRelax";
+//import "./Modules/Akatsuki.module";
+import AkatsukiRelax from "./Modules/AkatsukiRelax.module";
 import BanchoV2API from "./API/Servers/BanchoV2";
 import ScreenshotCreator from "./ScreenshotCreator";
 import TrackAPI from "./API/TrackAPI";
@@ -39,7 +31,11 @@ import Logger, { LogLevel } from "./Logger";
 import Banlist, { BanUtil } from "./Banlist";
 import { PrismaClient } from "@prisma/client";
 import Config from "./Config";
-import { getDBUser } from "./Util";
+import { getDBUser, importClassesFromDirectories } from "./Util";
+import "./Modules";
+import { ModulesManager } from "./Modules";
+
+importClassesFromDirectories([__dirname + "/Modules/**/*.module.ts"]);
 
 export interface IBotConfig {
     vk: {
@@ -95,17 +91,7 @@ export default class Bot {
 
     track = new TrackAPI();
     
-    modules: Module[] = [ 
-        Main, 
-        Admin, 
-        Bancho,
-        Gatari,
-        Kurikku,
-        Enjuu,
-        Ripple,
-        Akatsuki,
-        AkatsukiRelax
-    ].map(m => new m(this));
+    modules: Module[] = ModulesManager.getInstances(this);
 
     commands: StandaloneCommand[] = [
         new MapCommand()

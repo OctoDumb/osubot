@@ -1,3 +1,4 @@
+import * as path from "path";
 import Message from "./Message";
 import Bot, { IBotConfig } from "./Bot";
 import { IHitCounts, IUserAPIResponse } from "./API/APIResponse";
@@ -7,6 +8,7 @@ import Logger, { LogLevel } from "./Logger";
 import { PrismaClient, Role, Status, User } from "@prisma/client";
 import Config from "./Config";
 import { VK } from "vk-io";
+import { glob } from "glob";
 
 /**
  * Mods bitwise enum
@@ -408,4 +410,39 @@ export function stringDateToMs(s: string): number {
         (parseInt(m.groups.d ?? "0")) * 24 * 60 +
         (parseInt(m.groups.h ?? "0")) * 60 +
         (parseInt(m.groups.m ?? "0"))) * 60 * 1e3;
+}
+
+export function importClassesFromDirectories(directories: string[], formats = [".js", ".cjs", ".ts"], log = false): Function[] {
+    const classesNotFoundMessage = "No classes were found using the provided glob pattern: ";
+    const classesFoundMessage = "All classes found using provided glob pattern";
+
+    function loadFileClasses(exported: any, allLoaded: Function[]) {
+        if (Array.isArray(exported)) {
+            exported.forEach((i: any) => loadFileClasses(i, allLoaded));
+        } else if (typeof exported === "object" && exported !== null) {
+            Object.keys(exported).forEach(key => loadFileClasses(exported[key], allLoaded));
+        }
+        return allLoaded;
+    }
+
+    const allFiles = directories.reduce((allDirs, dir) => {
+        return allDirs.concat(glob.sync(path.normalize(dir)));
+    }, [] as string[]);
+
+    if (log) {
+        if (directories.length > 0 && allFiles.length === 0) {
+            console.log(`${classesNotFoundMessage} "${directories}"`);
+        } else if (allFiles.length > 0) {
+            console.log(`${classesFoundMessage} "${directories}" : "${allFiles}"`);
+        }
+    }
+
+    const dirs = allFiles
+        .filter(file => {
+            const dtsExtension = file.substring(file.length - 5, file.length);
+            return formats.indexOf(path.extname(file)) !== -1 && dtsExtension !== ".d.ts";
+        })
+        .map(file => require(path.resolve(file)));
+
+    return loadFileClasses(dirs, []);
 }

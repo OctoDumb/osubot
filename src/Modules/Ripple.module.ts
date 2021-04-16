@@ -6,17 +6,18 @@ import ModeCommand from "./ServerCommands/Mode";
 import RecentCommand from "./ServerCommands/Recent";
 import CompareCommand from "./ServerCommands/Compare";
 import FindCommand from "./ServerCommands/Find";
-import ChatCommand from "./ServerCommands/Chat";
+import { ModuleDecorator } from ".";
 
-export default class Enjuu extends ServerModule {
-    name = "Enjuu";
-    prefix = ["e", "у"];
+@ModuleDecorator
+export default class Ripple extends ServerModule {
+    name = "Ripple";
+    prefix = ["r", "к"];
 
-    baseLink = "https://enjuu.click/";
+    baseLink = "https://ripple.moe/";
 
     description = "";
 
-    api = this.apilist.enjuu;
+    api = this.apilist.ripple;
 
     commands = [
         new NickCommand(this),
@@ -25,7 +26,6 @@ export default class Enjuu extends ServerModule {
         new TopCommand(this),
         new RecentCommand(this),
         new CompareCommand(this),
-        new FindCommand(this),
-        new ChatCommand(this)
+        new FindCommand(this)
     ];
 }

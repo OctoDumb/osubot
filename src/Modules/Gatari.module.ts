@@ -6,16 +6,18 @@ import ModeCommand from "./ServerCommands/Mode";
 import RecentCommand from "./ServerCommands/Recent";
 import CompareCommand from "./ServerCommands/Compare";
 import FindCommand from "./ServerCommands/Find";
+import { ModuleDecorator } from ".";
 
-export default class Kurikku extends ServerModule {
-    name = "Kurikku";
-    prefix = ["k", "л"];
+@ModuleDecorator
+export default class Gatari extends ServerModule {
+    name = "Gatari";
+    prefix = ["g", "п"];
 
-    baseLink = "https://kurikku.pw/";
+    baseLink = "https://osu.gatari.pw/";
 
     description = "";
 
-    api = this.apilist.kurikku;
+    api = this.apilist.gatari;
 
     commands = [
         new NickCommand(this),
