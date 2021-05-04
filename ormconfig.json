@@ -4,13 +4,13 @@
     "synchronize": false,
     "logging": false,
     "entities": [
-       "src/Database/entity/**/*.ts"
+        "dist/src/Database/entity/**/*.{js,ts}"
     ],
     "migrations": [
-       "src/Database/migration/**/*.ts"
+        "dist/src/Database/migration/**/*.{js,ts}"
     ],
     "cli": {
-       "entitiesDir": "src/Database/entity",
-       "migrationsDir": "src/Database/migration"
+        "entitiesDir": "dist/src/Database/entity",
+        "migrationsDir": "dist/src/Database/migration"
     }
- }
+}

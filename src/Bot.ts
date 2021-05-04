@@ -128,8 +128,49 @@ export default class Bot {
     }
 
     public privilegesManager = new PrivilegesManager();
-    
-    constructor() {
+
+    async start() {
+        try {
+            this.database = await createConnection();
+            Logger.log(LogLevel.MESSAGE, "[DB] Database connection successful");
+        } catch(e) {
+            Logger.log(LogLevel.ERROR, "[DB] Database connection failed");
+        }
+
+        try {
+            await this.vk.updates.start();
+
+            this.startTime = Date.now();
+            Logger.log(LogLevel.MESSAGE, "[BOT] VK Long Poll listening");
+        } catch(e) {
+            console.log(e);
+            Logger.log(LogLevel.ERROR, "[BOT] VK Long Poll connection failed");
+        }
+
+        try {
+            await this.v2.login(
+                Config.data.osu.username,
+                Config.data.osu.password
+            );
+
+            Logger.log(LogLevel.MESSAGE, "[V2] Successfully logged in!");
+        } catch(e) {
+            Logger.log(LogLevel.ERROR, "[V2] Login failed!");
+        }
+
+        // await this.screenshotCreator.launch();
+
+        // this.v2.data.start();
+        Logger.assert(this.v2.logged, LogLevel.MESSAGE, `[V2] Updating V2 data every ${Math.floor(this.v2.data.interval / 1e3)} seconds`);
+
+        // cron.schedule('*/5 * * * *', () => { this.updateUses() });
+
+        Logger.log(LogLevel.DEBUG, `[DEBUG] Initialized with ${this.modules.length} modules and ${this.modules.flatMap(m => m.commands).length + this.commands.length} commands`);
+
+        this.startMessageListening();
+    }
+
+    private startMessageListening() {
         this.vk.updates.on("message", async ctx => {
             try {
                 let user = await User.findOrCreate(ctx.senderId);
@@ -174,45 +215,6 @@ export default class Bot {
                 console.log(e)
             }
         });
-    }
-
-    async start() {
-        try {
-            this.database = await createConnection();
-            Logger.log(LogLevel.MESSAGE, "[DB] Database connection successful");
-        } catch(e) {
-            Logger.log(LogLevel.ERROR, "[DB] Database connection failed");
-        }
-
-        try {
-            await this.vk.updates.start();
-
-            this.startTime = Date.now();
-            Logger.log(LogLevel.MESSAGE, "[BOT] VK Long Poll listening");
-        } catch(e) {
-            console.log(e);
-            Logger.log(LogLevel.ERROR, "[BOT] VK Long Poll connection failed");
-        }
-
-        try {
-            await this.v2.login(
-                Config.data.osu.username,
-                Config.data.osu.password
-            );
-
-            Logger.log(LogLevel.MESSAGE, "[V2] Successfully logged in!");
-        } catch(e) {
-            Logger.log(LogLevel.ERROR, "[V2] Login failed!");
-        }
-
-        // await this.screenshotCreator.launch();
-
-        // this.v2.data.start();
-        Logger.assert(this.v2.logged, LogLevel.MESSAGE, `[V2] Updating V2 data every ${Math.floor(this.v2.data.interval / 1e3)} seconds`);
-
-        // cron.schedule('*/5 * * * *', () => { this.updateUses() });
-
-        Logger.log(LogLevel.DEBUG, `[DEBUG] Initialized with ${this.modules.length} modules and ${this.modules.flatMap(m => m.commands).length + this.commands.length} commands`);
     }
 
     private updateUses() {
