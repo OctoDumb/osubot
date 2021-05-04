@@ -3,31 +3,22 @@ import NewsRule from "./NewsRule";
 import GroupRule from "./Rules/Group";
 import OsuUpdateRule from "./Rules/OsuUpdate";
 
-import fs from "fs";
 import OsuNewsRule from "./Rules/OsuNews";
 import Message from "../Message";
 import NewRankedRule from "./Rules/NewRanked";
-import { PrismaClient } from "@prisma/client";
+import { NewsRules } from "../Database/entity/NewsRules";
 
 interface IChatRule {
     enabled: boolean;
     filters: string[];
 }
 
-interface IChatRules {
-    [key: string]: IChatRule;
-}
-
-interface IRuleCollection {
-    id: number;
-    rules: IChatRules
-}
 interface IRule {
     id?: number;
     peerId: number;
     type: string;
     enabled: boolean;
-    filters: string;
+    filters: string[];
 }
 
 export default class NewsController {
@@ -46,9 +37,9 @@ export default class NewsController {
         ];
     }
 
-    private get db(): PrismaClient {
-        return this.bot.database;
-    }
+    // private get db(): PrismaClient {
+    //     return this.bot.database;
+    // }
 
     private async asyncFilter<T>(arr: T[], f: (value: T, index: number, array: T[]) => Promise<boolean>) {
         let values = await Promise.all(arr.map((value, index, array) => f(value, index, array)));
@@ -71,7 +62,7 @@ export default class NewsController {
         if(rule.hasFilters) {
             ids = await this.asyncFilter(ids, async (id) => {
                 let filters = (await this.getRule(id, rule.name)).filters
-                    .split(";;").map(f => NewsRule.parseFilters(f));
+                    .map(f => NewsRule.parseFilters(f));
                 if(!filters.length) return true;
 
                 let res = false;
@@ -97,7 +88,7 @@ export default class NewsController {
 
     private getChats() {
         let ids = [];
-        for(let i = 1; i <= 280; i++) 
+        for(let i = 1; i <= 500; i++) 
             ids.push(2000000000 + i);
 
         return ids;
@@ -127,23 +118,19 @@ export default class NewsController {
 
     private async upsert(r: IRule, data: object): Promise<void> {
         if(r.id)
-            await this.db.newsRules.update({
-                where: { id: r.id }, data
-            });
+            await NewsRules.update({ id: r.id }, data);
         else
-            await this.db.newsRules.create({
-                data: { ...r, ...data }
-            });
+            await NewsRules.create({ ...r, ...data }).save();
     }
 
     async getRule(id: number, rule: string): Promise<IRule> {
         let r = this.getNewsRule(rule);
-        let rules = await this.db.newsRules.findFirst({
+        let rules = await NewsRules.findOne({
             where: {
                 peerId: id,
                 type: rule
             }
-        }) ?? { peerId: id, type: rule, enabled: r.getDefault(id), filters: "" };
+        }) ?? { peerId: id, type: rule, enabled: r.getDefault(id), filters: [] };
 
         return rules;
     }
@@ -164,19 +151,15 @@ export default class NewsController {
 
     async addFilter(id: number, rule: string, filter: string): Promise<void> {
         let r = await this.getRule(id, rule);
-        let filters = r.filters.split(";;");
-        filters.push(filter);
-        await this.upsert(r, { filters: filters.join(";;") });
+        await this.upsert(r, { filters: [...r.filters, filter ] });
     }
 
     async removeFilter(id: number, rule: string, i2: number): Promise<void> {
         let r = await this.getRule(id, rule);
-        let filters = r.filters.split(";;");
         if(i2 < 0)
             throw "FUCK YOU";
-        if(filters.length < i2)
+        if(r.filters.length < i2)
             throw "ALSO FUCK YOU";
-        filters.splice(i2 - 1, 1);
-        await this.upsert(r, { filters: filters.join(";;") });
+        await this.upsert(r, { filters: r.filters.splice(i2 - 1, 1) });
     }
 }

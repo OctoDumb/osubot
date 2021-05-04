@@ -22,20 +22,6 @@ export default class AdminSQL extends Command {
         let stmt = message.arguments.join(" ");
         let res: any | any[];
 
-        switch (type) {
-            case DBCommandType.get:
-                res = await database.$queryRaw(stmt);
-                message.reply(`
-                    Результат:
-                    ${JSON.stringify(res, null)}
-                `);
-                break;
-            case DBCommandType.run:
-                res = await database.$executeRaw(stmt);
-                message.reply(`
-                    Выполнено! Затронуто ${res} строк
-                `);
-                break;
-        }
+        // TODO: Remake SQL command
     }
 }

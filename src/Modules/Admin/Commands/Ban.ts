@@ -5,6 +5,7 @@ import Message from "../../../Message";
 import { stringDateToMs } from "../../../Util";
 import dateformat from "dateformat";
 import { Permission } from "../../../Permissions";
+import { Ban } from "../../../Database/entity/Ban";
 
 const mention = /\[id(?<id>\d+)|.+\]/i;
 
@@ -30,7 +31,7 @@ export default class BanCommand extends Command {
 
         let reason = message.arguments.join(" ");
 
-        let until = await BanUtil.addBan(vk, database, id, duration, reason);
+        Ban.add(vk, id, duration, reason);
 
         message.reply(`[id${id}|Пользователь] забанен!`);
     }

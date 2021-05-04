@@ -1,6 +1,7 @@
 /dist
 /node_modules
 *.db
+*.sqlite
 config.json
 privileges.json
 *.log

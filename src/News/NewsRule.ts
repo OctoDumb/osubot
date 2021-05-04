@@ -53,7 +53,7 @@ export default abstract class NewsRule<T> {
                     case "list":
                         let { filters } = await this.controller.getRule(id, this.name);
                         if(filters.length)
-                            return `Фильтры:\n${filters.replace(/;;/g, '\n')}`;
+                            return `Фильтры:\n${filters.join("\n")}`;
                         return `Нет фильтров`;
 
                     case "add":

@@ -127,24 +127,6 @@ export async function addNotification(vk: VK, to: number, message: string): Prom
     } catch(e) {}
 
     return notification.delivered;
-
-    // let notification = await database.notification.create({
-    //     data: {
-    //         userId: to,
-    //         message
-    //     }
-    // });
-    // try {
-    //     await vk.api.messages.send({
-    //         user_id: to,
-    //         message
-    //     });
-    //     notification = await database.notification.update({
-    //         where: { id: notification.id },
-    //         data: { delivered: true }
-    //     });
-    // } catch(e) {}
-    // return notification.delivered;
 }
 
 /**

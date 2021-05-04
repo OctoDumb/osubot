@@ -24,7 +24,7 @@ export class User extends BaseEntity {
             user.id = id;
             user.role = await Role.findOne(Config.data.vk.ownerId == id ? 2 : 1);
         }
-        return user;
+        return user.save();
     }
 
 }

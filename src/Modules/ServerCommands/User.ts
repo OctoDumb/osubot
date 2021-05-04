@@ -1,9 +1,10 @@
 import Message from "../../Message";
 import Bot from "../../Bot";
 import ServerCommand from "../../Commands/Server/ServerCommand";
-import { IArgumentsWithMode, IServerCommandArguments, IRecentCommandArguments, Parsers, parseArguments } from "../../Commands/Arguments";
+import { IArgumentsWithMode, IServerCommandArguments, Parsers, parseArguments } from "../../Commands/Arguments";
 import { UserTemplate } from "../../Templates";
-import { defaultArguments, getStatus, getUserInfo, updateInfo } from "../../Util";
+import { defaultArguments, getStatus, getUserInfo } from "../../Util";
+import { Stats } from "../../Database/entity/Stats";
 
 export default class UserCommand extends ServerCommand {
     name = "User";
@@ -27,9 +28,9 @@ export default class UserCommand extends ServerCommand {
 
         let user = await this.api.getUser({ username, mode });
 
-        await updateInfo(database, this.module.name, user, mode);
+        await Stats.updateInfo(this.module.name, user, mode);
 
-        let status = await getStatus(database, user.id);
+        let status = await getStatus(user.id);
 
         message.reply(UserTemplate(this.module, user, status));
     }

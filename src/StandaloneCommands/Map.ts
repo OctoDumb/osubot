@@ -1,9 +1,10 @@
 import Bot from "../Bot";
 import { IMapCommandArguments, IStandaloneCommandArguments, parseArguments, Parsers } from "../Commands/Arguments";
 import StandaloneCommand from "../Commands/StandaloneCommand";
+import { Cover } from "../Database/entity/Cover";
 import Message from "../Message";
 import { MapTemplate } from "../Templates";
-import { clearObject, defaultArguments, getCover, modsToString } from "../Util";
+import { clearObject, defaultArguments, modsToString } from "../Util";
 
 export default class MapCommand extends StandaloneCommand {
     name = "Map";
@@ -40,7 +41,7 @@ export default class MapCommand extends StandaloneCommand {
             mods: mods.join(",")
         }));
 
-        let cover = await getCover(database, vk, map.beatmapsetID);
+        let cover = await Cover.get(vk, map.beatmapsetID);
 
         let msg = MapTemplate(map, pp, mods);
 

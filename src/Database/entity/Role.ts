@@ -12,8 +12,17 @@ export class Role extends BaseEntity {
     name: string;
 
     @Column({
-        default: ""
+        type: 'text',
+        default: [],
+        transformer: {
+            to(p: string[]) {
+                return p?.join(",") ?? "";
+            },
+            from(s: string) {
+                return s?.split(',') ?? [];
+            }
+        }
     })
-    permissions: string;
+    permissions: string[];
 
 }

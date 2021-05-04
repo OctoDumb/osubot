@@ -4,6 +4,7 @@ import Bot from "../Bot";
 import { BanUtil } from "../Banlist";
 import dateformat from "dateformat";
 import PermissionManager, { Permission } from "../Permissions";
+import { Ban } from "../Database/entity/Ban";
 
 export default abstract class Module {
     abstract name: string;
@@ -34,13 +35,12 @@ export default abstract class Module {
         if(this.permission || command.permission)
             if(!PermissionManager.hasPermission(message.user.role.permissions, command.permission ?? this.permission)) return;
 
-        let ban = await this.database.ban.findFirst({
-            where: { userId: message.sender }
+        let ban = await Ban.findOne({
+            where: { user: { id: message.sender } }
         });
-        if(BanUtil.isBanned(ban)) {
-            if(!command.ignoreBan 
-                && PermissionManager.hasPermission(message.user.role.permissions, Permission.IGNOREBAN)) return;
-        }
+        if(ban?.isBanned
+            && !command.ignoreBan
+            && PermissionManager.hasPermission(message.user.role.permissions, Permission.IGNOREBAN)) return;
         
         try {
             command.use(message);
@@ -48,6 +48,7 @@ export default abstract class Module {
             let args = command.parseArguments(message, bot);
             await command.run(args);
         } catch(e) {
+            console.log(e.stack);
             message.reply(`Ошибка! ${e instanceof Error ? e.message : e}`);
         }
     }

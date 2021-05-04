@@ -1,5 +1,6 @@
 import ServerCommand from "../../Commands/Server/ServerCommand";
 import { IServerCommandArguments } from "../../Commands/Arguments";
+import { ServerConnection } from "../../Database/entity/ServerConnection";
 
 export default class NickCommand extends ServerCommand {
     name = "Nick";
@@ -7,32 +8,43 @@ export default class NickCommand extends ServerCommand {
 
     description = "Привязать аккаунт";
 
-    async run({ message, database }: IServerCommandArguments<null>) {
-        let username = message.arguments.join(" ");
-        
-        let user = await this.api.getUser({ username });
+    async run({ message }: IServerCommandArguments<null>) {
+        try {
+            let username = message.arguments.join(" ");
+            
+            let user = await this.api.getUser({ username });
 
-        let data = {
-            userId: message.sender,
-            playerId: user.id,
-            server: this.module.name,
-            nickname: user.username
-        };
+            let data = {
+                userId: message.sender,
+                playerId: user.id,
+                server: this.module.name,
+                nickname: user.username
+            };
 
-        let exists = (await database.serverConnection.count({ where: { playerId: user.id, server: this.module.name, nickname: user.username } })) > 0;
-        if(exists)
-            await database.serverConnection.updateMany({
-                data, where: {
-                    userId: message.sender,
+            let exists = (await ServerConnection.count({ where: { user: { id: message.sender }, server: this.module.name } })) > 0;
+            if(exists)
+                await ServerConnection.update({
+                    user: { id: message.sender },
                     server: this.module.name
-                }
-            });
-        else
-            await database.serverConnection.create({ data })
-        
-        message.reply(`
-            [Server: ${this.module.name}]
-            Установлен ник: ${user.username}
-        `);
+                }, {
+                    playerId: user.id,
+                    nickname: user.username
+                })
+            else
+                await ServerConnection.create({
+                    user: { id: message.sender },
+                    server: this.module.name,
+                    playerId: user.id,
+                    nickname: user.username
+                }).save();
+            
+            message.reply(`
+                [Server: ${this.module.name}]
+                Установлен ник: ${user.username}
+            `);
+        } catch(e) {
+            console.log(e);
+            throw e;
+        }
     }
 }

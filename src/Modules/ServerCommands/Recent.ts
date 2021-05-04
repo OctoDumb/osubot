@@ -2,8 +2,9 @@ import ServerCommand from "../../Commands/Server/ServerCommand";
 import { IServerCommandArguments, parseArguments, Parsers, IRecentCommandArguments } from "../../Commands/Arguments";
 import Message from "../../Message";
 import Bot from "../../Bot";
-import { defaultArguments, getCover, getUserInfo, hitsToFail, modsToString } from "../../Util";
+import { defaultArguments, getUserInfo, hitsToFail, modsToString } from "../../Util";
 import { RecentTemplate } from "../../Templates";
+import { Cover } from "../../Database/entity/Cover";
 
 export default class RecentCommand extends ServerCommand {
     name = "Recent";
@@ -42,7 +43,7 @@ export default class RecentCommand extends ServerCommand {
         let map = await mapAPI.getBeatmap(recent.beatmapId, mods);
         chats.setChatMap(message.peerId, recent.beatmapId);
 
-        let attachment = await getCover(database, vk, map.beatmapsetID);
+        let attachment = await Cover.get(vk, map.beatmapsetID);
 
         let pp = await mapAPI.getPP(recent.beatmapId, {
             combo: recent.maxCombo,

@@ -161,10 +161,6 @@ export default class Bot {
                     if(command.command.includes(message.prefix)) {
                         let ban = await Ban.findOne({ where: { user: { id: message.sender } } });
                         if(ban.isBanned && !command.ignoreBan) return;
-                        // let ban = await this.database.ban.findFirst({
-                        //     where: { userId: message.sender }
-                        // });
-                        // if(BanUtil.isBanned(ban) && !command.ignoreBan) return;
                         try {
                             let args = command.parseArguments(message, this);
                             command.use(message);
@@ -183,12 +179,18 @@ export default class Bot {
     async start() {
         try {
             this.database = await createConnection();
+            Logger.log(LogLevel.MESSAGE, "[DB] Database connection successful");
+        } catch(e) {
+            Logger.log(LogLevel.ERROR, "[DB] Database connection failed");
+        }
 
+        try {
             await this.vk.updates.start();
 
             this.startTime = Date.now();
             Logger.log(LogLevel.MESSAGE, "[BOT] VK Long Poll listening");
         } catch(e) {
+            console.log(e);
             Logger.log(LogLevel.ERROR, "[BOT] VK Long Poll connection failed");
         }
 

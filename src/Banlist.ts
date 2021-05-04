@@ -1,7 +1,7 @@
 import fs from "fs";
-import { addNotification } from "./Util";
 import dateformat from "dateformat";
 import VK from "vk-io";
+import { Ban } from "./Database/entity/Ban";
 
 dateformat.i18n = {
     monthNames: [

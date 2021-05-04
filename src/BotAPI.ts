@@ -84,22 +84,6 @@ export default class BotAPI {
             });
         });
 
-        // this.app.post('/db/get', this.auth.bind(this), async (req, res) => {
-        //     if(req.body?.query == null) 
-        //         return res.status(400).send({ "error": "Missing query" });
-        //     var result = await this.bot.database.$queryRaw(req.body.query);
-
-        //     res.send({ result })
-        // });
-
-        // this.app.post('/db/run', this.auth.bind(this), async (req, res) => {
-        //     if(req.body?.query == null) 
-        //         return res.status(400).send({ "error": "Missing query" });
-        //     var result = await this.bot.database.$executeRaw(req.body.query);
-
-        //     res.send({ result })
-        // });
-
         this.app.get('/uses', this.auth.bind(this), (_req, res) => {
             res.send(this.bot.modules.map(m => ({
                 name: m.name,

@@ -19,6 +19,7 @@ export class NewsRules extends BaseEntity {
 
     @Column({
         type: "text",
+        default: '',
         transformer: {
             to(f: string[]) {
                 return f.join(";;");

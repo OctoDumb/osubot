@@ -2,6 +2,7 @@ import ServerCommand from "../../Commands/Server/ServerCommand";
 import { IArgumentsWithMode, IServerCommandArguments } from "../../Commands/Arguments";
 import { FindTemplate } from "../../Templates";
 import { getUserInfo } from "../../Util";
+import { ServerConnection } from "../../Database/entity/ServerConnection";
 
 export default class FindCommand extends ServerCommand {
     name = "Find";
@@ -13,10 +14,8 @@ export default class FindCommand extends ServerCommand {
     async run({ message, database, vk, clean }: IServerCommandArguments<null>) {
         let { username } = await getUserInfo(message, this.module.name, database, clean);
         let u = await this.api.getUser({ username });
-        let dbusers = await database.serverConnection.findMany({
-            where: {
-                playerId: u.id
-            }
+        let dbusers = await ServerConnection.find({
+            where: { playerId: u.id }
         });
 
         if(!dbusers[0])

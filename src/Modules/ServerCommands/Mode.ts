@@ -1,6 +1,7 @@
 import ServerCommand from "../../Commands/Server/ServerCommand";
 import { IServerCommandArguments } from "../../Commands/Arguments";
 import { modeNumberToString } from "../../Util";
+import { ServerConnection } from "../../Database/entity/ServerConnection";
 
 export default class ModeCommand extends ServerCommand {
     name = "Mode";
@@ -13,7 +14,7 @@ export default class ModeCommand extends ServerCommand {
 
         if (forwarded) {
             const userId = forwarded.senderId;
-            const { mode } = await database.serverConnection.findFirst({ where: { userId } });
+            const { mode } = await ServerConnection.findOne({ where: { user: { id: userId } } });
             const [user] = await vk.api.users.get({ 
                 user_ids: [userId.toString()]
             });
@@ -29,15 +30,12 @@ export default class ModeCommand extends ServerCommand {
 
         if(mode == null) throw "Некорректный режим!";
 
-        await database.serverConnection.updateMany({
-            data: {
-                mode: Number(mode)
-            },
-            where: {
-                userId: message.sender,
-                server: this.module.name
-            }
-        })
+        await ServerConnection.update({
+            user: { id: message.sender },
+            server: this.module.name
+        }, {
+            mode: Number(mode)
+        });
 
         message.reply(`
             [Server: ${this.module.name}]

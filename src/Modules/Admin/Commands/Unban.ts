@@ -1,6 +1,7 @@
 import Banlist from "../../../Banlist";
 import ICommandArguments from "../../../Commands/Arguments";
 import Command from "../../../Commands/Command";
+import { Ban } from "../../../Database/entity/Ban";
 import Message from "../../../Message";
 import { Permission } from "../../../Permissions";
 
@@ -24,11 +25,11 @@ export default class UnbanCommand extends Command {
         if(!id)
             return message.reply("Не указан пользователь!");
         
-        let d = await database.ban.deleteMany({ where: { userId: id } })
+        let d = await Ban.delete({ user: { id } });
 
-        message.reply(`[id${id}|Пользователь] ${d.count > 0 ? "был разбанен" : "не был в бане"}`);
+        message.reply(`[id${id}|Пользователь] ${d.affected > 0 ? "был разбанен" : "не был в бане"}`);
 
-        if(d.count > 0) {
+        if(d.affected > 0) {
             try {
                 await vk.api.messages.send({
                     peer_id: id,
