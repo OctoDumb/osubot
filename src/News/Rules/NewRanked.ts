@@ -10,34 +10,17 @@ export default class NewRankedRule extends NewsRule<IV2Beatmapset> {
 
     async createMessage(mapset: IV2Beatmapset): Promise<INewsSendParams> {
         let modes = [];
+        const m = ["osu!", "osu!taiko", "osu!catch", "osu!mania"];
 
-        if(mapset.beatmaps.filter(map => map.mode == 0).length)
-            modes.push({
-                mode: 'osu!',
-                min: Math.min(...mapset.beatmaps.filter(map => map.mode == 0).map(map => map.stars)),
-                max: Math.max(...mapset.beatmaps.filter(map => map.mode == 0).map(map => map.stars))
-            });
-
-        if(mapset.beatmaps.filter(map => map.mode == 1).length)
-            modes.push({
-                mode: 'osu!taiko',
-                min: Math.min(...mapset.beatmaps.filter(map => map.mode == 1).map(map => map.stars)),
-                max: Math.max(...mapset.beatmaps.filter(map => map.mode == 1).map(map => map.stars))
-            });
-
-        if(mapset.beatmaps.filter(map => map.mode == 2).length)
-            modes.push({
-                mode: 'osu!catch',
-                min: Math.min(...mapset.beatmaps.filter(map => map.mode == 2).map(map => map.stars)),
-                max: Math.max(...mapset.beatmaps.filter(map => map.mode == 2).map(map => map.stars))
-            });
-
-        if(mapset.beatmaps.filter(map => map.mode == 3).length)
-            modes.push({
-                mode: 'osu!mania',
-                min: Math.min(...mapset.beatmaps.filter(map => map.mode == 3).map(map => map.stars)),
-                max: Math.max(...mapset.beatmaps.filter(map => map.mode == 3).map(map => map.stars))
-            });
+        for (let i = 0; i <= 3; i++) {
+            if (mapset.beatmaps.filter(map => map.mode == i).length) {
+                modes.push({
+                    mode: m[i],
+                    min: Math.min(...mapset.beatmaps.filter(map => map.mode == i).map(map => map.stars)),
+                    max: Math.max(...mapset.beatmaps.filter(map => map.mode == i).map(map => map.stars))
+                });
+            }
+        }
 
         return {
             message: `Новая ранкнутая карта!
