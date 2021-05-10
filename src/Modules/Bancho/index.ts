@@ -18,8 +18,6 @@ export default class Bancho extends ServerModule {
 
     description = "Официальный сервер Osu!";
 
-    api = this.apilist.bancho;
-
     commands = [
         new NickCommand(this),
         new ModeCommand(this),

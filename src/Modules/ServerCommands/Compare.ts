@@ -1,4 +1,4 @@
-import { APIWithScores } from "../../API/ServerAPI";
+import { OsuAPIWithScores } from "../../API/Osu/OsuServerAPI";
 import Bot from "../../Bot";
 import { ICompareCommandArguments, IServerCommandArguments, parseArguments, Parsers } from "../../Commands/Arguments";
 import ServerCommand from "../../Commands/Server/ServerCommand";
@@ -6,9 +6,7 @@ import Message from "../../Message";
 import { CompareScoreTemplate } from "../../Templates";
 import { defaultArguments, getUserInfo, modsEqual, modsToString } from "../../Util";
 
-export default class CompareCommand extends ServerCommand {
-    api: APIWithScores;
-
+export default class CompareCommand extends ServerCommand<OsuAPIWithScores> {
     name = "Compare";
     command = ["c", "compare"];
 

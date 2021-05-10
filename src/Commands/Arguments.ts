@@ -7,7 +7,7 @@ import ChatCache from "../ChatCache";
 import PrivilegesManager from "../Privileges";
 import ScreenshotCreator from "../ScreenshotCreator";
 import TrackAPI from "../API/TrackAPI";
-import BanchoV2API from "../API/Servers/BanchoV2";
+import BanchoV2API from "../API/Osu/Servers/V2/BanchoV2";
 import { PrismaClient } from "@prisma/client";
 
 export default interface ICommandArguments {

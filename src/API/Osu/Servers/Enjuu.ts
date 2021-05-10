@@ -1,13 +1,29 @@
-import { APIWithScores } from "../ServerAPI";
 import { IUserRequestParams, ITopRequestParams, IRecentRequestParams, IScoreRequestParams } from "../RequestParams";
 import { IUserAPIResponse, ITopAPIResponse, IRecentAPIResponse, IScoreAPIResponse } from "../APIResponse";
 import { stringify } from "querystring";
-import { APINotFoundError } from "../APIErrors";
+import { APINotFoundError } from "../../APIErrors";
 import Axios from "axios";
+import {
+    IOsuAPIWithLeaderboard,
+    IOsuAPIWithRecent,
+    IOsuAPIWithScores,
+    IOsuAPIWithTop,
+    IOsuAPIWithUser,
+    OsuAPIWithScores
+} from "../OsuServerAPI";
 
-export default class RippleAPI extends APIWithScores {
+export interface IEnjuuAPI extends
+    IOsuAPIWithUser,
+    IOsuAPIWithTop,
+    IOsuAPIWithRecent,
+    IOsuAPIWithScores,
+    IOsuAPIWithLeaderboard
+{}
+
+export default class EnjuuAPI extends OsuAPIWithScores implements IEnjuuAPI {
+    name = "Enjuu";
     api = Axios.create({
-        baseURL: "https://ripple.moe/api"
+        baseURL: "https://enjuu.click/api"
     });
 
     async getUser({ 
@@ -37,7 +53,7 @@ export default class RippleAPI extends APIWithScores {
         })}`);
 
         return data.map(s => Object.assign(
-            this.adaptScore(s, mode ?? 0), 
+            this.adaptScore(s, mode), 
             { 
                 pp: Number(s.pp) 
             }

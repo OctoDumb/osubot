@@ -3,7 +3,7 @@ import { AttachmentType, MessageContext } from "vk-io";
 import Bot from "./Bot";
 import ServerModule from "./Commands/Server/ServerModule";
 import { MapInfoTemplate, MapsetInfoTemplate } from "./Templates";
-import { IV2Beatmapset } from "./API/Servers/V2/V2Responses";
+import { IV2Beatmapset } from "./API/Osu/Servers/V2/V2Responses";
 import Message from "./Message";
 import { getCover } from "./Util";
 

@@ -15,8 +15,6 @@ export default class Ripple extends ServerModule {
 
     description = "";
 
-    api = this.apilist.ripple;
-
     commands = [
         new NickCommand(this),
         new ModeCommand(this),

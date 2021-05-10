@@ -1,11 +1,20 @@
-import { APIWithScores } from "../ServerAPI";
 import { IUserRequestParams, ITopRequestParams, IRecentRequestParams, IScoreRequestParams } from "../RequestParams";
 import { IUserAPIResponse, ITopAPIResponse, IRecentAPIResponse, IScoreAPIResponse } from "../APIResponse";
 import { stringify } from "querystring";
-import { APINotFoundError } from "../APIErrors";
+import { APINotFoundError } from "../../APIErrors";
 import Axios from "axios";
+import { IOsuAPIWithLeaderboard, IOsuAPIWithRecent, IOsuAPIWithScores, IOsuAPIWithTop, IOsuAPIWithUser, OsuAPIWithScores } from "../OsuServerAPI";
 
-export default class KurikkuAPI extends APIWithScores {
+export interface IKurikkuAPI extends
+    IOsuAPIWithUser,
+    IOsuAPIWithTop,
+    IOsuAPIWithRecent,
+    IOsuAPIWithScores,
+    IOsuAPIWithLeaderboard
+{}
+
+export default class KurikkuAPI extends OsuAPIWithScores implements IKurikkuAPI {
+    name = "Kurikku";
     api = Axios.create({
         baseURL: "https://kurikku.pw/api"
     });

@@ -1,4 +1,4 @@
-import { IHitCounts } from "../API/APIResponse";
+import { IHitCounts } from "../API/Osu/APIResponse";
 import { Mods } from "../Util";
 
 export default interface IReplay {

@@ -1,7 +1,8 @@
 import ServerCommand from "../../Commands/Server/ServerCommand";
 import { IServerCommandArguments } from "../../Commands/Arguments";
+import { OsuAPI } from "../../API/Osu/OsuServerAPI";
 
-export default class NickCommand extends ServerCommand {
+export default class NickCommand extends ServerCommand<OsuAPI> {
     name = "Nick";
     command = [ "n", "nick", "т", "тшсл" ];
 

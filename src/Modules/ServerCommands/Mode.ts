@@ -1,8 +1,9 @@
 import ServerCommand from "../../Commands/Server/ServerCommand";
 import { IServerCommandArguments } from "../../Commands/Arguments";
 import { modeNumberToString } from "../../Util";
+import { OsuAPI } from "../../API/Osu/OsuServerAPI";
 
-export default class ModeCommand extends ServerCommand {
+export default class ModeCommand extends ServerCommand<OsuAPI> {
     name = "Mode";
     command = [ "m", "mode", "ь", "ьщву" ];
 

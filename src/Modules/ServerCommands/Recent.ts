@@ -4,8 +4,9 @@ import Message from "../../Message";
 import Bot from "../../Bot";
 import { defaultArguments, getCover, getUserInfo, hitsToFail, modsToString } from "../../Util";
 import { RecentTemplate } from "../../Templates";
+import { OsuAPI } from "../../API/Osu/OsuServerAPI";
 
-export default class RecentCommand extends ServerCommand {
+export default class RecentCommand extends ServerCommand<OsuAPI> {
     name = "Recent";
     command = [ "r", "rp", "recent", "к", "кз", "кусуте" ];
 

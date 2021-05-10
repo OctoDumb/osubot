@@ -1,4 +1,4 @@
-import { IV2Beatmapset } from "../../API/Servers/V2/V2Responses";
+import { IV2Beatmapset } from "../../API/Osu/Servers/V2/V2Responses";
 import { getCover } from "../../Util";
 import NewsRule, { executeFilter, IFilter, INewsSendParams } from "../NewsRule";
 

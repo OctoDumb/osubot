@@ -4,8 +4,9 @@ import Bot from "../../Bot";
 import { IServerCommandArguments, ITopCommandArguments, parseArguments, Parsers } from "../../Commands/Arguments";
 import { defaultArguments, getCover, getStatus, getUserInfo, modsToString, updateInfo } from "../../Util";
 import { TopTemplate, TopSingleTemplate } from "../../Templates";
+import { OsuAPI } from "../../API/Osu/OsuServerAPI";
 
-export default class TopCommand extends ServerCommand {
+export default class TopCommand extends ServerCommand<OsuAPI> {
     name = "Top";
     command = [ "top", "t", "ещз", "е" ];
 

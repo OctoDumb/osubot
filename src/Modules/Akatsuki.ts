@@ -16,8 +16,6 @@ export default class Akatsuki extends ServerModule {
 
     description = "";
 
-    api = this.apilist.akatsuki;
-
     commands = [
         new NickCommand(this),
         new ModeCommand(this),

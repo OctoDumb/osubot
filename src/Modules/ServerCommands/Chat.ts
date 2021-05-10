@@ -1,4 +1,5 @@
 import { PrismaClient, Stats, Status } from "@prisma/client";
+import { OsuAPI } from "../../API/Osu/OsuServerAPI";
 import Bot from "../../Bot";
 import { IArgumentsWithMode, IServerCommandArguments, parseArguments, Parsers } from "../../Commands/Arguments";
 import ServerCommand from "../../Commands/Server/ServerCommand";
@@ -13,7 +14,7 @@ export interface IChatTopUser {
     stats: Stats;
 }
 
-export default class ChatCommand extends ServerCommand {
+export default class ChatCommand extends ServerCommand<OsuAPI> {
     name = "Chat";
     command = [ "chat", "срфе" ];
 

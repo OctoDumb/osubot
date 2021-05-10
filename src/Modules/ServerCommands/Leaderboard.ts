@@ -4,13 +4,11 @@ import { IServerCommandArguments, parseArguments, Parsers, IArgumentsWithMods } 
 import Bot from "../../Bot";
 import { defaultArguments } from "../../Util";
 import { IDBUser } from "../../Database";
-import { APIWithScores } from "../../API/ServerAPI";
 import { LeaderboardTemplate } from "../../Templates";
 import { ServerConnection } from "@prisma/client";
+import { OsuAPIWithScores } from "../../API/Osu/OsuServerAPI";
 
-export default class LeaderboardCommand extends ServerCommand {
-    api: APIWithScores;
-    
+export default class LeaderboardCommand extends ServerCommand<OsuAPIWithScores> {
     name = "Leaderboard";
     command = [ "leaderboard", "lb", "дуфвукищфкв", "ди" ];
 

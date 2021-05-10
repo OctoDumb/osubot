@@ -1,6 +1,6 @@
 import Message from "./Message";
 import Bot, { IBotConfig } from "./Bot";
-import { IHitCounts, IUserAPIResponse } from "./API/APIResponse";
+import { IHitCounts, IUserAPIResponse } from "./API/Osu/APIResponse";
 import Database, { IDBUser, Server } from "./Database";
 import { IPPResponse } from "./API/MapAPI";
 import Logger, { LogLevel } from "./Logger";
