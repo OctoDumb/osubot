@@ -33,7 +33,7 @@ import AkatsukiRelaxAPI from "./API/Servers/AkatsukiRelax";
 import Akatsuki from "./Modules/Akatsuki";
 import AkatsukiRelax from "./Modules/AkatsukiRelax";
 import BanchoV2API from "./API/Servers/BanchoV2";
-import ScreenshotCreator from "./ScreenshotCreator";
+import PuppeteerInstance from "./PuppeteerInstance";
 import TrackAPI from "./API/TrackAPI";
 import Logger, { LogLevel } from "./Logger";
 import Banlist, { BanUtil } from "./Banlist";
@@ -80,7 +80,7 @@ export default class Bot {
     });
 
     database = new PrismaClient();
-    screenshotCreator = new ScreenshotCreator();
+    puppeteer = new PuppeteerInstance();
     api: IAPIList = {
         bancho: new BanchoAPI(Config.data.osu.token),
         gatari: new GatariAPI(),
@@ -198,7 +198,7 @@ export default class Bot {
             Logger.log(LogLevel.ERROR, "[V2] Login failed!");
         }
 
-        // await this.screenshotCreator.launch();
+        await this.puppeteer.launch();
 
         // this.v2.data.start();
         Logger.assert(this.v2.logged, LogLevel.MESSAGE, `[V2] Updating V2 data every ${Math.floor(this.v2.data.interval / 1e3)} seconds`);

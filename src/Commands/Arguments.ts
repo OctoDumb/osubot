@@ -5,10 +5,11 @@ import { Mods } from "../Util";
 import NewsController from "../News/NewsController";
 import ChatCache from "../ChatCache";
 import PrivilegesManager from "../Privileges";
-import ScreenshotCreator from "../ScreenshotCreator";
+import ScreenshotCreator from "../PuppeteerInstance";
 import TrackAPI from "../API/TrackAPI";
 import BanchoV2API from "../API/Servers/BanchoV2";
 import { PrismaClient } from "@prisma/client";
+import PuppeteerInstance from "../PuppeteerInstance";
 
 export default interface ICommandArguments {
     message: Message;
@@ -21,7 +22,7 @@ export default interface ICommandArguments {
     uptime: number;
     track: TrackAPI;
     v2: BanchoV2API;
-    screenshot: ScreenshotCreator;
+    puppeteer: PuppeteerInstance;
 }
 
 export interface IArgumentsWithMode {
