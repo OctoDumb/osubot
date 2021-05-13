@@ -5,7 +5,7 @@ import ICommandArguments, { IStandaloneCommandArguments, parseArguments } from "
 import Command from "./Command";
 
 export default abstract class StandaloneCommand extends Command {
-    parseAёrguments(message: Message, bot: Bot): IStandaloneCommandArguments<any> {
+    parseArguments(message: Message, bot: Bot): IStandaloneCommandArguments<any> {
         return {
             ...defaultArguments(message, bot),
             ...parseArguments(message.arguments, [])
