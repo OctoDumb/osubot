@@ -200,13 +200,13 @@ export default class Bot {
                 for(let module of this.modules)
                     await module.run(message, this);
                 
+                    message.arguments.unshift(message.command);
                 for(let command of this.commands) {
                     if(this.disabled.includes(message.peerId) && command.disables) return;
-                    message.arguments.unshift(message.command);
 
                     if(command.command.includes(message.prefix)) {
                         let ban = await Ban.findOne({ where: { user: { id: message.sender } } });
-                        if(ban.isBanned && !command.ignoreBan) return;
+                        if(ban?.isBanned && !command.ignoreBan) return;
                         try {
                             let args = command.parseArguments(message, this);
                             command.use(message);
