@@ -9,6 +9,7 @@ import TrackAPI from "../API/TrackAPI";
 import BanchoV2API from "../API/Servers/BanchoV2";
 import { Connection } from "typeorm";
 import PuppeteerInstance from "../PuppeteerInstance";
+import Disabled from "../Disabled";
 
 export default interface ICommandArguments {
     message: Message;
@@ -17,7 +18,7 @@ export default interface ICommandArguments {
     news: NewsController;
     vk: VK;
     chats: ChatCache;
-    disabled: number[];
+    disabled: Disabled;
     privileges: PrivilegesManager;
     uptime: number;
     track: TrackAPI;

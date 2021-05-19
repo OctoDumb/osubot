@@ -43,6 +43,7 @@ import { Notification } from "./Database/entity/Notification";
 import { User } from "./Database/entity/User";
 import { Ban } from "./Database/entity/Ban";
 import DisableBotCommand from "./StandaloneCommands/DisableBot";
+import Disabled from "./Disabled";
 
 export interface IBotConfig {
     vk: {
@@ -131,7 +132,7 @@ export default class Bot {
 
     public privilegesManager = new PrivilegesManager();
 
-    public disabled: number[] = [];
+    public disabled: Disabled = new Disabled();
 
     async start() {
         try {
@@ -194,19 +195,19 @@ export default class Bot {
 
                 let mapLink = this.mapLinkProcessor.checkLink(message, ctx);
 
-                if (mapLink && !this.disabled.includes(message.peerId)) 
+                if (mapLink && !this.disabled.isDisabled(message.peerId)) 
                     return this.mapLinkProcessor.process(message, mapLink);
 
                 for(let module of this.modules)
                     await module.run(message, this);
                 
-                    message.arguments.unshift(message.command);
+                message.arguments.unshift(message.command);
                 for(let command of this.commands) {
-                    if(this.disabled.includes(message.peerId) && command.disables) return;
+                    if(this.disabled.isDisabled(message.peerId) && command.disables) continue;
 
                     if(command.command.includes(message.prefix)) {
                         let ban = await Ban.findOne({ where: { user: { id: message.sender } } });
-                        if(ban?.isBanned && !command.ignoreBan) return;
+                        if(ban?.isBanned && !command.ignoreBan) continue;
                         try {
                             let args = command.parseArguments(message, this);
                             command.use(message);
