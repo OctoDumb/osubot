@@ -27,7 +27,7 @@
     "eventemitter3": "^4.0.7",
     "express": "^4.17.1",
     "int64-buffer": "^0.99.1007",
-    "jsdom": "^16.4.0",
+    "jsdom": "^16.5.3",
     "leb": "^0.3.0",
     "md5": "^2.3.0",
     "node-cron": "^2.0.3",
@@ -39,6 +39,7 @@
   },
   "devDependencies": {
     "@types/dateformat": "^3.0.1",
+    "@types/jsdom": "^16.2.10",
     "@types/sqlite3": "^3.1.6",
     "ts-node": "^9.0.0",
     "ts-node-dev": "^1.0.0",
