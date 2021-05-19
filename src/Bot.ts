@@ -33,7 +33,7 @@ import AkatsukiRelaxAPI from "./API/Servers/AkatsukiRelax";
 import Akatsuki from "./Modules/Akatsuki";
 import AkatsukiRelax from "./Modules/AkatsukiRelax";
 import BanchoV2API from "./API/Servers/BanchoV2";
-import ScreenshotCreator from "./ScreenshotCreator";
+import PuppeteerInstance from "./PuppeteerInstance";
 import TrackAPI from "./API/TrackAPI";
 import Logger, { LogLevel } from "./Logger";
 import Banlist, { BanUtil } from "./Banlist";
@@ -82,7 +82,7 @@ export default class Bot {
     });
 
     database: Connection;
-    screenshotCreator = new ScreenshotCreator();
+    screenshotCreator = new PuppeteerInstance();
     api: IAPIList = {
         bancho: new BanchoAPI(Config.data.osu.token),
         gatari: new GatariAPI(),

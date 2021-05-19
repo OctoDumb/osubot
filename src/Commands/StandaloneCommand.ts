@@ -1,7 +1,7 @@
 import Bot from "../Bot";
 import Message from "../Message";
 import { defaultArguments } from "../Util";
-import { IStandaloneCommandArguments, parseArguments } from "./Arguments";
+import ICommandArguments, { IStandaloneCommandArguments, parseArguments } from "./Arguments";
 import Command from "./Command";
 
 export default abstract class StandaloneCommand extends Command {
@@ -12,5 +12,5 @@ export default abstract class StandaloneCommand extends Command {
         };
     }
 
-    abstract run(args: IStandaloneCommandArguments<any>): Promise<void>;
+    abstract run(args: ICommandArguments): Promise<void>;
 }

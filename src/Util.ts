@@ -61,8 +61,9 @@ export function defaultArguments(message: Message, {
     news, lastMaps: chats, 
     privilegesManager: privileges,
     uptime, track, v2,
-    screenshotCreator: screenshot
+    puppeteer
 }: Bot) {
+
     return { 
         message, 
         database, 
@@ -70,7 +71,7 @@ export function defaultArguments(message: Message, {
         news, chats, 
         privileges,
         uptime, track,
-        v2, screenshot 
+        v2, puppeteer
     };
 }
 

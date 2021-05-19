@@ -94,7 +94,7 @@ export default class NewsController {
         return ids;
     }
 
-    private async getUsers() {
+    private async getUsers(): Promise<number[]> {
         let rawIds: number[][] = (await this.bot.vk.api.execute({ code: `
             var i = 0;
             var users = [];
@@ -109,7 +109,7 @@ export default class NewsController {
             return users;
         `})).response;
 
-        return <Array<number>>rawIds.flat(1);
+        return rawIds.flat(1);
     }
 
     private getNewsRule(rule: string): NewsRule<any> {

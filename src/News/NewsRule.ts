@@ -23,8 +23,21 @@ export default abstract class NewsRule<T> {
     abstract userDefault: boolean;
     abstract chatDefault: boolean;
 
+    constructor(
+        protected controller: NewsController,
+        protected bot: Bot,
+        emitter?: EventEmitter,
+        event?: string
+    ) {
+        if(event)
+            emitter.on(
+                event, 
+                (o: T) => this.controller.send(this, o)
+            );
+    }
+
     public getDefault(id: number): boolean {
-        return id > 2000000000 ? this.chatDefault : this.userDefault;
+        return id > 2e9 ? this.chatDefault : this.userDefault;
     }
 
     public abstract createMessage(obj: T): Promise<INewsSendParams>;
@@ -79,19 +92,6 @@ export default abstract class NewsRule<T> {
     public abstract hasFilters: boolean = false;
 
     public abstract useFilter?(object: T, filter: IFilter): boolean;
-
-    constructor(
-        protected controller: NewsController,
-        protected bot: Bot,
-        emitter?: EventEmitter,
-        event?: string
-    ) {
-        if(event)
-            emitter.on(
-                event, 
-                (o: T) => this.controller.send(this, o)
-            );
-    }
 
     static parseFilters(filter: string): IFilter[] {
         let r = /(?<name>\w+)(?<operator>(=|>|<|>=|<=))(?<value>(\".+\"|\S+))/g;
