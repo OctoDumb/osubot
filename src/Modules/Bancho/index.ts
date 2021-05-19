@@ -9,7 +9,6 @@ import FindCommand from "../ServerCommands/Find";
 import ChatCommand from "../ServerCommands/Chat";
 import LeaderboardCommand from "../ServerCommands/Leaderboard";
 import TrackCommand from "./Track";
-import StatusCommand from "./Status";
 
 export default class Bancho extends ServerModule {
     name = "Bancho";
@@ -32,6 +31,5 @@ export default class Bancho extends ServerModule {
         new FindCommand(this),
         new ChatCommand(this),
         new TrackCommand(this),
-        new StatusCommand(this),
     ];
 }

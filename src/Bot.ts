@@ -82,7 +82,7 @@ export default class Bot {
     });
 
     database: Connection;
-    screenshotCreator = new PuppeteerInstance();
+    puppeteer = new PuppeteerInstance();
     api: IAPIList = {
         bancho: new BanchoAPI(Config.data.osu.token),
         gatari: new GatariAPI(),
