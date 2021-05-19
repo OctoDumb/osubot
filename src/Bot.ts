@@ -129,6 +129,8 @@ export default class Bot {
 
     public privilegesManager = new PrivilegesManager();
 
+    public disabled: number[] = [];
+
     async start() {
         try {
             this.database = await createConnection();
@@ -190,13 +192,14 @@ export default class Bot {
 
                 let mapLink = this.mapLinkProcessor.checkLink(message, ctx);
 
-                if (mapLink) 
+                if (mapLink && !this.disabled.includes(message.peerId)) 
                     return this.mapLinkProcessor.process(message, mapLink);
 
                 for(let module of this.modules)
                     await module.run(message, this);
                 
                 for(let command of this.commands) {
+                    if(this.disabled.includes(message.peerId) && command.disables) return;
                     message.arguments.unshift(message.command);
 
                     if(command.command.includes(message.prefix)) {

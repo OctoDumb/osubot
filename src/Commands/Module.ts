@@ -24,6 +24,7 @@ export default abstract class Module {
     protected get apilist() { return this.bot.api; }
 
     async run(message: Message, bot: Bot) {
+        if(bot.disabled.includes(message.peerId)) return;
         if(!this.prefix.includes(message.prefix)) return;
 
         if(message.command == "help"

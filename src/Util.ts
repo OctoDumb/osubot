@@ -59,6 +59,7 @@ export function defaultArguments(message: Message, {
     database, vk, 
     maps: mapAPI, 
     news, lastMaps: chats, 
+    disabled,
     privilegesManager: privileges,
     uptime, track, v2,
     puppeteer
@@ -69,6 +70,7 @@ export function defaultArguments(message: Message, {
         database, 
         vk, mapAPI, 
         news, chats, 
+        disabled,
         privileges,
         uptime, track,
         v2, puppeteer

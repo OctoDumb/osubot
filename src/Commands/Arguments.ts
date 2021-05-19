@@ -17,6 +17,7 @@ export default interface ICommandArguments {
     news: NewsController;
     vk: VK;
     chats: ChatCache;
+    disabled: number[];
     privileges: PrivilegesManager;
     uptime: number;
     track: TrackAPI;
@@ -176,8 +177,8 @@ export function parseArguments<T>(args: string[], parsers: IArgumentParser[] = [
 }
 
 export interface IServerCommandArguments<T> extends ICommandArguments {
-    clean: string;
-    args: T;
+    clean?: string;
+    args?: T;
 }
 
 export interface IStandaloneCommandArguments<T> extends IServerCommandArguments<T> {}
