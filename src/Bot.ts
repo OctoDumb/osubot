@@ -42,6 +42,7 @@ import { Connection, createConnection, In } from "typeorm";
 import { Notification } from "./Database/entity/Notification";
 import { User } from "./Database/entity/User";
 import { Ban } from "./Database/entity/Ban";
+import DisableBotCommand from "./StandaloneCommands/DisableBot";
 
 export interface IBotConfig {
     vk: {
@@ -110,7 +111,8 @@ export default class Bot {
     ].map(m => new m(this));
 
     commands: StandaloneCommand[] = [
-        new MapCommand()
+        new MapCommand(),
+        new DisableBotCommand()
     ];
 
     lastMaps = new ChatCache();
