@@ -82,6 +82,7 @@ export async function getUserInfo(message: Message, server: string, db: Connecti
         .createQueryBuilder("conn")
         .innerJoinAndSelect("conn.user", "user")
         .where("user.id = :id", { id: message.sender })
+        .andWhere("conn.server = :server", { server })
         .getOne();
     let username = connection?.nickname ?? "";
     let mode = connection?.mode ?? 0;
@@ -90,6 +91,7 @@ export async function getUserInfo(message: Message, server: string, db: Connecti
             .createQueryBuilder("conn")
             .innerJoinAndSelect("conn.user", "user")
             .where("user.id = :id", { id: message.forwarded.senderId })
+            .andWhere("conn.server = :server", { server })
             .getOne();
         if(forwarded)
             username = forwarded.nickname;
