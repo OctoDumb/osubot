@@ -1,5 +1,10 @@
+import { stat } from "fs";
+import { In } from "typeorm";
 import ICommandArguments from "../../../Commands/Arguments";
 import Command from "../../../Commands/Command";
+import { Status } from "../../../Database/entity/Status";
+import { StatusOwned } from "../../../Database/entity/StatusOwned";
+import { User } from "../../../Database/entity/User";
 
 export default class MainStatus extends Command {
     name = "Status";
@@ -19,22 +24,21 @@ export default class MainStatus extends Command {
                 let [ page = 1 ] = args.map(Number);
                 if(page < 1)
                     return message.reply("Некорректная страница");
-                let owned = await database.statusOwned.findMany({
-                    where: {
-                        userId: message.sender
-                    },
+                let owned = await StatusOwned.find({
+                    where: { user: { id: message.sender } },
+                    relations: [ 'status' ],
                     take: 10,
                     skip: 10 * (page - 1)
                 });
 
-                let ownedCount = await database.statusOwned.count({ where: { userId: message.sender } });
+                let ownedCount = await StatusOwned.count({ where: { user: { id: message.sender } } });
                 if(!owned.length)
                     if(ownedCount == 0)
                         return message.reply("У вас нет статусов!");
                     else
                         return message.reply("Страница не найдена");
-
-                let statuses = await database.$transaction(owned.map(o => database.status.findUnique({ where: { id: o.statusId } })));
+                
+                let statuses = owned.map(o => o.status);
                 message.reply(`
                     Доступные статусы:
                     ${statuses.map(s => `[ID:${s.id}] ${s.name} (${s.emoji})`)}
@@ -44,23 +48,24 @@ export default class MainStatus extends Command {
             }
             case "set": {
                 let [ st ] = args;
-                let status = await database.status.findFirst({
-                    where: {
-                        OR: [
-                            { id: Number(st) },
-                            { emoji: st }
-                        ]
-                    }
+                let status = await Status.findOne({
+                    where: [
+                        { id: Number(st) },
+                        { name: st },
+                        { emoji: st }
+                    ]
                 });
-                let owned = await database.statusOwned.findFirst({
-                    where: { userId: message.sender, statusId: status.id }
+                let owned = StatusOwned.findOne({
+                    where: {
+                        user: { id: message.sender },
+                        status
+                    }
                 });
                 if(!owned)
                     return message.reply("У вас нет этого статуса!");
-                await database.user.updateMany({
-                    where: { id: message.sender },
-                    data: { statusId: status.id }
-                });
+                await User.update({
+                    id: message.sender
+                }, { status })
                 message.reply(`
                     Установлен статус ${status.name} (${status.emoji})
                 `);
@@ -68,13 +73,12 @@ export default class MainStatus extends Command {
             }
             case "info": {
                 let [ st ] = args;
-                let status = await database.status.findFirst({
-                    where: {
-                        OR: [
-                            { id: Number(st) },
-                            { emoji: st }
-                        ]
-                    }
+                let status = await Status.findOne({
+                    where: [
+                        { id: Number(st) },
+                        { name: st },
+                        { emoji: st }
+                    ]
                 });
                 message.reply(`
                     [ID:${status.id}] ${status.name} (${status.emoji})

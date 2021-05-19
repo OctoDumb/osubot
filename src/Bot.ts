@@ -37,9 +37,11 @@ import PuppeteerInstance from "./PuppeteerInstance";
 import TrackAPI from "./API/TrackAPI";
 import Logger, { LogLevel } from "./Logger";
 import Banlist, { BanUtil } from "./Banlist";
-import { PrismaClient } from "@prisma/client";
 import Config from "./Config";
-import { getDBUser } from "./Util";
+import { Connection, createConnection, In } from "typeorm";
+import { Notification } from "./Database/entity/Notification";
+import { User } from "./Database/entity/User";
+import { Ban } from "./Database/entity/Ban";
 
 export interface IBotConfig {
     vk: {
@@ -79,8 +81,8 @@ export default class Bot {
         pollingGroupId: Config.data.vk.groupId
     });
 
-    database = new PrismaClient();
-    puppeteer = new PuppeteerInstance();
+    database: Connection;
+    screenshotCreator = new PuppeteerInstance();
     api: IAPIList = {
         bancho: new BanchoAPI(Config.data.osu.token),
         gatari: new GatariAPI(),
@@ -126,22 +128,62 @@ export default class Bot {
     }
 
     public privilegesManager = new PrivilegesManager();
-    
-    constructor() {
+
+    async start() {
+        try {
+            this.database = await createConnection();
+            Logger.log(LogLevel.MESSAGE, "[DB] Database connection successful");
+        } catch(e) {
+            Logger.log(LogLevel.ERROR, "[DB] Database connection failed");
+        }
+
+        try {
+            await this.vk.updates.start();
+
+            this.startTime = Date.now();
+            Logger.log(LogLevel.MESSAGE, "[BOT] VK Long Poll listening");
+        } catch(e) {
+            console.log(e);
+            Logger.log(LogLevel.ERROR, "[BOT] VK Long Poll connection failed");
+        }
+
+        try {
+            await this.v2.login(
+                Config.data.osu.username,
+                Config.data.osu.password
+            );
+
+            Logger.log(LogLevel.MESSAGE, "[V2] Successfully logged in!");
+        } catch(e) {
+            Logger.log(LogLevel.ERROR, "[V2] Login failed!");
+        }
+
+        // await this.screenshotCreator.launch();
+
+        // this.v2.data.start();
+        Logger.assert(this.v2.logged, LogLevel.MESSAGE, `[V2] Updating V2 data every ${Math.floor(this.v2.data.interval / 1e3)} seconds`);
+
+        // cron.schedule('*/5 * * * *', () => { this.updateUses() });
+
+        Logger.log(LogLevel.DEBUG, `[DEBUG] Initialized with ${this.modules.length} modules and ${this.modules.flatMap(m => m.commands).length + this.commands.length} commands`);
+
+        this.startMessageListening();
+    }
+
+    private startMessageListening() {
         this.vk.updates.on("message", async ctx => {
             try {
-                let user = await getDBUser(this.database, ctx.senderId);
+                let user = await User.findOrCreate(ctx.senderId);
                 let message = new Message(ctx, user);
                 
-                let notifications = await this.database.notification.findMany({
-                    where: { userId: user.id, delivered: false },
-                    orderBy: { id: "asc" }
+                let notifications = await Notification.find({
+                    where: { user: { id: user.id }, delivered: false },
+                    order: { id: "ASC" }
                 });
-                await this.database.notification.updateMany({
-                    where: {
-                        id: { in: notifications.map(n => n.id) }
-                    },
-                    data: { delivered: true }
+                await Notification.update({
+                    id: In(notifications.map(n => n.id))
+                }, {
+                    delivered: true
                 });
                 for(let notification of notifications)
                     await message.reply(notification.message);
@@ -158,10 +200,8 @@ export default class Bot {
                     message.arguments.unshift(message.command);
 
                     if(command.command.includes(message.prefix)) {
-                        let ban = await this.database.ban.findFirst({
-                            where: { userId: message.sender }
-                        });
-                        if(BanUtil.isBanned(ban) && !command.ignoreBan) return;
+                        let ban = await Ban.findOne({ where: { user: { id: message.sender } } });
+                        if(ban.isBanned && !command.ignoreBan) return;
                         try {
                             let args = command.parseArguments(message, this);
                             command.use(message);
@@ -175,37 +215,6 @@ export default class Bot {
                 console.log(e)
             }
         });
-    }
-
-    async start() {
-        try {
-            await this.vk.updates.start();
-
-            this.startTime = Date.now();
-            Logger.log(LogLevel.MESSAGE, "[BOT] VK Long Poll listening");
-        } catch(e) {
-            Logger.log(LogLevel.ERROR, "[BOT] VK Long Poll connection failed");
-        }
-
-        try {
-            await this.v2.login(
-                Config.data.osu.username,
-                Config.data.osu.password
-            );
-
-            Logger.log(LogLevel.MESSAGE, "[V2] Successfully logged in!");
-        } catch(e) {
-            Logger.log(LogLevel.ERROR, "[V2] Login failed!");
-        }
-
-        await this.puppeteer.launch();
-
-        // this.v2.data.start();
-        Logger.assert(this.v2.logged, LogLevel.MESSAGE, `[V2] Updating V2 data every ${Math.floor(this.v2.data.interval / 1e3)} seconds`);
-
-        // cron.schedule('*/5 * * * *', () => { this.updateUses() });
-
-        Logger.log(LogLevel.DEBUG, `[DEBUG] Initialized with ${this.modules.length} modules and ${this.modules.flatMap(m => m.commands).length + this.commands.length} commands`);
     }
 
     private updateUses() {

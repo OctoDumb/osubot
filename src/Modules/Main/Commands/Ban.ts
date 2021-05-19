@@ -1,6 +1,7 @@
 import ICommandArguments from "../../../Commands/Arguments";
 import Command from "../../../Commands/Command";
 import dateformat from "dateformat";
+import { Ban } from "../../../Database/entity/Ban";
 
 export default class MainBan extends Command {
     name = "Ban";
@@ -10,7 +11,7 @@ export default class MainBan extends Command {
     description = "";
 
     async run({ message, database }: ICommandArguments) {
-        let ban = await database.ban.findFirst({ where: { userId: message.sender } });
+        let ban = await Ban.findOne({ where: { user: { id: message.sender } } });
 
         if(!ban)
             return message.reply("У вас нет бана!");

@@ -1,5 +1,5 @@
 import { IV2Beatmapset } from "../../API/Servers/V2/V2Responses";
-import { getCover } from "../../Util";
+import { Cover } from "../../Database/entity/Cover";
 import NewsRule, { executeFilter, IFilter, INewsSendParams } from "../NewsRule";
 
 export default class NewRankedRule extends NewsRule<IV2Beatmapset> {
@@ -29,7 +29,7 @@ export default class NewRankedRule extends NewsRule<IV2Beatmapset> {
             ${modes.map(mode => `${mode.mode} [${mode.min == mode.max ? mode.min : `${mode.min}-${mode.max}`}]`).join(", ")}
             
             https://osu.ppy.sh/s/${mapset.id}`,
-            attachment: await getCover(this.bot.database, this.bot.vk, mapset.id)
+            attachment: await Cover.get(this.bot.vk, mapset.id)
         }
     }
 

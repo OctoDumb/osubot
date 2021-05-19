@@ -6,7 +6,7 @@ import { defaultArguments } from "../../Util";
 import { IDBUser } from "../../Database";
 import { APIWithScores } from "../../API/ServerAPI";
 import { LeaderboardTemplate } from "../../Templates";
-import { ServerConnection } from "@prisma/client";
+import { ServerConnection } from "../../Database/entity/ServerConnection";
 
 export default class LeaderboardCommand extends ServerCommand {
     api: APIWithScores;
@@ -43,11 +43,9 @@ export default class LeaderboardCommand extends ServerCommand {
 
         let users: ServerConnection[] = [];
         for(let profile of profiles) {
-            let user = await database.serverConnection.findFirst({
-                where: {
-                    userId: profile.id
-                }
-            })
+            let user = await ServerConnection.findOne({
+                where: { user: { id: profile.id } }
+            });
             if(user.id && !users.some(u => u.id == user.id))
                 users.push(user);
         }

@@ -1,7 +1,7 @@
-import { Role, User } from "@prisma/client";
 import { MessageContext, MessagesSendParams } from "vk-io";
 import MessageForward from "vk-io/lib/structures/shared/message-forward";
 import MessageReply from "vk-io/lib/structures/shared/message-reply";
+import { User } from "./Database/entity/User";
 
 export default class Message {
     static DefaultParams: MessagesSendParams = {
@@ -33,7 +33,7 @@ export default class Message {
 
     constructor(
         private ctx: MessageContext,
-        public user: User & { role: Role }
+        public user: User
     ) {
         let args = ctx.text?.split(" ") ?? [];
 

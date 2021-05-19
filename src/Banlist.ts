@@ -1,8 +1,7 @@
-import { Ban, PrismaClient } from "@prisma/client";
 import fs from "fs";
-import { addNotification } from "./Util";
 import dateformat from "dateformat";
 import VK from "vk-io";
+import { Ban } from "./Database/entity/Ban";
 
 dateformat.i18n = {
     monthNames: [
@@ -25,15 +24,8 @@ export class BanUtil {
         return ban?.until < Date.now() ?? false;
     }
 
-    public static async addBan(vk: VK, database: PrismaClient, id: number, duration: number, reason?: string) {
-        await database.ban.deleteMany({ where: { userId: id } });
+    public static async addBan(vk: VK,id: number, duration: number, reason?: string) {
         let until = Date.now() + duration;
-        await database.ban.create({ data: { userId: id, until, reason } });
-        await addNotification(vk, database, id, `
-            Вы были забанены!
-            Время окончания бана: ${dateformat(new Date(until), "dd mmm yyyy HH:MM:ss 'MSK'")}
-            Причина бана: ${reason ?? "не указана"}
-        `);
         return until;
     }
 }

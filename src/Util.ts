@@ -1,12 +1,16 @@
 import Message from "./Message";
 import Bot, { IBotConfig } from "./Bot";
 import { IHitCounts, IUserAPIResponse } from "./API/APIResponse";
-import Database, { IDBUser, Server } from "./Database";
 import { IPPResponse } from "./API/MapAPI";
 import Logger, { LogLevel } from "./Logger";
-import { PrismaClient, Role, Status, User } from "@prisma/client";
 import Config from "./Config";
 import { VK } from "vk-io";
+import { ServerConnection } from "./Database/entity/ServerConnection";
+import { Connection } from "typeorm";
+import { User } from "./Database/entity/User";
+import { Status } from "./Database/entity/Status";
+import { Notification } from "./Database/entity/Notification";
+import { Stats } from "fs";
 
 /**
  * Mods bitwise enum
@@ -71,22 +75,20 @@ export function defaultArguments(message: Message, {
     };
 }
 
-export async function getUserInfo(message: Message, server: string, db: PrismaClient, clean: string, args?: { mode?: number }) {
-    let connection = await db.serverConnection.findFirst({
-        where: {
-            userId: message.sender,
-            server
-        }
-    });
+export async function getUserInfo(message: Message, server: string, db: Connection, clean: string, args?: { mode?: number }) {
+    let connection = await ServerConnection.getRepository()
+        .createQueryBuilder("conn")
+        .innerJoinAndSelect("conn.user", "user")
+        .where("user.id = :id", { id: message.sender })
+        .getOne();
     let username = connection?.nickname ?? "";
     let mode = connection?.mode ?? 0;
     if(message.forwarded) {
-        let forwarded = await db.serverConnection.findFirst({
-            where: {
-                userId: message.forwarded.senderId,
-                server
-            }
-        });
+        let forwarded = await ServerConnection.getRepository()
+            .createQueryBuilder("conn")
+            .innerJoinAndSelect("conn.user", "user")
+            .where("user.id = :id", { id: message.forwarded.senderId })
+            .getOne();
         if(forwarded)
             username = forwarded.nickname;
     }
@@ -98,98 +100,34 @@ export async function getUserInfo(message: Message, server: string, db: PrismaCl
     return { username, mode };
 }
 
-export async function getDBUser(database: PrismaClient, id: number): Promise<User & { role: Role }> {
-    let user = await database.user.findUnique({ where: { id }, include: { role: true } });
-    if(!user)
-        return await database.user.create({ 
-            data: { 
-                id, role: { 
-                    connect: { 
-                        id: Config.data.vk.ownerId == id ? 2 : 1 
-                    } 
-                } 
-            }, 
-            include: { role: true } 
-        });
-    return user;
+export async function getStatus(playerId: number): Promise<Status> {
+    let connections = await ServerConnection.find({ 
+        where: { playerId }, 
+        relations: [ 'user', 'user.status' ] 
+    });
+
+    if(!connections.length) return null;
+
+    return connections[0].user.status;
 }
 
-export async function getStatus(database: PrismaClient, playerId: number): Promise<Status> {
-    let connections = await database.serverConnection.findMany({
-        where: { playerId }
-    });
-    let users = await database.$transaction(
-        connections.map(c => database.user.findUnique({
-            where: { id: c.userId }
-        }))
-    );
-    users = users.filter(u => u.statusId);
-    return await database.status.findUnique({
-        where: {
-            id: users[0]?.statusId ?? 0
-        }
-    });
-}
-
-export async function addNotification(vk: VK, database: PrismaClient, to: number, message: string): Promise<boolean> {
+export async function addNotification(vk: VK, to: number, message: string): Promise<boolean> {
     message = Message.fixString(message);
-    let notification = await database.notification.create({
-        data: {
-            userId: to,
-            message
-        }
-    });
+    let notification = new Notification();
+    notification.user = await User.findOne(to);
+    notification.message = message;
+    await notification.save();
+
     try {
         await vk.api.messages.send({
             user_id: to,
             message
         });
-        notification = await database.notification.update({
-            where: { id: notification.id },
-            data: { delivered: true }
-        });
+        notification.delivered = true;
+        await notification.save();
     } catch(e) {}
+
     return notification.delivered;
-}
-
-export async function updateInfo(database: PrismaClient, server: string, user: IUserAPIResponse, mode: number = 0): Promise<void> {
-    let where = { playerId: user.id, mode, server };
-    let data = { rank: user.rank.total, pp: user.pp, accuracy: user.accuracy };
-
-    let i = await database.stats.findFirst({ where });
-
-    if(!i)
-        await database.stats.create({ data: { ...where, ...data } });
-    else
-        await database.stats.updateMany({ where, data });
-}
-
-export async function getCover(database: PrismaClient, vk: VK, id: number): Promise<string> {
-    let cover = await database.cover.findUnique({
-        where: { id }
-    });
-    if(!cover) {
-        try {
-            let photo = await vk.upload.messagePhoto({
-                source: `https://assets.ppy.sh/beatmaps/${id}/covers/cover.jpg?1`
-            });
-            await database.cover.create({
-                data: {
-                    id, attachment: photo.toString()
-                }
-            });
-            return photo.toString();
-        } catch(e) {
-            await database.cover.create({
-                data: {
-                    id, attachment: ""
-                }
-            })
-            return "";
-        }
-
-    } else
-        return cover.attachment;
 }
 
 /**

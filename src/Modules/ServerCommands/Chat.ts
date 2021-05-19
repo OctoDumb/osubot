@@ -1,7 +1,9 @@
-import { PrismaClient, Stats, Status } from "@prisma/client";
 import Bot from "../../Bot";
 import { IArgumentsWithMode, IServerCommandArguments, parseArguments, Parsers } from "../../Commands/Arguments";
 import ServerCommand from "../../Commands/Server/ServerCommand";
+import { ServerConnection } from "../../Database/entity/ServerConnection";
+import { Stats } from "../../Database/entity/Stats";
+import { Status } from "../../Database/entity/Status";
 import Message from "../../Message";
 import PrivilegesManager from "../../Privileges";
 import { ChatTopTemplate } from "../../Templates";
@@ -43,7 +45,7 @@ export default class ChatCommand extends ServerCommand {
             peer_id: 2e9 + chatId
         })).profiles?.map(m => m.id);
 
-        let users = await Promise.all(members?.map(id => this.getChatTopUser(database, privileges, id, mode)));
+        let users = await Promise.all(members?.map(id => this.getChatTopUser(privileges, id, mode)));
 
         let msg = ChatTopTemplate(
             this.module, chatId, 
@@ -55,18 +57,16 @@ export default class ChatCommand extends ServerCommand {
         message.reply(msg);
     }
 
-    private async getChatTopUser(database: PrismaClient, privileges: PrivilegesManager, id: number, mode: number): Promise<IChatTopUser> {
-        let conn = await database.serverConnection.findFirst({
-            where: {
-                userId: id
-            }
+    private async getChatTopUser(privileges: PrivilegesManager, id: number, mode: number): Promise<IChatTopUser> {
+        let conn = await ServerConnection.findOne({
+            where: { user: id }
         });
         if(!conn)
             return null;
         return {
-            status: await getStatus(database, conn.playerId),
+            status: await getStatus(conn.playerId),
             nickname: conn.nickname,
-            stats: await database.stats.findFirst({
+            stats: await Stats.findOne({
                 where: {
                     playerId: conn.playerId
                 }

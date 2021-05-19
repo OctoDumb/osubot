@@ -5,15 +5,14 @@ import { Mods } from "../Util";
 import NewsController from "../News/NewsController";
 import ChatCache from "../ChatCache";
 import PrivilegesManager from "../Privileges";
-import ScreenshotCreator from "../PuppeteerInstance";
 import TrackAPI from "../API/TrackAPI";
 import BanchoV2API from "../API/Servers/BanchoV2";
-import { PrismaClient } from "@prisma/client";
+import { Connection } from "typeorm";
 import PuppeteerInstance from "../PuppeteerInstance";
 
 export default interface ICommandArguments {
     message: Message;
-    database: PrismaClient;
+    database: Connection;
     mapAPI: MapAPI;
     news: NewsController;
     vk: VK;

@@ -2,8 +2,11 @@ import ServerCommand from "../../Commands/Server/ServerCommand";
 import Message from "../../Message";
 import Bot from "../../Bot";
 import { IServerCommandArguments, ITopCommandArguments, parseArguments, Parsers } from "../../Commands/Arguments";
-import { defaultArguments, getCover, getStatus, getUserInfo, modsToString, updateInfo } from "../../Util";
+import { defaultArguments, getStatus, getUserInfo, modsToString } from "../../Util";
 import { TopTemplate, TopSingleTemplate } from "../../Templates";
+import { ServerConnection } from "../../Database/entity/ServerConnection";
+import { Stats } from "../../Database/entity/Stats";
+import { Cover } from "../../Database/entity/Cover";
 
 export default class TopCommand extends ServerCommand {
     name = "Top";
@@ -30,14 +33,14 @@ export default class TopCommand extends ServerCommand {
 
         let user = await this.api.getUser({ username, mode });
 
-        await updateInfo(database, this.module.name, user, mode);
+        await Stats.updateInfo(this.module.name, user, mode);
 
-        let users = await database.serverConnection.findMany({
-            where: {
+        let users = await ServerConnection.find({
+            where: { 
                 playerId: user.id
             }
         });
-        let status = await getStatus(database, user.id);
+        let status = await getStatus(user.id);
         
         let top = await this.api.getTop({ 
             username, 
@@ -59,7 +62,7 @@ export default class TopCommand extends ServerCommand {
 
             let map = await mapAPI.getBeatmap(t.beatmapId, modsToString(t.mods));
 
-            let attachment = await getCover(database, vk, map.beatmapsetID);
+            let attachment = await Cover.get(vk, map.beatmapsetID);
 
             let msg = TopSingleTemplate(this.module, user.username, t, args.place, map, status);
             
