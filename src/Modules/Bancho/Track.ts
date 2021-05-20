@@ -26,6 +26,9 @@ export default class BanchoTrack extends ServerCommand {
         database
     }: IServerCommandArguments<IArgumentsWithMode>) {
         let { username, mode } = await getUserInfo(message, this.module.name, database, clean, args);
+
+        if(!username)
+            throw "Не указан ник!";
         
         let update = await track.getChanges(username, mode);
 

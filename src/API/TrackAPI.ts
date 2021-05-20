@@ -24,7 +24,7 @@ export default class TrackAPI {
         timeout: 20000
     });
 
-    async getChanges(nickname: string, mode: number): Promise<any> {
+    async getChanges(nickname: string, mode: number = 0): Promise<any> {
         let { data } = await this.api.get(`/get_changes.php?${stringify({ user: nickname, mode })}`);
         
         return {
