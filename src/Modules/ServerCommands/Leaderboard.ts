@@ -7,6 +7,7 @@ import { IDBUser } from "../../Database";
 import { APIWithScores } from "../../API/ServerAPI";
 import { LeaderboardTemplate } from "../../Templates";
 import { ServerConnection } from "../../Database/entity/ServerConnection";
+import { User } from "../../Database/entity/User";
 
 export default class LeaderboardCommand extends ServerCommand {
     api: APIWithScores;
@@ -43,11 +44,12 @@ export default class LeaderboardCommand extends ServerCommand {
 
         let users: ServerConnection[] = [];
         for(let profile of profiles) {
-            let user = await ServerConnection.findOne({
-                where: { user: { id: profile.id } }
+            let user = await User.findOrCreate(profile.id);
+            let conn = await ServerConnection.findOne({
+                where: { user }
             });
-            if(user.id && !users.some(u => u.id == user.id))
-                users.push(user);
+            if(conn && !users.some(u => u.id == conn.id))
+                users.push(conn);
         }
 
         let leaderboard = await this.api.getLeaderboard({
