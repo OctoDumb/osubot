@@ -61,12 +61,13 @@ export default class ChatCommand extends ServerCommand {
 
     private async getChatTopUser(privileges: PrivilegesManager, id: number, mode: number): Promise<IChatTopUser> {
         let conn = await ServerConnection.findOne({
-            where: { user: id }
+            where: { user: id, server: this.module.name }
         });
         if(!conn)
             return null;
         let stats = await Stats.findOne({
             where: {
+                server: this.module.name,
                 playerId: conn.playerId,
                 mode
             }
