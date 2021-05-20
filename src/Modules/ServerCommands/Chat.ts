@@ -47,6 +47,8 @@ export default class ChatCommand extends ServerCommand {
 
         let users = await Promise.all(members?.map(id => this.getChatTopUser(privileges, id, mode)));
 
+        users = users.filter(u => u);
+
         let msg = ChatTopTemplate(
             this.module, chatId, 
             users
@@ -63,14 +65,18 @@ export default class ChatCommand extends ServerCommand {
         });
         if(!conn)
             return null;
+        let stats = await Stats.findOne({
+            where: {
+                playerId: conn.playerId,
+                mode
+            }
+        });
+        if(!stats)
+            return null;
         return {
             status: await getStatus(conn.playerId),
             nickname: conn.nickname,
-            stats: await Stats.findOne({
-                where: {
-                    playerId: conn.playerId
-                }
-            })
+            stats
         };
     }
 }
