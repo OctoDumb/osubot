@@ -61,8 +61,8 @@ export default class LeaderboardCommand extends ServerCommand {
         let scores = leaderboard.map(v => ({
             user: v.user,
             status: privileges.getStatus(v.user.id),
-            score: args.mods ? v.scores.find(s => s.mods == args.mods) : v.scores[0]
-        })).filter(v => v.score);
+            score: args.mods ? v.scores.find(s => s.mods == args.mods) : v.scores.sort((a,b) => b.score - a.score)[0]
+        })).filter(v => v.score).sort((a,b) => b.score.score - a.score.score);
 
         let msg = LeaderboardTemplate(this.module, scores, map);
 
