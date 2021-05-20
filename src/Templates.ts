@@ -160,9 +160,7 @@ export function LeaderboardTemplate(server: ServerModule, scores: {user: ServerC
         Топ беседы на карте ${map.artist} - ${map.title} [${map.version}] by ${map.creator}
         ${scores.map((s, i) => {
             let { user, status, score } = s;
-            return `
-                #${i + 1} ${user.nickname} ${status} | ${score.score} | ${score.maxCombo}x | ${round(score.accuracy)}% | ${round(0)}pp | ${formatDate(score.date)}
-            `;
+            return `#${i + 1} ${user.nickname} ${status} | ${score.score} | ${formatCombo(score.maxCombo, map.maxCombo)} | ${round(score.accuracy * 100)}% | ${round(0)}pp | ${formatDate(score.date)}`;
         }).map(Message.fixString).join('\n')}
     ` ;
 }

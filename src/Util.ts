@@ -98,7 +98,7 @@ export async function getUserInfo(message: Message, server: string, db: Connecti
     }
     if(clean)
         username = clean;
-    if(mode != null)
+    if(args.mode != null)
         mode = args.mode;
 
     return { username, mode };
@@ -297,7 +297,7 @@ export function formatDate(date: Date) {
 }
 
 export function formatCombo(combo: number, maxCombo: number) {
-    return `${combo}x${maxCombo == 0 ? '' : `/${maxCombo}x`}`;
+    return `${combo}x${maxCombo ? `/${maxCombo}x` : ''}`;
 }
 
 export function formatChange(num: number) {
