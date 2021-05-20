@@ -26,13 +26,15 @@ export default class MapLinkProcessor {
         ];
 
         for(let r of regExps) {
-            let [firstLine] = message.clean.split("\n");
+            if(ctx.hasText) {
+                let [firstLine] = message.clean.split("\n");
 
-            if(r.test(firstLine)) {
-                let g = firstLine.match(r).groups;
-                return {
-                    beatmapsetId: Number(g.setId),
-                    beatmapId: Number(g.mapId)
+                if(r.test(firstLine)) {
+                    let g = firstLine.match(r).groups;
+                    return {
+                        beatmapsetId: Number(g.setId),
+                        beatmapId: Number(g.mapId)
+                    }
                 }
             }
 
