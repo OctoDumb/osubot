@@ -1,4 +1,4 @@
-import { IV2News } from "../../API/Servers/V2/V2Responses";
+import { IV2News } from "../../API/Osu/Servers/V2/V2Responses";
 import NewsRule, { IFilter, INewsSendParams } from "../NewsRule";
 
 export default class OsuNewsRule extends NewsRule<IV2News> {

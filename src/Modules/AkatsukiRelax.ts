@@ -11,8 +11,6 @@ export default class AkatsukiRelax extends ServerModule {
 
     description = "";
 
-    api = this.apilist.akatsukiRelax;
-
     commands = [
         new UserCommand(this),
         new TopCommand(this),

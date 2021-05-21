@@ -23,16 +23,16 @@ import Kurikku from "./Modules/Kurikku";
 import Ripple from "./Modules/Ripple";
 import Enjuu from "./Modules/Enjuu";
 
-import BanchoAPI from "./API/Servers/Bancho";
-import GatariAPI from "./API/Servers/Gatari";
-import KurikkuAPI from "./API/Servers/Kurikku";
-import EnjuuAPI from "./API/Servers/Enjuu";
-import RippleAPI from "./API/Servers/Ripple";
-import AkatsukiAPI from "./API/Servers/Akatsuki";
-import AkatsukiRelaxAPI from "./API/Servers/AkatsukiRelax";
+import BanchoAPI from "./API/Osu/Servers/Bancho";
+import GatariAPI from "./API/Osu/Servers/Gatari";
+import KurikkuAPI from "./API/Osu/Servers/Kurikku";
+import EnjuuAPI from "./API/Osu/Servers/Enjuu";
+import RippleAPI from "./API/Osu/Servers/Ripple";
+import AkatsukiAPI from "./API/Osu/Servers/Akatsuki";
+import AkatsukiRelaxAPI from "./API/Osu/Servers/AkatsukiRelax";
 import Akatsuki from "./Modules/Akatsuki";
 import AkatsukiRelax from "./Modules/AkatsukiRelax";
-import BanchoV2API from "./API/Servers/BanchoV2";
+import BanchoV2API from "./API/Osu/Servers/V2/BanchoV2";
 import PuppeteerInstance from "./PuppeteerInstance";
 import TrackAPI from "./API/TrackAPI";
 import Logger, { LogLevel } from "./Logger";
@@ -174,9 +174,9 @@ export default class Bot {
 
         this.startMessageListening();
     }
-
+    
     private startMessageListening() {
-        this.vk.updates.on("message", async ctx => {
+        this.vk.updates.on("new_message", async ctx => {
             try {
                 let user = await User.findOrCreate(ctx.senderId);
                 let message = new Message(ctx, user);

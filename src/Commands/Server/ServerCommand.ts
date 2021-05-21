@@ -1,15 +1,17 @@
 import Command from "../Command";
 import { IServerCommandArguments, parseArguments } from "../Arguments";
-import { API, APIWithScores } from "../../API/ServerAPI";
 import ServerModule from "./ServerModule";
 import Message from "../../Message";
 import Bot from "../../Bot";
 import { defaultArguments } from "../../Util";
+import ServerAPIManager from "../../API/ServerAPIManager";
 
-export default abstract class ServerCommand extends Command {
+export default abstract class ServerCommand<T = unknown> extends Command {
     abstract run(args: IServerCommandArguments<any>): Promise<void>;
 
-    protected api: API;
+    get api(): T {
+        return ServerAPIManager.get(this.module.name) as unknown as T;
+    }
 
     parseArguments(message: Message, bot: Bot): IServerCommandArguments<any> {
         return {
@@ -22,6 +24,5 @@ export default abstract class ServerCommand extends Command {
         protected module: ServerModule
     ) {
         super();
-        this.api = module.api;
     }
 }

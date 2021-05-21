@@ -2,9 +2,10 @@ import ServerCommand from "../../Commands/Server/ServerCommand";
 import { IArgumentsWithMode, IServerCommandArguments } from "../../Commands/Arguments";
 import { FindTemplate } from "../../Templates";
 import { getUserInfo } from "../../Util";
+import { OsuAPIWithScores } from "../../API/Osu/OsuServerAPI";
 import { ServerConnection } from "../../Database/entity/ServerConnection";
 
-export default class FindCommand extends ServerCommand {
+export default class FindCommand extends ServerCommand<OsuAPIWithScores> {
     name = "Find";
 
     command = [ "f", "find", "а", "аштв" ];

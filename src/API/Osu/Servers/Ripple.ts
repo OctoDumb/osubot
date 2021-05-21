@@ -1,30 +1,33 @@
-import { APIWithScores } from "../ServerAPI";
 import { IUserRequestParams, ITopRequestParams, IRecentRequestParams, IScoreRequestParams } from "../RequestParams";
 import { IUserAPIResponse, ITopAPIResponse, IRecentAPIResponse, IScoreAPIResponse } from "../APIResponse";
 import { stringify } from "querystring";
-import { APINotFoundError } from "../APIErrors";
+import { APINotFoundError } from "../../APIErrors";
 import Axios from "axios";
+import { IOsuAPIWithLeaderboard, IOsuAPIWithRecent, IOsuAPIWithScores, IOsuAPIWithTop, IOsuAPIWithUser, OsuAPIWithScores } from "../OsuServerAPI";
 
-export default class BanchoAPI extends APIWithScores {
+export interface IRippleAPI extends
+    IOsuAPIWithUser,
+    IOsuAPIWithTop,
+    IOsuAPIWithRecent,
+    IOsuAPIWithScores,
+    IOsuAPIWithLeaderboard
+{}
+
+export default class RippleAPI extends OsuAPIWithScores implements IRippleAPI {
+    name = "Ripple";
     api = Axios.create({
-        baseURL: "https://osu.ppy.sh/api"
+        baseURL: "https://ripple.moe/api"
     });
 
-    constructor(
-        private token: string
-    ) {
-        super();
-    }
-
-    async getUser({ 
-        username, 
+    async getUser({
+        username,
         mode = 0
     }: IUserRequestParams): Promise<IUserAPIResponse> {
         let { data: [data] } = await this.api(`/get_user?${stringify({ 
-            k: this.token,
             u: username, 
             m: mode ?? 0,
         })}`);
+        
         if(!data)
             throw new APINotFoundError("User is not found!");
         
@@ -37,7 +40,6 @@ export default class BanchoAPI extends APIWithScores {
         limit = 3 
     }: ITopRequestParams): Promise<ITopAPIResponse[]> {
         let { data } = await this.api(`/get_user_best?${stringify({ 
-            k: this.token,
             u: username, 
             m: mode ?? 0, 
             limit
@@ -57,9 +59,8 @@ export default class BanchoAPI extends APIWithScores {
         pass = false 
     }: IRecentRequestParams): Promise<IRecentAPIResponse[]> {
         let { data } = await this.api(`/get_user_recent?${stringify({
-            k: this.token,
             u: username, 
-            m: mode ?? 0,
+            m: mode ?? 0, 
             limit: 50
         })}`);
 
@@ -73,7 +74,6 @@ export default class BanchoAPI extends APIWithScores {
         mods = null
     }: IScoreRequestParams): Promise<IScoreAPIResponse[]> {
         let { data } = await this.api(`/get_scores?${stringify({
-            k: this.token,
             u: username,
             b: beatmapId,
             m: mode ?? 0

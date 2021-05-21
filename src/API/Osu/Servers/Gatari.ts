@@ -1,12 +1,21 @@
-import { APIWithScores } from "../ServerAPI";
 import { IUserRequestParams, ITopRequestParams, IRecentRequestParams, IScoreRequestParams } from "../RequestParams";
 import { IUserAPIResponse, ITopAPIResponse, IRecentAPIResponse, IScoreAPIResponse } from "../APIResponse";
 import { stringify } from "querystring";
-import { APINotFoundError } from "../APIErrors";
-import { getAccuracy } from "../../Util";
+import { APINotFoundError } from "../../APIErrors";
+import { getAccuracy } from "../../../Util";
 import Axios from "axios";
+import { IOsuAPIWithLeaderboard, IOsuAPIWithRecent, IOsuAPIWithScores, IOsuAPIWithTop, IOsuAPIWithUser, OsuAPIWithScores } from "../OsuServerAPI";
 
-export default class GatariAPI extends APIWithScores {
+export interface IGatariAPI extends
+    IOsuAPIWithUser,
+    IOsuAPIWithTop,
+    IOsuAPIWithRecent,
+    IOsuAPIWithScores,
+    IOsuAPIWithLeaderboard
+{}
+
+export default class GatariAPI extends OsuAPIWithScores {
+    name = "Gatari";
     api = Axios.create({
         baseURL: "https://api.gatari.pw"
     });

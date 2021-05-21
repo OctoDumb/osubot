@@ -16,8 +16,6 @@ export default class Enjuu extends ServerModule {
 
     description = "";
 
-    api = this.apilist.enjuu;
-
     commands = [
         new NickCommand(this),
         new ModeCommand(this),

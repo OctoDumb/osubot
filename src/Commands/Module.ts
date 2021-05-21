@@ -27,8 +27,8 @@ export default abstract class Module {
         if(bot.disabled.isDisabled(message.peerId)) return;
         if(!this.prefix.includes(message.prefix)) return;
 
-        if(message.command == "help"
-            || message.command == "рудз") return this.help(message);
+        if(message.command == "help" || message.command == "рудз") 
+            return this.help(message);
 
         let command = this.commands.find(c => c.command.includes(message.command));
         if(!command) return;

@@ -3,10 +3,11 @@ import Bot from "../../Bot";
 import ServerCommand from "../../Commands/Server/ServerCommand";
 import { IArgumentsWithMode, IServerCommandArguments, Parsers, parseArguments } from "../../Commands/Arguments";
 import { UserTemplate } from "../../Templates";
-import { defaultArguments, getStatus, getUserInfo } from "../../Util";
 import { Stats } from "../../Database/entity/Stats";
+import { defaultArguments, getStatus, getUserInfo } from "../../Util";
+import { OsuAPI } from "../../API/Osu/OsuServerAPI";
 
-export default class UserCommand extends ServerCommand {
+export default class UserCommand extends ServerCommand<OsuAPI> {
     name = "User";
     command = [ "u", "user", "г", "гыук" ];
 
