@@ -3,25 +3,11 @@ import { API, IAPIWithLeaderboard, IAPIWithRecent, IAPIWithScores, IAPIWithTop, 
 import { ILeaderboardAPIResponse, IRecentAPIResponse, IScoreAPIResponse, ITopAPIResponse, IUserAPIResponse } from "./APIResponse";
 import { ILeaderboardRequestParams, IRecentRequestParams, IScoreRequestParams, ITopRequestParams, IUserRequestParams } from "./RequestParams";
 
-export interface IOsuAPIWithUser extends IAPIWithUser<IUserRequestParams, IUserAPIResponse> { 
-
-}
-
-export interface IOsuAPIWithTop extends IAPIWithTop<ITopRequestParams, ITopAPIResponse[]> {
-
-}
-
-export interface IOsuAPIWithRecent extends IAPIWithRecent<IRecentRequestParams, IRecentAPIResponse[]> {
-
-}
-
-export interface IOsuAPIWithScores extends IAPIWithScores<IScoreRequestParams, IScoreAPIResponse[]> {
-
-}
-
-export interface IOsuAPIWithLeaderboard extends IAPIWithLeaderboard<ILeaderboardRequestParams, ILeaderboardAPIResponse[]> {
-
-}
+export interface IOsuAPIWithUser extends IAPIWithUser<IUserRequestParams, IUserAPIResponse> {}
+export interface IOsuAPIWithTop extends IAPIWithTop<ITopRequestParams, ITopAPIResponse[]> {}
+export interface IOsuAPIWithRecent extends IAPIWithRecent<IRecentRequestParams, IRecentAPIResponse[]> {}
+export interface IOsuAPIWithScores extends IAPIWithScores<IScoreRequestParams, IScoreAPIResponse[]> {}
+export interface IOsuAPIWithLeaderboard extends IAPIWithLeaderboard<ILeaderboardRequestParams, ILeaderboardAPIResponse[]> {}
 
 export abstract class OsuAPI extends API implements
     IOsuAPIWithUser,
