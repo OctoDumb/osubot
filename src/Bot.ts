@@ -61,16 +61,6 @@ export interface IBotConfig {
     }
 }
 
-export interface IAPIList {
-    bancho: BanchoAPI;
-    gatari: GatariAPI;
-    kurikku: KurikkuAPI;
-    enjuu: EnjuuAPI;
-    ripple: RippleAPI;
-    akatsuki: AkatsukiAPI;
-    akatsukiRelax: AkatsukiRelaxAPI;
-}
-
 interface IMapLink {
     beatmapsetId?: number;
     beatmapId?: number;
@@ -84,15 +74,6 @@ export default class Bot {
 
     database: Connection;
     puppeteer = new PuppeteerInstance();
-    api: IAPIList = {
-        bancho: new BanchoAPI(Config.data.osu.token),
-        gatari: new GatariAPI(),
-        kurikku: new KurikkuAPI(),
-        enjuu: new EnjuuAPI(),
-        ripple: new RippleAPI(),
-        akatsuki: new AkatsukiAPI(),
-        akatsukiRelax: new AkatsukiRelaxAPI(),
-    };
 
     v2 = new BanchoV2API();
 
