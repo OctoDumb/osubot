@@ -52,7 +52,7 @@ export function TopTemplate(server: ServerModule, nickname: string, scores: ITop
         return "Нет скоров!";
     return `
         [Server: ${server.name}]
-        Топ скоры игрока ${nickname} ${status?.emoji ?? ''} [${scores[0].mode}]
+        Топ скоры игрока ${nickname} ${status?.emoji ?? ''} [${modeNumberToString(scores[0].mode)}]
         ${scores.map((score, i) => {
             let map = maps[i];
             let length = formatTime(~~(map.length / 1e3));
