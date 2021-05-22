@@ -1,6 +1,6 @@
 import * as sqlite from "sqlite3";
 import VK from "vk-io";
-import { IUserAPIResponse } from "./API/APIResponse";
+import { IUserAPIResponse } from "./API/Osu/APIResponse";
 
 export class Covers {
     constructor(

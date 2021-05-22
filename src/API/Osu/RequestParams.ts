@@ -1,4 +1,4 @@
-import { ServerConnection } from "../Database/entity/ServerConnection";
+import { ServerConnection } from "../../Database/entity/ServerConnection";
 
 export interface IUserRequestParams {
     username: string;

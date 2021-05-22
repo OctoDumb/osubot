@@ -3,7 +3,7 @@ import {
     ITopAPIResponse,
     IRecentAPIResponse, 
     IScoreAPIResponse
-} from "./API/APIResponse";
+} from "./API/Osu/APIResponse";
 import ServerModule from "./Commands/Server/ServerModule";
 import { IBeatmap, IPPResponse } from "./API/MapAPI";
 import { statsToString, formatTime, formatBPM, modsToString, hitsToString, round, formatDate, formatPP, formatChange, formatCombo, modeNumberToString } from "./Util";
@@ -11,7 +11,7 @@ import Message from "./Message";
 import IReplay from "./Replay/Replay";
 import { UsersGetResponse } from "vk-io";
 import { IChatTopUser } from "./Modules/ServerCommands/Chat";
-import { IV2Beatmapset } from "./API/Servers/V2/V2Responses";
+import { IV2Beatmapset } from "./API/Osu/Servers/V2/V2Responses";
 import { OsuTrackResponse } from "./API/TrackAPI";
 import { Status } from "./Database/entity/Status";
 import { ServerConnection } from "./Database/entity/ServerConnection";

@@ -1,5 +1,5 @@
-import { IV2Beatmapset } from "../../API/Servers/V2/V2Responses";
 import { Cover } from "../../Database/entity/Cover";
+import { IV2Beatmapset } from "../../API/Osu/Servers/V2/V2Responses";
 import NewsRule, { executeFilter, IFilter, INewsSendParams } from "../NewsRule";
 
 export default class NewRankedRule extends NewsRule<IV2Beatmapset> {

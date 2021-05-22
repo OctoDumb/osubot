@@ -7,8 +7,9 @@ import { TopTemplate, TopSingleTemplate } from "../../Templates";
 import { ServerConnection } from "../../Database/entity/ServerConnection";
 import { Stats } from "../../Database/entity/Stats";
 import { Cover } from "../../Database/entity/Cover";
+import { OsuAPI } from "../../API/Osu/OsuServerAPI";
 
-export default class TopCommand extends ServerCommand {
+export default class TopCommand extends ServerCommand<OsuAPI> {
     name = "Top";
     command = [ "top", "t", "ещз", "е" ];
 

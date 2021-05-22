@@ -1,12 +1,24 @@
-import { API } from "../ServerAPI";
 import { IUserRequestParams, ITopRequestParams, IRecentRequestParams } from "../RequestParams";
 import { IUserAPIResponse, ITopAPIResponse, IRecentAPIResponse } from "../APIResponse";
 import { stringify } from "querystring";
-import { APINotFoundError } from "../APIErrors";
-import { getAccuracy } from "../../Util";
+import { APINotFoundError } from "../../APIErrors";
+import { getAccuracy } from "../../../Util";
 import Axios from "axios";
+import {
+    IOsuAPIWithRecent,
+    IOsuAPIWithTop,
+    IOsuAPIWithUser,
+    OsuAPI
+} from "../OsuServerAPI";
 
-export default class AkatsukiAPI extends API {
+export interface IAkatsukiAPI extends
+    IOsuAPIWithUser,
+    IOsuAPIWithTop,
+    IOsuAPIWithRecent
+{}
+
+export default class AkatsukiAPI extends OsuAPI implements IAkatsukiAPI {
+    name = "Akatsuki";
     api = Axios.create({
         baseURL: "https://akatsuki.pw/api/v1"
     });

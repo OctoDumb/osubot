@@ -1,9 +1,15 @@
 import { ITopRequestParams, IRecentRequestParams } from "../RequestParams";
 import { ITopAPIResponse, IRecentAPIResponse } from "../APIResponse";
 import { stringify } from "querystring";
-import AkatsukiAPI from "./Akatsuki";
+import AkatsukiAPI, { IAkatsukiAPI } from "./Akatsuki";
 
-export default class AkatsukiRelaxAPI extends AkatsukiAPI {
+export interface IAkatsukiRelaxAPI extends IAkatsukiAPI {
+
+}
+
+export default class AkatsukiRelaxAPI extends AkatsukiAPI implements IAkatsukiAPI {
+    name = "Akatsuki relax";
+
     async getTop({
         username, 
         mode = 0, 

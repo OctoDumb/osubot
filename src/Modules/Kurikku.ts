@@ -15,8 +15,6 @@ export default class Kurikku extends ServerModule {
 
     description = "";
 
-    api = this.apilist.kurikku;
-
     commands = [
         new NickCommand(this),
         new ModeCommand(this),

@@ -1,4 +1,4 @@
-import { IChangelog } from "../../API/Servers/V2/V2Responses";
+import { IChangelog } from "../../API/Osu/Servers/V2/V2Responses";
 import NewsRule, { IFilter, INewsSendParams } from "../NewsRule";
 
 export default class OsuUpdateRule extends NewsRule<IChangelog> {

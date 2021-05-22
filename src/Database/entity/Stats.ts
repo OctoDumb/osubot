@@ -1,5 +1,5 @@
 import { BaseEntity, Column, Entity, PrimaryGeneratedColumn } from "typeorm";
-import { IUserAPIResponse } from "../../API/APIResponse";
+import { IUserAPIResponse } from "../../API/Osu/APIResponse";
 
 @Entity({
     name: "stats"

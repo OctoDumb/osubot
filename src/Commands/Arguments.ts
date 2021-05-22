@@ -6,7 +6,8 @@ import NewsController from "../News/NewsController";
 import ChatCache from "../ChatCache";
 import PrivilegesManager from "../Privileges";
 import TrackAPI from "../API/TrackAPI";
-import BanchoV2API from "../API/Servers/BanchoV2";
+import BanchoV2API from "../API/Osu/Servers/V2/BanchoV2";
+
 import { Connection } from "typeorm";
 import PuppeteerInstance from "../PuppeteerInstance";
 import Disabled from "../Disabled";
