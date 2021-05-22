@@ -21,7 +21,6 @@ export default abstract class Module {
     permission: Permission = null;
 
     protected get database() { return this.bot.database; }
-    protected get apilist() { return this.bot.api; }
 
     async run(message: Message, bot: Bot) {
         if(bot.disabled.isDisabled(message.peerId)) return;

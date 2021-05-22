@@ -3,7 +3,6 @@ import ServerCommand from "../../Commands/Server/ServerCommand";
 import { IServerCommandArguments, parseArguments, Parsers, IArgumentsWithMods } from "../../Commands/Arguments";
 import Bot from "../../Bot";
 import { defaultArguments } from "../../Util";
-import { IDBUser } from "../../Database";
 import { LeaderboardTemplate } from "../../Templates";
 import { ServerConnection } from "../../Database/entity/ServerConnection";
 import { User } from "../../Database/entity/User";
