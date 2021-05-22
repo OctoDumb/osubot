@@ -38,7 +38,7 @@ export default class CompareCommand extends ServerCommand {
 
         let score = args.mods !== undefined
             ? scores.find(s => modsEqual(s.mods, args.mods))
-            : scores.sort((a, b) => a.score - b.score)[0];
+            : scores.sort((a, b) => b.score - a.score)[0];
 
         if(!score)
             return message.reply("Скор не найден!");
