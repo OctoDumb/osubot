@@ -12,6 +12,7 @@ import { User } from "./Database/entity/User";
 import { Status } from "./Database/entity/Status";
 import { Notification } from "./Database/entity/Notification";
 import { Stats } from "fs";
+import dateFormat from "dateformat";
 
 /**
  * Mods bitwise enum
@@ -293,8 +294,7 @@ export function formatTime(seconds: number) {
 }
 
 export function formatDate(date: Date) {
-    return `${fixNum(date.getDate())}.${fixNum(date.getMonth())}.${date.getFullYear()}`
-        + ` ${fixNum(date.getHours())}:${fixNum(date.getMinutes())}`;
+    return dateFormat(date, "dd.mm.yyyy HH:MM");
 }
 
 export function formatCombo(combo: number, maxCombo: number) {
