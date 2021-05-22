@@ -3,7 +3,6 @@ import { readFileSync } from "fs";
 import cron from "node-cron";
 
 import Message from "./Message";
-import Database from "./Database";
 import MapAPI from "./API/MapAPI";
 import NewsController from "./News/NewsController";
 import ChatCache from "./ChatCache";
