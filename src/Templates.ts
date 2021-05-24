@@ -23,7 +23,7 @@ function joinMods(mods: string[]) {
 /**
  * Message template for User command 
  */
-export function UserTemplate(server: ServerModule, user: IUserAPIResponse, status: Status) {
+export function UserTemplate(server: ServerModule, user: IUserAPIResponse, mode: number, status: Status) {
     let { 
         username, id, 
         country, rank, 
@@ -34,7 +34,7 @@ export function UserTemplate(server: ServerModule, user: IUserAPIResponse, statu
     
     return `
         [Server: ${server.name}]
-        Player ${username} ${status?.emoji ?? ''}
+        Player ${username} ${status?.emoji ?? ''} [${modeNumberToString(mode)}]
         Rank: #${rank.total} (${country}#${rank.country})
         Playcount: ${playcount} (Lv${Math.floor(level)})
         PP: ${Math.round(pp)}
@@ -160,7 +160,8 @@ export function LeaderboardTemplate(server: ServerModule, scores: {user: ServerC
         Топ беседы на карте ${map.artist} - ${map.title} [${map.version}] by ${map.creator}
         ${scores.map((s, i) => {
             let { user, status, score } = s;
-            return `#${i + 1} ${user.nickname} ${status} | ${score.score} | ${formatCombo(score.maxCombo, map.maxCombo)} | ${round(score.accuracy * 100)}% | ${round(0)}pp | ${formatDate(score.date)}`;
+            let modsString = joinMods(modsToString(score.mods));
+            return `#${i + 1} ${user.nickname} ${status} | ${score.score} | ${formatCombo(score.maxCombo, map.maxCombo)} | ${round(score.accuracy * 100)}% | ${round(0)}pp | ${formatDate(score.date)} ${modsString}`;
         }).map(Message.fixString).join('\n')}
     ` ;
 }

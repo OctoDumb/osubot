@@ -33,6 +33,6 @@ export default class UserCommand extends ServerCommand<OsuAPI> {
 
         let status = await getStatus(user.id);
 
-        message.reply(UserTemplate(this.module, user, status));
+        message.reply(UserTemplate(this.module, user, mode, status));
     }
 }
