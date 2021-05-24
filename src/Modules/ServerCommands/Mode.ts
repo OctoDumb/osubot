@@ -20,11 +20,10 @@ export default class ModeCommand extends ServerCommand<OsuAPI> {
                 user_ids: [userId.toString()]
             });
 
-            message.reply(`
+            return message.reply(`
                 [Server: ${this.module.name}]
                 У [id${user.id}|${user.first_name} ${user.last_name}] стоит режим ${modeNumberToString(Number(mode))}
             `);
-            return;
         }
 
         let mode = message.arguments[0];

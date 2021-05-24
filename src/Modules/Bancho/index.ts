@@ -8,6 +8,7 @@ import CompareCommand from "../ServerCommands/Compare";
 import FindCommand from "../ServerCommands/Find";
 import ChatCommand from "../ServerCommands/Chat";
 import LeaderboardCommand from "../ServerCommands/Leaderboard";
+import TwinkCommand from "../ServerCommands/Twink";
 import TrackCommand from "./Track";
 
 export default class Bancho extends ServerModule {
@@ -29,5 +30,6 @@ export default class Bancho extends ServerModule {
         new FindCommand(this),
         new ChatCommand(this),
         new TrackCommand(this),
+        new TwinkCommand(this)
     ];
 }

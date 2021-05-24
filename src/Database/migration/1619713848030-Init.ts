@@ -133,7 +133,7 @@ export class Init1619713848030 implements MigrationInterface {
                 referencedTableName: 'statuses',
                 referencedColumnNames: ['id']
             }]
-        }), true);
+        }), true, true);
 
         await queryRunner.createTable(new Table({
             name: 'connections',
@@ -164,7 +164,7 @@ export class Init1619713848030 implements MigrationInterface {
                 referencedTableName: 'users',
                 referencedColumnNames: ['id']
             }]
-        }), true);
+        }), true, true);
 
         await queryRunner.createTable(new Table({
             name: 'notifications',
@@ -190,7 +190,7 @@ export class Init1619713848030 implements MigrationInterface {
                 referencedTableName: 'users',
                 referencedColumnNames: ['id']
             }]
-        }), true);
+        }), true, true);
 
         await queryRunner.createTable(new Table({
             name: 'bans',
@@ -215,7 +215,7 @@ export class Init1619713848030 implements MigrationInterface {
                 referencedTableName: 'users',
                 referencedColumnNames: ['id']
             }]
-        }), true);
+        }), true, true);
 
         await queryRunner.createTable(new Table({
             name: 'statusesowned',
@@ -241,7 +241,7 @@ export class Init1619713848030 implements MigrationInterface {
                 referencedTableName: 'statuses',
                 referencedColumnNames: ['id']
             }]
-        }), true);
+        }), true, true);
 
         await queryRunner.query('INSERT INTO `roles` ( "name" ) VALUES ( "Default" )');
         await queryRunner.query('INSERT INTO `roles` ( "name", "permissions" ) VALUES ( "Owner", "*" )');

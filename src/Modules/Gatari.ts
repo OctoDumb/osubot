@@ -6,6 +6,7 @@ import ModeCommand from "./ServerCommands/Mode";
 import RecentCommand from "./ServerCommands/Recent";
 import CompareCommand from "./ServerCommands/Compare";
 import FindCommand from "./ServerCommands/Find";
+import TwinkCommand from "./ServerCommands/Twink";
 
 export default class Gatari extends ServerModule {
     name = "Gatari";
@@ -22,6 +23,7 @@ export default class Gatari extends ServerModule {
         new TopCommand(this),
         new RecentCommand(this),
         new CompareCommand(this),
-        new FindCommand(this)
+        new FindCommand(this),
+        new TwinkCommand(this)
     ];
 }
