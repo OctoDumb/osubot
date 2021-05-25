@@ -1,17 +1,17 @@
 import Message from "./Message";
-import Bot, { IBotConfig } from "./Bot";
-import { IHitCounts, IUserAPIResponse } from "./API/Osu/APIResponse";
-import { IPPResponse } from "./API/MapAPI";
-import Logger, { LogLevel } from "./Logger";
-import Config from "./Config";
-import { VK } from "vk-io";
-import { ServerConnection } from "./Database/entity/ServerConnection";
-import { Connection } from "typeorm";
-import { User } from "./Database/entity/User";
-import { Status } from "./Database/entity/Status";
-import { Notification } from "./Database/entity/Notification";
-import { Stats } from "fs";
+import Bot from "./Bot";
+import {IHitCounts} from "./API/Osu/APIResponse";
+import {IPPResponse} from "./API/MapAPI";
+import Logger, {LogLevel} from "./Logger";
+import {VK} from "vk-io";
+import {ServerConnection} from "./Database/entity/ServerConnection";
+import {Connection} from "typeorm";
+import {User} from "./Database/entity/User";
+import {Status} from "./Database/entity/Status";
+import {Notification} from "./Database/entity/Notification";
 import dateFormat from "dateformat";
+import path from "path";
+import {glob} from "glob";
 
 /**
  * Mods bitwise enum
@@ -52,25 +52,25 @@ export enum Mods {
 
 /**
  * Generate default command arguments
- * 
+ *
  * @param message Message object
  * @param param1 Bot instance
  */
-export function defaultArguments(message: Message, { 
-    database, vk, 
-    maps: mapAPI, 
-    news, lastMaps: chats, 
+export function defaultArguments(message: Message, {
+    database, vk,
+    maps: mapAPI,
+    news, lastMaps: chats,
     disabled,
     privilegesManager: privileges,
     uptime, track, v2,
     puppeteer
 }: Bot) {
 
-    return { 
-        message, 
-        database, 
-        vk, mapAPI, 
-        news, chats, 
+    return {
+        message,
+        database,
+        vk, mapAPI,
+        news, chats,
         disabled,
         privileges,
         uptime, track,
@@ -106,9 +106,9 @@ export async function getUserInfo(message: Message, server: string, db: Connecti
 }
 
 export async function getStatus(playerId: number): Promise<Status> {
-    let connections = await ServerConnection.find({ 
-        where: { playerId }, 
-        relations: [ 'user', 'user.status' ] 
+    let connections = await ServerConnection.find({
+        where: { playerId },
+        relations: [ 'user', 'user.status' ]
     });
 
     if(!connections.length) return null;
@@ -137,7 +137,7 @@ export async function addNotification(vk: VK, to: number, message: string): Prom
 
 /**
  * Calculate accuracy for `mode` with `counts`
- * 
+ *
  * @param mode Gamemode
  * @param counts Hitcounts
  */
@@ -145,42 +145,42 @@ export function getAccuracy(mode: number, counts: IHitCounts): number {
     switch(mode) {
         case 1:
             return ( counts[300] * 2 + counts[100] ) / (
-                    (counts[300] + 
-                        counts[100] + 
-                        counts[50] + 
+                    (counts[300] +
+                        counts[100] +
+                        counts[50] +
                         counts.miss
                     ) * 2);
         case 2:
             return (
-                counts[300] + 
-                counts[100] + 
+                counts[300] +
+                counts[100] +
                 counts[50]) / (
-                    counts[300] + 
-                    counts[100] + 
-                    counts[50] + 
-                    counts.katu + 
+                    counts[300] +
+                    counts[100] +
+                    counts[50] +
+                    counts.katu +
                     counts.miss);
         case 3:
             return (
-                (counts[300] + counts.geki) * 6 + 
-                counts.katu * 4 + 
-                counts[100] * 2 + 
+                (counts[300] + counts.geki) * 6 +
+                counts.katu * 4 +
+                counts[100] * 2 +
                 counts[50]) / (
-                    (counts[300] + 
-                        counts.geki + 
-                        counts.katu + 
-                        counts[100] + 
-                        counts[50] + 
+                    (counts[300] +
+                        counts.geki +
+                        counts.katu +
+                        counts[100] +
+                        counts[50] +
                         counts.miss
                     ) * 6);
         default:
             return (
-                counts[300] * 6 + 
-                counts[100] * 2 + 
+                counts[300] * 6 +
+                counts[100] * 2 +
                 counts[50]) / (
-                    (counts[300] + 
-                        counts[100] + 
-                        counts[50] + 
+                    (counts[300] +
+                        counts[100] +
+                        counts[50] +
                         counts.miss
                     ) * 6);
     }
@@ -188,7 +188,7 @@ export function getAccuracy(mode: number, counts: IHitCounts): number {
 
 /**
  * Turn mods bitwise into a string array
- * 
+ *
  * @param mods Mods bitwise
  */
 export function modsToString(mods: number): string[] {
@@ -203,7 +203,7 @@ export function modsToString(mods: number): string[] {
 
 /**
  * Remove unnecessary mods
- * 
+ *
  * @param mods Array of mods
  */
 export function clearMods(mods: string[]) {
@@ -227,7 +227,7 @@ export function modsEqual(score: number, arg: number) {
 
 /**
  * Stringify map stats object
- * 
+ *
  * @param mode Gamemode
  * @param stats Map stats
  */
@@ -244,7 +244,7 @@ export function statsToString(mode: number, stats: { ar: number, cs: number, hp:
 
 /**
  * Stringify hitcounts for `mode`
- * 
+ *
  * @param hits Hitcounts
  * @param mode Gamemode
  */
@@ -351,4 +351,26 @@ export function stringDateToMs(s: string): number {
         (parseInt(m.groups.d ?? "0")) * 24 * 60 +
         (parseInt(m.groups.h ?? "0")) * 60 +
         (parseInt(m.groups.m ?? "0"))) * 60 * 1e3;
+}
+
+type Constructor<T = {}> = new (...args: any[]) => T;
+
+export async function importDirectory<T>(
+    folderTemplate: string,
+    callback?: (module: Constructor<T>) => any,
+) {
+    if (path.sep === "\\")
+        folderTemplate = folderTemplate.replace(/\\/g, "/");
+
+    const files = glob.sync(folderTemplate);
+    const result = await Promise.all(files.map(async file => {
+        const imported = await import(file);
+
+        if (callback)
+            return await callback(imported.default);
+
+        return imported;
+    }));
+
+    return result.filter(module => module);
 }
