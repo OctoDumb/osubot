@@ -65,8 +65,8 @@ export default class MapLinkProcessor {
             });
         } else if (beatmapId) {
             let map = await this.bot.maps.getBeatmap(beatmapId);
-            let pp98 = await this.bot.maps.getPP(beatmapId, { acc: 98 });
-            let pp99 = await this.bot.maps.getPP(beatmapId, { acc: 99 });
+            let pp98 = await this.bot.maps.getPP(beatmapId, { acc: 98, score: 8e5 });
+            let pp99 = await this.bot.maps.getPP(beatmapId, { acc: 99, score: 9e5 });
             let attachment = await Cover.get(this.bot.vk, map.beatmapsetID);
 
             this.bot.lastMaps.setChatMap(message.peerId, beatmapId);

@@ -29,7 +29,7 @@ export default class TopCommand extends ServerCommand<OsuAPI> {
         };
     }
 
-    async run({ message, database, privileges, mapAPI, clean, vk, args }: IServerCommandArguments<ITopCommandArguments>) {
+    async run({ message, database, mapAPI, chats, clean, vk, args }: IServerCommandArguments<ITopCommandArguments>) {
         let { username, mode } = await getUserInfo(message, this.module.name, database, clean, args);
 
         let user = await this.api.getUser({ username, mode });
@@ -66,6 +66,8 @@ export default class TopCommand extends ServerCommand<OsuAPI> {
             let attachment = await Cover.get(vk, map.beatmapsetID);
 
             let msg = TopSingleTemplate(this.module, user.username, t, args.place, map, status);
+
+            chats.setChatMap(message.peerId, t.beatmapId);
             
             message.reply(msg, {
                 attachment

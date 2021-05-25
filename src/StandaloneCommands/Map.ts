@@ -19,6 +19,7 @@ export default class MapCommand extends StandaloneCommand {
                 Parsers.accuracy,
                 Parsers.combo,
                 Parsers.miss,
+                Parsers.n50,
                 Parsers.mods
             ])
         }
@@ -37,6 +38,7 @@ export default class MapCommand extends StandaloneCommand {
             acc: args.accuracy,
             combo: args.combo,
             miss: args.miss,
+            n50: args.n50,
             score: Number(clean),
             mods: mods.join(",")
         }));

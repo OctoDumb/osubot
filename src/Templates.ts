@@ -226,9 +226,9 @@ export function MapInfoTemplate(map: IBeatmap, pp98: IPPResponse, pp99: IPPRespo
         ${map.artist} - ${map.title} [${map.version}] by ${map.creator}
         ${length} | ${statsToString(map.mode, map.difficulty)} | ${map.difficulty.stars}✩
         PP:
-        - 98% = ${pp98.pp}
-        - 99% = ${pp99.pp}
-        - 100% = ${pp99.sspp}
+        - ${map.mode == 3 ? '800k' : '98%'} = ${pp98.pp}
+        - ${map.mode == 3 ? '900k' : '99%'} = ${pp99.pp}
+        - ${map.mode == 3 ? '1kk' : '100%'} = ${pp99.sspp}
     `;
 }
 

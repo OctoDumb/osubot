@@ -69,6 +69,7 @@ export default class MapAPI {
 interface IPPArguments {
     combo?: number;
     miss?: number;
+    n50?: number;
     acc?: number;
     score?: number;
     mods?: string

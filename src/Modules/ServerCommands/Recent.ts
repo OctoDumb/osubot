@@ -49,6 +49,7 @@ export default class RecentCommand extends ServerCommand<OsuAPI> {
         let pp = await mapAPI.getPP(recent.beatmapId, {
             combo: recent.maxCombo,
             miss: recent.counts.miss,
+            n50: recent.counts[50],
             acc: recent.accuracy * 100,
             score: recent.score,
             mods: mods.join(),

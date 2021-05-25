@@ -56,6 +56,7 @@ export interface IMapCommandArguments extends IArgumentsWithMods {
     accuracy?: number;
     combo?: number;
     miss?: number;
+    n50?: number;
 }
 
 export interface IArgumentParser {
@@ -112,6 +113,11 @@ export const Parsers = {
     miss: {
         arg: "miss",
         suffix: "m",
+        parser: Number
+    },
+    n50: {
+        arg: "n50",
+        suffix: "x50",
         parser: Number
     },
     combo: {
