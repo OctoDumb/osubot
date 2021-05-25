@@ -13,7 +13,7 @@ export default class TwinkCommand extends ServerCommand {
 
         const userId = message.forwarded.senderId;
 
-        let tw = await TwinkAccept.findOne({ 
+        let twink = await TwinkAccept.findOne({
             where: { 
                 senderId: message.sender,
                 receiverId: userId,
@@ -21,7 +21,7 @@ export default class TwinkCommand extends ServerCommand {
             } 
         });
 
-        if(tw)
+        if(twink)
             return message.reply(`
                 [Server: ${this.module.name}]
                 [id${userId}|Пользователю] уже разрешено использовать ваш ник!
