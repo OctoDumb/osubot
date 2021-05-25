@@ -36,11 +36,6 @@ export default class TopCommand extends ServerCommand<OsuAPI> {
 
         await Stats.updateInfo(this.module.name, user, mode);
 
-        let users = await ServerConnection.find({
-            where: { 
-                playerId: user.id
-            }
-        });
         let status = await getStatus(user.id);
         
         let top = await this.api.getTop({ 
@@ -52,6 +47,29 @@ export default class TopCommand extends ServerCommand<OsuAPI> {
         if(args.morethan) {
             let amount = top.filter(t => t.pp >= args.morethan).length;
             message.reply(`У игрока ${user.username} ${amount} скоров больше ${args.morethan}pp`);
+        } else if(args.approximate) {
+            let index = 0;
+            let diff = Math.abs(top[index].pp - args.approximate);
+            for(let i = 0; i < top.length; i++) {
+                let newDiff = Math.abs(top[i].pp - args.approximate);
+                if(newDiff < diff) {
+                    index = i;
+                    diff = newDiff;
+                }
+            }
+            let score = top[index];
+
+            let map = await mapAPI.getBeatmap(score.beatmapId, modsToString(score.mods));
+
+            let attachment = await Cover.get(vk, map.beatmapsetID);
+            
+            let msg = TopSingleTemplate(this.module, user.username, score, index + 1, map, status);
+
+            chats.setChatMap(message.peerId, score.beatmapId);
+
+            message.reply(msg, {
+                attachment
+            });
         } else if(args.place) {
             if(args.place > 100 || args.place < 1)
                 throw "Некорректное место! (1-100)";
