@@ -6,7 +6,6 @@ import { ServerConnection } from "../../Database/entity/ServerConnection";
 import { Stats } from "../../Database/entity/Stats";
 import { Status } from "../../Database/entity/Status";
 import Message from "../../Message";
-import PrivilegesManager from "../../Privileges";
 import { ChatTopTemplate } from "../../Templates";
 import { defaultArguments, getStatus, getUserInfo } from "../../Util";
 
@@ -34,8 +33,7 @@ export default class ChatCommand extends ServerCommand<OsuAPI> {
     async run({
         message, args,
         clean, vk,
-        database,
-        privileges
+        database
     }: IServerCommandArguments<IArgumentsWithMode>) {
         let { mode } = await getUserInfo(message, this.module.name, database, clean, args);
         let chatId = message.chatId ?? Number(clean);
@@ -46,7 +44,7 @@ export default class ChatCommand extends ServerCommand<OsuAPI> {
             peer_id: 2e9 + chatId
         })).profiles?.map(m => m.id);
 
-        let users = await Promise.all(members?.map(id => this.getChatTopUser(privileges, id, mode)));
+        let users = await Promise.all(members?.map(id => this.getChatTopUser(id, mode)));
 
         users = users.filter(u => u);
 
@@ -60,7 +58,7 @@ export default class ChatCommand extends ServerCommand<OsuAPI> {
         message.reply(msg);
     }
 
-    private async getChatTopUser(privileges: PrivilegesManager, id: number, mode: number): Promise<IChatTopUser> {
+    private async getChatTopUser(id: number, mode: number): Promise<IChatTopUser> {
         let conn = await ServerConnection.findOne({
             where: { user: id, server: this.module.name }
         });
