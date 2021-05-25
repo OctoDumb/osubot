@@ -23,13 +23,14 @@ export default class CompareCommand extends ServerCommand<OsuAPIWithScores> {
     }
 
     async run({ message, database, mapAPI, clean, args, chats }: IServerCommandArguments<ICompareCommandArguments>) {
+        let { username, mode } = await getUserInfo(message, this.module.name, database, clean, args);
 
         let beatmapId = chats.getChatMap(message.peerId);
         if(!beatmapId)
             throw "Не найдена карта!";
 
         let scores = await this.api.getScores({
-            username,
+            username, mode,
             beatmapId
         });
 
