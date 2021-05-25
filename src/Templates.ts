@@ -214,7 +214,7 @@ export function MapsetInfoTemplate(set: IV2Beatmapset) {
             let { mode, stars, version } = b;
             let modeString = ["osu", "taiko", "ctb", "mania"][mode];
             return `
-                ${i + 1}) ${version} | ${stars}* | ${modeString}
+                ${i + 1}) ${version} | ${stars}✩ | ${modeString}
             `;
         }).map(Message.fixString).join("\n")}
     `;
