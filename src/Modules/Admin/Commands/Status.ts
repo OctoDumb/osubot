@@ -42,7 +42,7 @@ export default class AdminStatus extends Command {
                 });
                 if(!status)
                     return message.reply(`Статуса с таким ID не существует`);
-                await status.remove();
+                await StatusOwned.delete({ status: { id } });
                 let users = await User.find({ where: { status: { id } } });
                 for(let user of users) {
                     await addNotification(vk, user.id, `
@@ -50,8 +50,8 @@ export default class AdminStatus extends Command {
                         ${status.name} (${status.emoji})
                     `)
                 }
-                let upd = await User.update({ status: { id } }, { status: null });
-                await StatusOwned.delete({ status: { id } });
+                await User.update({ status: { id } }, { status: null });
+                await status.remove();
                 message.reply(`
                     Статус ${status.name} (${status.emoji}) удалён.
                 `);
