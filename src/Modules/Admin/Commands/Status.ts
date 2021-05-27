@@ -41,9 +41,7 @@ export default class AdminStatus extends Command {
                 if(!status)
                     return message.reply(`Статуса с таким ID не существует`);
                 await status.remove();
-                await StatusOwned.remove(
-                    await StatusOwned.find({ where: { status: { id } } })
-                );
+                await StatusOwned.delete({ status: { id } });
                 message.reply(`
                     Статус ${status.name} (${status.emoji}) удалён.
                 `);
