@@ -99,7 +99,7 @@ export async function getUserInfo(message: Message, server: string, db: Connecti
     }
     if(clean)
         username = clean;
-    if(args.mode != null)
+    if(args?.mode != null)
         mode = args.mode;
 
     return { username, mode };
