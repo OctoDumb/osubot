@@ -55,7 +55,7 @@ export default class MainStatus extends Command {
                         { emoji: st }
                     ]
                 });
-                let owned = StatusOwned.findOne({
+                let owned = await StatusOwned.findOne({
                     where: {
                         user: { id: message.sender },
                         status
