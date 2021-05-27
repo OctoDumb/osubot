@@ -32,7 +32,7 @@ export default class NickCommand extends ServerCommand<OsuAPI> {
                     }
                 });
 
-                if(!twink)
+                if(!twink && orig.user.id !== message.sender)
                     return message.reply(`
                         [Server: ${this.module.name}]
                         Этот аккаунт используется другим пользователем!
