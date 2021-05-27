@@ -20,8 +20,10 @@ export default class AdminStatus extends Command {
 
         if(!args[0])
             return message.reply("nope.");
+
+        const cmd = args.shift().toLowerCase();
         
-        switch(args.shift().toLowerCase()) {
+        switch(cmd) {
             case "create": {
                 let [ emoji, name, ...description ] = args;
                 let status = await Status.create({
@@ -41,6 +43,14 @@ export default class AdminStatus extends Command {
                 if(!status)
                     return message.reply(`Статуса с таким ID не существует`);
                 await status.remove();
+                let users = await User.find({ where: { status: { id } } });
+                for(let user of users) {
+                    await addNotification(vk, user.id, `
+                        Используемый [id${user.id}|Вами] статус был удалён!
+                        ${status.name} (${status.emoji})
+                    `)
+                }
+                let upd = await User.update({ status: { id } }, { status: null });
                 await StatusOwned.delete({ status: { id } });
                 message.reply(`
                     Статус ${status.name} (${status.emoji}) удалён.
@@ -73,29 +83,26 @@ export default class AdminStatus extends Command {
             }
             case "remove": {
                 let [ userId, statusId ] = args.map(Number);
-                let [ owned, count ] = await StatusOwned.findAndCount({
-                    where: {
-                        user: { id: userId },
-                        status: { id: statusId }
-                    }
-                });
-                await StatusOwned.remove(owned);
+                let res = await StatusOwned.delete({ user: { id: userId }, status: { id: statusId } })
                 let status = await Status.findOne({
                     where: { id: statusId }
                 });
                 await User.update({
+                    id: userId,
                     status: { id: statusId }
                 }, {
                     status: null
                 });
-                await addNotification(vk, userId, `
-                    [id${userId}|Вы] потеряли статус!
-                    ${status.name} (${status.emoji})
-                `);
-                if(!count)
+                
+                if(!res.affected)
                     message.reply("У пользователя нет этого статуса!");
-                else
+                else {
+                    await addNotification(vk, userId, `
+                        [id${userId}|Вы] потеряли статус!
+                        ${status.name} (${status.emoji})
+                    `);
                     message.reply(`Удалён статус ID: ${statusId} у пользователя ${userId}`);
+                }
                 break;
             }
             case "list": {
@@ -114,12 +121,13 @@ export default class AdminStatus extends Command {
                     Страница ${page} из ${Math.ceil(total / 10)}
                 `);
             }
+
             default: {
                 let status = await Status.findOne({
                     where: [
-                        { id: Number(args[0]) },
-                        { name: args[0] },
-                        { emoji: args[0] }
+                        { id: Number(cmd) },
+                        { name: cmd },
+                        { emoji: cmd }
                     ]
                 });
                 if(!status)
