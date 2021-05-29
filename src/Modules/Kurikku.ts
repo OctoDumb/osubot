@@ -7,6 +7,7 @@ import RecentCommand from "./ServerCommands/Recent";
 import CompareCommand from "./ServerCommands/Compare";
 import FindCommand from "./ServerCommands/Find";
 import TwinkCommand from "./ServerCommands/Twink";
+import ChatCommand from "./ServerCommands/Chat";
 
 export default class Kurikku extends ServerModule {
     name = "Kurikku";
@@ -24,6 +25,7 @@ export default class Kurikku extends ServerModule {
         new RecentCommand(this),
         new CompareCommand(this),
         new FindCommand(this),
+        new ChatCommand(this),
         new TwinkCommand(this)
     ];
 }

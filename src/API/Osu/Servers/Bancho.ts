@@ -36,11 +36,11 @@ export default class BanchoAPI extends OsuAPIWithScores implements IBanchoAPI {
         username, 
         mode = 0
     }: IUserRequestParams): Promise<IUserAPIResponse> {
-        let { data: [data] } = await this.api(`/get_user?${stringify({ 
+        let [ data ] = await this.request('/get_user', {
             k: this.token,
-            u: username, 
-            m: mode ?? 0,
-        })}`);
+            u: username,
+            m: mode ?? 0
+        });
         if(!data)
             throw new APINotFoundError("User is not found!");
         
@@ -52,12 +52,11 @@ export default class BanchoAPI extends OsuAPIWithScores implements IBanchoAPI {
         mode = 0, 
         limit = 3 
     }: ITopRequestParams): Promise<ITopAPIResponse[]> {
-        let { data } = await this.api(`/get_user_best?${stringify({ 
+        let data = await this.request('/get_user_best', {
             k: this.token,
-            u: username, 
-            m: mode ?? 0, 
-            limit
-        })}`);
+            u: username,
+            m: mode ?? 0
+        });
 
         return data.map(s => Object.assign(
             this.adaptScore(s, mode ?? 0), 

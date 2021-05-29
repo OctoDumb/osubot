@@ -7,6 +7,7 @@ import RecentCommand from "./ServerCommands/Recent";
 import CompareCommand from "./ServerCommands/Compare";
 import FindCommand from "./ServerCommands/Find";
 import TwinkCommand from './ServerCommands/Twink';
+import ChatCommand from "./ServerCommands/Chat";
 
 export default class Ripple extends ServerModule {
     name = "Ripple";
@@ -23,6 +24,7 @@ export default class Ripple extends ServerModule {
         new TopCommand(this),
         new RecentCommand(this),
         new CompareCommand(this),
+        new ChatCommand(this),
         new FindCommand(this),
         new TwinkCommand(this)
     ];
