@@ -36,7 +36,7 @@ export class Stats extends BaseEntity {
     accuracy: number;
 
     static async updateInfo(server: string, user: IUserAPIResponse, mode: number = 0) {
-        let i = await Stats.findOne({ where: { playerId: user.id, server } });
+        let i = await Stats.findOne({ where: { playerId: user.id, server, mode } });
 
         if(!i)
             await Stats.create({ 
