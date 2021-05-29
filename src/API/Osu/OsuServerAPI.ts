@@ -32,7 +32,7 @@ export class APICache {
 
     set(cached: CachedRequest) {
         let old = this.get(cached.hash);
-        if(old.expires > Date.now()) return;
+        if(old?.expires > Date.now()) return;
         this.cached.push(cached);
     }
 }
