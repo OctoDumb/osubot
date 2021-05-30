@@ -11,49 +11,11 @@ export interface IOsuAPIWithRecent extends IAPIWithRecent<IRecentRequestParams, 
 export interface IOsuAPIWithScores extends IAPIWithScores<IScoreRequestParams, IScoreAPIResponse[]> {}
 export interface IOsuAPIWithLeaderboard extends IAPIWithLeaderboard<ILeaderboardRequestParams, ILeaderboardAPIResponse[]> {}
 
-export interface CachedRequest {
-    hash: string;
-    data: any;
-    expires: number;
-}
-
-export class APICache {
-    private cached: CachedRequest[] = [];
-
-    constructor() {
-        setInterval(() => {
-            this.cached = this.cached.filter(c => c.expires > Date.now());
-        }, 5000);
-    }
-
-    get(hash: string) {
-        return this.cached.find(c => c.hash == hash && this.cached);
-    }
-
-    set(cached: CachedRequest) {
-        let old = this.get(cached.hash);
-        if(old?.expires > Date.now()) return;
-        this.cached.push(cached);
-    }
-}
-
 export abstract class OsuAPI extends API implements
     IOsuAPIWithUser,
     IOsuAPIWithTop,
     IOsuAPIWithRecent
 {
-    protected cache: APICache = new APICache();
-
-    async request(endpoint: string, params: any): Promise<any> {
-        let str = `${endpoint}?${qs.stringify(params)}`;
-        let hash = md5(str);
-        let cached = this.cache.get(hash);
-        if(cached) return cached.data;
-        let { data } = await this.api.get(str);
-        this.cache.set({ hash, data, expires: Date.now() + 5000 });
-        return data;
-    }
-
     abstract getUser(params: IUserRequestParams): Promise<IUserAPIResponse>;
     abstract getTop(params: ITopRequestParams): Promise<ITopAPIResponse[]>;
     abstract getRecent(params: IRecentRequestParams): Promise<IRecentAPIResponse[]>;
@@ -109,10 +71,7 @@ export abstract class OsuAPIWithScores extends OsuAPI implements
 {
     abstract getScores(params: IScoreRequestParams): Promise<IScoreAPIResponse[]>;
 
-    async getLeaderboard({
-        beatmapId,
-        users
-    }: ILeaderboardRequestParams): Promise<ILeaderboardAPIResponse[]> {
+    async getLeaderboard({ beatmapId, users }: ILeaderboardRequestParams): Promise<ILeaderboardAPIResponse[]> {
         let scores: ILeaderboardAPIResponse[] = [];
         try {
             let lim = Math.ceil(users.length / 5);
