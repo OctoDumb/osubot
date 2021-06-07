@@ -69,23 +69,19 @@ export default class LeaderboardCommand extends ServerCommand<OsuAPIWithScores> 
             score: args.mods ? v.scores.find(s => s.mods == args.mods) : v.scores.sort((a,b) => b.score - a.score)[0],
             pp: 0
         })).filter(v => v.score).sort((a,b) => b.score.score - a.score.score);
-
-        let p = [];
-        for(let i = 0; i < scores.length; i++)
-            p.push(async () => {
-                let s = scores[i].score;
-                let pp = await mapAPI.getPP(mapId, {
-                    acc: s.accuracy * 100,
-                    combo: s.maxCombo,
-                    miss: s.counts.miss,
-                    mods: modsToString(s.mods).join(),
-                    n50: s.counts[50],
-                    score: s.score
-                });
-                scores[i].pp = pp.pp;
+        
+        for(let i = 0; i < scores.length; i++) {
+            let s = scores[i].score;
+            let pp = await mapAPI.getPP(mapId, {
+                acc: s.accuracy * 100,
+                combo: s.maxCombo,
+                miss: s.counts.miss,
+                mods: modsToString(s.mods).join(),
+                n50: s.counts[50],
+                score: s.score
             });
-
-        await Promise.all(p);
+            scores[i].pp = pp.pp;
+        }
 
         let msg = LeaderboardTemplate(this.module, scores, map);
 
