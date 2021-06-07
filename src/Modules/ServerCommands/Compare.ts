@@ -8,7 +8,7 @@ import { defaultArguments, getUserInfo, modsEqual, modsToString } from "../../Ut
 
 export default class CompareCommand extends ServerCommand<OsuAPIWithScores> {
     name = "Compare";
-    command = ["c", "compare"];
+    command = ["c", "compare", "с", "сщьзфку"];
 
     description = "";
 
