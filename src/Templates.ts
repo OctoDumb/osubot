@@ -14,7 +14,7 @@ import { IChatTopUser } from "./Modules/ServerCommands/Chat";
 import { IV2Beatmapset } from "./API/Osu/Servers/V2/V2Responses";
 import { OsuTrackResponse } from "./API/TrackAPI";
 import { Status } from "./Database/entity/Status";
-import { ServerConnection } from "./Database/entity/ServerConnection";
+import { ILeaderboardEntry } from "./Modules/ServerCommands/Leaderboard";
 
 function joinMods(mods: string[]) {
     return (mods.length ? "+" : "") + mods.join('');
@@ -154,7 +154,7 @@ export function ChatTopTemplate(server: ServerModule, chat: number, users: IChat
 /**
  * Message template for Leaderboard command 
  */
-export function LeaderboardTemplate(server: ServerModule, scores: {user: ServerConnection, status: string, score: IScoreAPIResponse}[], map: IBeatmap) {
+export function LeaderboardTemplate(server: ServerModule, scores: ILeaderboardEntry[], map: IBeatmap) {
     return `
         [Server: ${server.name}]
         Топ беседы на карте ${map.artist} - ${map.title} [${map.version}] by ${map.creator}
