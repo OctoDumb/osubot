@@ -86,6 +86,9 @@ export default class GatariAPI extends OsuAPIWithScores {
             mode
         })}`);
 
+        if(!data.scores)
+            throw new APINotFoundError("No scores found!");
+
         if (mods != null)
             data.scores = data.scores.filter(p => p.enabled_mods == mods);
         
