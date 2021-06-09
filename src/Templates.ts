@@ -159,9 +159,9 @@ export function LeaderboardTemplate(server: ServerModule, scores: ILeaderboardEn
         [Server: ${server.name}]
         Топ беседы на карте ${map.artist} - ${map.title} [${map.version}] by ${map.creator}
         ${scores.map((s, i) => {
-            let { user, status, score } = s;
+            let { user, status, score, pp } = s;
             let modsString = joinMods(modsToString(score.mods));
-            return `#${i + 1} ${user.nickname} ${status} | ${score.score} | ${formatCombo(score.maxCombo, map.maxCombo)} | ${round(score.accuracy * 100)}% | ${round(0)}pp | ${formatDate(score.date)} ${modsString}`;
+            return `#${i + 1} ${user.nickname} ${status} | ${score.score} | ${formatCombo(score.maxCombo, map.maxCombo)} | ${round(score.accuracy * 100)}% | ${round(pp)}pp | ${formatDate(score.date)} ${modsString}`;
         }).map(Message.fixString).join('\n')}
     ` ;
 }
