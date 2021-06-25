@@ -57,11 +57,11 @@ export function TopTemplate(server: ServerModule, nickname: string, scores: ITop
             let map = maps[i];
             let length = formatTime(~~(map.length / 1e3));
             let modsString = joinMods(modsToString(score.mods));
-            return `
-                ${map.artist} - ${map.title} [${map.version}] ${modsString}
+            return `#${i+1}
+                ${map.title} [${map.version}] ${modsString}
                 ${statsToString(map.mode, map.difficulty)} ${round(map.difficulty.stars)}✩
-                Grade: ${score.rank.replace('X', 'SS')} > ${formatCombo(score.maxCombo, map.maxCombo)} > ${length}
-                Accuracy: ${round(score.accuracy * 100)}% > ${hitsToString(score.counts, score.mode)}
+                Grade: ${score.rank.replace('X', 'SS')} ⯈ ${formatCombo(score.maxCombo, map.maxCombo)} ⯈ ${length}
+                Accuracy: ${round(score.accuracy * 100)}% ⯈ ${hitsToString(score.counts, score.mode)}
                 PP: ${score.pp}
                 ${formatDate(score.date)}
                 ${server.baseLink}b/${score.beatmapId}
@@ -78,7 +78,7 @@ export function TopSingleTemplate(server: ServerModule, nickname: string, score:
     let modsString = joinMods(modsToString(score.mods));
     return `
         [Server: ${server.name}]
-        Топ #${place} плей игрока ${nickname} ${status?.emoji ?? ''} (${modeNumberToString(score.mode)})
+        Топ #${place} плей игрока ${nickname} ${status?.emoji ?? ''} (${modeNumberToString(score.mode)}):
         ${map.artist} - ${map.title} [${map.version}] by ${map.creator}
         ${length} | ${statsToString(map.mode, map.difficulty)} BPM: ${formatBPM(map.bpm)} | ${round(map.difficulty.stars)}✩ ${modsString}
 
@@ -100,7 +100,7 @@ export function RecentTemplate(server: ServerModule, recent: IRecentAPIResponse,
     let modsString = joinMods(modsToString(recent.mods));
     return `
         [Server: ${server.name}]
-        ${map.artist} - ${map.title} [${map.version}] by ${map.creator}
+        <${map.status}> ${map.artist} - ${map.title} [${map.version}] by ${map.creator}
         ${length} | ${statsToString(map.mode, map.difficulty)} BPM: ${formatBPM(map.bpm)} | ${round(map.difficulty.stars)}✩ ${modsString}
 
         Score: ${recent.score} | Combo: ${formatCombo(recent.maxCombo, map.maxCombo)}
@@ -145,9 +145,7 @@ export function ChatTopTemplate(server: ServerModule, chat: number, users: IChat
     return `
         [Server: ${server.name}]
         Топ${full ? '' : `-${users.length}`} беседы (ID ${chat}):
-        ${users.sort((a, b) => b.stats.pp - a.stats.pp).map((u, i) => `
-            #${i + 1} ${u.nickname} ${u.status?.emoji ?? ''} | ${round(u.stats.pp, 1)}pp | Ранк ${u.stats.rank} | ${round(u.stats.accuracy)}%
-        `).map(Message.fixString).join('\n')}
+        ${users.sort((a, b) => b.stats.pp - a.stats.pp).map((u, i) => `#${i + 1} ${u.nickname} ${u.status?.emoji ?? ''} | ${round(u.stats.pp, 1)}pp | Ранк ${u.stats.rank} | ${round(u.stats.accuracy)}%`).map(Message.fixString).join('\n')}
     `;
 }
 
@@ -248,8 +246,6 @@ export function SearchTemplate(maps: IV2Beatmapset[]) {
     return `
         Результат поиска:
 
-        ${maps.splice(0, 10).map(map => `
-            ${map.artist} - ${map.title} by ${map.creator} | https://osu.ppy.sh/s/${map.id}
-        `).map(Message.fixString).join("\n")}
+        ${maps.splice(0, 10).map(map => `${map.artist} - ${map.title} by ${map.creator} | https://osu.ppy.sh/s/${map.id}`).map(Message.fixString).join("\n")}
     `
 }
