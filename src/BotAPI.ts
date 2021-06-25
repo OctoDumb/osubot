@@ -61,8 +61,6 @@ export default class BotAPI {
         });
 
         this.app.get('/db', this.auth.bind(this), async (_req, res) => {
-            // let { database: db } = this.bot;
-            await ServerConnection.findAndCount({ where: { server: "Bancho" } });
             res.send({
                 users: {
                     bancho: await ServerConnection.count({ where: { server: "Bancho" } }),

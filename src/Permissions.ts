@@ -1,9 +1,3 @@
-/*
-    - ignoreban
-    - ban
-    - admin
-*/
-
 export enum Permission {
     IGNOREBAN = "ignoreban",
     BAN = "ban",

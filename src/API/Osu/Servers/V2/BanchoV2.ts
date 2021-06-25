@@ -143,8 +143,8 @@ export default class BanchoV2API {
         }
     }
 
-    async getChangelog({ stream, limit }: IChangelogRequest): Promise<IChangelog[]> {
-        let data = (await this.request('/changelog', { stream: stream ?? "stable40", limit })).builds;
+    async getChangelog({ stream = "stable40", limit = 1 }: IChangelogRequest): Promise<IChangelog[]> {
+        let data = (await this.request('/changelog', { stream, limit })).builds;
         return data.map(build => ({
             id: build.id,
             version: build.version,

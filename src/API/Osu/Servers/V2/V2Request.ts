@@ -4,7 +4,7 @@ export interface IChangelogRequest {
 }
 
 export interface IV2BeatmapsetRequest {
-    beatmapsetId?: number;
+    beatmapsetId: number;
 }
 
 export interface IV2BeatmapsetsRequest {
