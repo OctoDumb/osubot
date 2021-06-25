@@ -9,6 +9,7 @@ export interface IBeatmap {
     version: string
     beatmapsetID: number
     maxCombo: number
+    status: string
     mode: number
     difficulty: {
         ar: number
@@ -38,6 +39,11 @@ export interface IPPResponse {
     }
 }
 
+export interface IAPIBeatmapRequest {
+    id: number
+    hash: string
+}
+
 export default class MapAPI {
     api: AxiosInstance
     constructor(
@@ -51,6 +57,11 @@ export default class MapAPI {
     async getStatus(): Promise<any> {
         let { data } = await this.api('/');
         return data;
+    }
+
+    async getBeatmapIdFromHash(hash: string): Promise<number> {
+        let { data } = await this.api(`/api/getBeatmap?${qs.stringify({ hash })}`);
+        return Number(data.beatmap_id)
     }
 
     async getBeatmap(id: number, mods?: string[]): Promise<IBeatmap> {
