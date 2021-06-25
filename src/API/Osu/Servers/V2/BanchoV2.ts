@@ -117,7 +117,7 @@ export default class BanchoV2API {
             throw "Not logged in";
         let { data } = await Axios.post("https://osu.ppy.sh/oauth/token", {
             client_id: 5,
-            client_secret: "FGc9GAtyHzeQDshWP5Ah7dega8hJACCAJpQtw6OXk",
+            client_secret: "FGc9GAtyHzeQDshWP5Ah7dega8hJACAJpQtw6OXk",
             grant_type: "refresh_token",
             refresh_token: this.refresh_token,
             scope: "*"
