@@ -43,6 +43,10 @@ import { User } from "./Database/entity/User";
 import { Ban } from "./Database/entity/Ban";
 import DisableBotCommand from "./StandaloneCommands/DisableBot";
 import Disabled from "./Disabled";
+import IReplay from "./Replay/Replay";
+import parseReplay from "./Replay/ReplayParser";
+import Axios from "axios";
+import { modsToString } from "./Util";
 
 export interface IBotConfig {
     vk: {
@@ -179,6 +183,11 @@ export default class Bot {
                 if (mapLink && !this.disabled.isDisabled(message.peerId)) 
                     return this.mapLinkProcessor.process(message, mapLink);
 
+                let replay = ctx.getAttachments("doc").filter(d => d.extension == "osr")[0]
+
+                if(replay && !this.disabled.isDisabled(message.peerId))
+                    return this.sendReplayData(ctx, replay.url)
+
                 for(let module of this.modules)
                     await module.run(message, this);
                 
@@ -202,6 +211,17 @@ export default class Bot {
                 console.log(e)
             }
         });
+    }
+
+    private async sendReplayData(ctx: MessageContext, link: string) {
+        try {
+            let { data } = await Axios.get(link, { responseType: "arraybuffer" })
+            let replay = parseReplay(data)
+            let id = await this.maps.getBeatmapIdFromHash(replay.beatmapHash)
+            let map = await this.maps.getBeatmap(id, modsToString(replay.mods))
+        } catch(e) {
+
+        }
     }
 
     private updateUses() {
