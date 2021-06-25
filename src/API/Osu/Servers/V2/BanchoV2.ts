@@ -1,6 +1,7 @@
 import Axios, { AxiosInstance } from "axios";
 import { EventEmitter } from "eventemitter3";
 import { stringify } from "querystring";
+import Logger from "../../../../Logger";
 import { IChangelogRequest, IV2BeatmapsetsRequest, IV2BeatmapsetRequest } from "./V2Request";
 import { IChangelog, IV2Beatmapset, IV2Beatmap, IV2News } from "./V2Responses";
 
@@ -39,8 +40,9 @@ class BanchoV2Data extends EventEmitter<APIV2Events> {
             await this.updateChangelog();
             await this.updateRanked();
             await this.updateNews();
+            Logger.info("Data update finished", "V2");
         } catch(e) {
-            console.log(e);
+            Logger.error(e, "V2")
         }
     }
 

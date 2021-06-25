@@ -117,19 +117,19 @@ export default class Bot {
     async start() {
         try {
             this.database = await createConnection();
-            Logger.log(LogLevel.MESSAGE, "[DB] Database connection successful");
+            Logger.info("Database connection successful", "DB");
         } catch(e) {
-            Logger.log(LogLevel.ERROR, "[DB] Database connection failed");
+            Logger.fatal("Database connection failed", "DB");
         }
 
         try {
             await this.vk.updates.start();
 
             this.startTime = Date.now();
-            Logger.log(LogLevel.MESSAGE, "[BOT] VK Long Poll listening");
+            Logger.info("VK Long Poll listening", "BOT");
         } catch(e) {
             console.log(e);
-            Logger.log(LogLevel.ERROR, "[BOT] VK Long Poll connection failed");
+            Logger.fatal("VK Long Poll connection failed", "BOT");
         }
 
         try {
@@ -138,19 +138,20 @@ export default class Bot {
                 Config.data.osu.password
             );
 
-            Logger.log(LogLevel.MESSAGE, "[V2] Successfully logged in!");
+            Logger.info("Successfully logged in!", "V2");
         } catch(e) {
-            Logger.log(LogLevel.ERROR, "[V2] Login failed!");
+            Logger.error("Login failed!", "V2");
         }
 
         // await this.screenshotCreator.launch();
 
-        // this.v2.data.start();
-        Logger.assert(this.v2.logged, LogLevel.MESSAGE, `[V2] Updating V2 data every ${Math.floor(this.v2.data.interval / 1e3)} seconds`);
+        this.v2.data.start();
+        if(this.v2.logged)
+            Logger.info(`Updating V2 data every ${Math.floor(this.v2.data.interval / 1e3)} seconds`, "V2");
+        
+        cron.schedule('*/5 * * * *', () => { this.updateUses() });
 
-        // cron.schedule('*/5 * * * *', () => { this.updateUses() });
-
-        Logger.log(LogLevel.DEBUG, `[DEBUG] Initialized with ${this.modules.length} modules and ${this.modules.flatMap(m => m.commands).length + this.commands.length} commands`);
+        Logger.debug(`Initialized with ${this.modules.length} modules and ${this.modules.flatMap(m => m.commands).length + this.commands.length} commands`, "BOT");
 
         this.startMessageListening();
     }

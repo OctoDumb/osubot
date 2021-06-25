@@ -1,3 +1,5 @@
+import Logger from "./Logger";
+
 export default class Disabled {
     list: number[] = [];
 
@@ -7,6 +9,9 @@ export default class Disabled {
             this.list = this.list.filter(i => i != id);
         else
             this.list.push(id);
+
+        Logger.info(`${isDisabled ? "Enabled" : "Disabled"} bot in chat ${id}`, "BOT")
+
         return isDisabled;
     }
 

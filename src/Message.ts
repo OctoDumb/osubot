@@ -2,6 +2,7 @@ import { MessageContext, MessagesSendParams } from "vk-io";
 import MessageForward from "vk-io/lib/structures/shared/message-forward";
 import MessageReply from "vk-io/lib/structures/shared/message-reply";
 import { User } from "./Database/entity/User";
+import Logger from "./Logger";
 
 export default class Message {
     static DefaultParams: MessagesSendParams = {
@@ -40,6 +41,11 @@ export default class Message {
         this.clean = ctx.text;
         this.prefix = args.shift()?.toLowerCase();
         this.command = args.shift()?.toLowerCase();
+
+        Logger.trace([
+            `Message: ${this.clean}`,
+            `Sender: ${this.sender} | Peer: ${this.peerId} | Has forwards: ${this.forwarded}`
+        ]);
 
         this.arguments = args;
     }

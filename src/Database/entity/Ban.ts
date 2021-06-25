@@ -3,6 +3,7 @@ import { VK } from "vk-io";
 import { addNotification } from "../../Util";
 import dateformat from "dateformat";
 import { User } from "./User";
+import Logger from "../../Logger";
 
 dateformat.i18n = {
     monthNames: [
@@ -40,6 +41,10 @@ export class Ban extends BaseEntity {
         let until = Date.now() + duration;
         await Ban.delete({ user: { id } });
         await Ban.create({ user: await User.findOne(id), until, reason }).save();
+        Logger.info([
+            `User ${id} banned for ${duration} seconds`,
+            `Reason: ${reason ?? "undefined"}`
+        ]);
         await addNotification(vk, id, `
             Вы были забанены!
             Время окончания бана: ${dateformat(new Date(until), "dd mmm yyyy HH:MM:ss 'MSK'")}

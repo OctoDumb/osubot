@@ -1,5 +1,6 @@
 import { BaseEntity, Column, Entity, PrimaryColumn } from "typeorm";
 import VK from "vk-io";
+import Logger from "../../Logger";
 
 @Entity({
     name: "covers"
@@ -16,6 +17,7 @@ export class Cover extends BaseEntity {
         let cover = await Cover.findOne({ where: { id } });
 
         if(!cover) {
+            Logger.debug(`Requesting Cover ID ${id}`, "DB");
             try { 
                 let photo = await vk.upload.messagePhoto({
                     source: {
@@ -23,8 +25,10 @@ export class Cover extends BaseEntity {
                     }
                 });
                 await Cover.create({ id, attachment: photo.toString() }).save();
+                Logger.debug(`Request for Cover ID ${id} succeeded`);
                 return photo.toString();
             } catch(e) {
+                Logger.warn(`Request for Cover ID ${id} failed`);
                 await Cover.create({ id, attachment: "" }).save();
                 return "";
             }

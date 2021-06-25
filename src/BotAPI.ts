@@ -30,7 +30,7 @@ export default class BotAPI {
 
         this.app.listen(config.port);
 
-        Logger.log(LogLevel.MESSAGE, `[API] Bot API listening on port ${config.port}`);
+        Logger.info(`Bot API listening on port ${config.port}`, "API");
     }
 
     setContentType() {
@@ -53,7 +53,7 @@ export default class BotAPI {
         });
 
         this.app.post('/auth', (req, res) => {
-            Logger.log(LogLevel.DEBUG, "Bot API authorization attempt");
+            Logger.debug("Bot API authorization attempt", "API");
             if(md5(req.body?.password as string ?? "") == this.token)
                 return res.send({ "token": this.token });
             

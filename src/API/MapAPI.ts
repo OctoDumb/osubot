@@ -59,9 +59,9 @@ export default class MapAPI {
     }
 
     async getPP(id: number, args?: IPPArguments): Promise<IPPResponse> {
-        Logger.log(LogLevel.DEBUG, `[MapAPI] PPArguments: ${JSON.stringify(args)}`);
+        Logger.debug(`[MapAPI] PPArguments: ${JSON.stringify(args)}`);
         let { data } = await this.api(`/getScorePP?${qs.stringify({ id, ...args })}`);
-        Logger.log(LogLevel.DEBUG, `[MapAPI] PPResponse: ${JSON.stringify(data)}`);
+        Logger.debug(`[MapAPI] PPResponse: ${JSON.stringify(data)}`);
         return data;
     }
 }

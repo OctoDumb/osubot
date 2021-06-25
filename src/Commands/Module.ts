@@ -5,6 +5,7 @@ import { BanUtil } from "../Banlist";
 import dateformat from "dateformat";
 import PermissionManager, { Permission } from "../Permissions";
 import { Ban } from "../Database/entity/Ban";
+import Logger from "../Logger";
 
 export default abstract class Module {
     abstract name: string;
@@ -43,12 +44,14 @@ export default abstract class Module {
             && PermissionManager.hasPermission(message.user.role.permissions, Permission.IGNOREBAN)) return;
         
         try {
+            Logger.debug(`Used command ${this.name}:${command.name} in chat ${message.peerId}`);
             command.use(message);
             
             let args = command.parseArguments(message, bot);
             await command.run(args);
         } catch(e) {
-            console.log(e.stack);
+            Logger.error(`Command ${this.name}:${command.name} failed`);
+            Logger.error(e);
             message.reply(`Ошибка! ${e instanceof Error ? e.message : e}`);
         }
     }

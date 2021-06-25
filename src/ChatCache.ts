@@ -1,3 +1,5 @@
+import Logger from "./Logger";
+
 export default class ChatCache {
     private cache: { id: number, beatmapId: number }[] = [];
 
@@ -12,5 +14,7 @@ export default class ChatCache {
             this.cache.push({ id, beatmapId });
         else
             this.cache[i].beatmapId = beatmapId;
+
+        Logger.debug(`Set ${beatmapId} in chat ${id}`, "MAPS")
     }
 }

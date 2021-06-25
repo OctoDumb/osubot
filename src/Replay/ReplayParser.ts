@@ -2,6 +2,7 @@ import leb from "leb";
 import int64 from "int64-buffer";
 import IReplay from "./Replay";
 import { getAccuracy } from "../Util";
+import Logger from "../Logger";
 
 class BinaryReader {
     private raw: Buffer;
@@ -45,6 +46,7 @@ class BinaryReader {
 }
 
 export default function parseReplay(replay: string | Buffer): IReplay {
+    Logger.trace("Parsing replay");
     let reader = new BinaryReader(replay);
 
     let obj = {

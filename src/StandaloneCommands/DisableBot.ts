@@ -1,6 +1,7 @@
 import Bot from "../Bot";
 import { IStandaloneCommandArguments } from "../Commands/Arguments";
 import StandaloneCommand from "../Commands/StandaloneCommand";
+import Logger from "../Logger";
 import Message from "../Message";
 import { defaultArguments } from "../Util";
 
@@ -26,6 +27,7 @@ export default class DisableBotCommand extends StandaloneCommand {
             if(!user.is_admin) return;
             let wasDisabled = disabled.switch(message.peerId);
             message.reply(`Бот ${wasDisabled ? 'включен' : 'отключен'}`)
+            Logger.info(`Bot ${wasDisabled ? 'enabled' : 'disabled'} in chat ${message.peerId}`);
         } catch {}
     }
 }
