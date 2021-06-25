@@ -86,6 +86,11 @@ export default class MainStatus extends Command {
                 `);
                 break;
             }
+            case "reset": {
+                await User.update({ id: message.sender }, { status: null });
+                message.reply("Статус сброшен!");
+                break;
+            }
             default: {
                 //
             }
