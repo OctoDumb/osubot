@@ -181,7 +181,7 @@ export function parseArguments<T>(args: string[], parsers: IArgumentParser[] = [
         if(!d) a.push(arg);
     }
 
-    return { clean: a.join(' '), args: <T>b };
+    return { clean: Object.keys(b).length ? a.join(' ') : args.join(' '), args: <T>b };
 }
 
 export interface IServerCommandArguments<T> extends ICommandArguments {

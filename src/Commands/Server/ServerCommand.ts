@@ -16,7 +16,7 @@ export default abstract class ServerCommand<T = unknown> extends Command {
     parseArguments(message: Message, bot: Bot): IServerCommandArguments<any> {
         return {
             ...defaultArguments(message, bot),
-            ...parseArguments([], [])
+            ...parseArguments(message.arguments, [])
         }
     }
 
