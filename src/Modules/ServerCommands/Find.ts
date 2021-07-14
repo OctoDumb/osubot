@@ -16,17 +16,17 @@ export default class FindCommand extends ServerCommand<OsuAPIWithScores> {
         let { username } = await getUserInfo(message, this.module.name, database, clean);
         let u = await this.api.getUser({ username });
         let dbusers = await ServerConnection.find({
-            where: { playerId: u.id }
+            where: { playerId: u.id }, relations: [ 'user' ]
         });
 
         if(!dbusers[0])
             return message.reply(`
                 [Server: ${this.module.name}]
-                Пользователей с таким ником не найдено!`
+                Пользователей с ником ${u.username} не найдено!`
             );
 
         let users = await vk.api.users.get({
-            user_ids: dbusers.map(u => u.id).join()
+            user_ids: dbusers.map(u => u.user.id).join()
         });
 
         message.reply(FindTemplate(this.module, u.username, users));
