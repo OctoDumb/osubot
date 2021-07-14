@@ -55,7 +55,8 @@ export default class BanchoAPI extends OsuAPIWithScores implements IBanchoAPI {
         let data = await this.request('/get_user_best', {
             k: this.token,
             u: username,
-            m: mode ?? 0
+            m: mode ?? 0,
+            limit
         });
 
         return data.map(s => Object.assign(
