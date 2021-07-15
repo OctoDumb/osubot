@@ -103,19 +103,28 @@ export default class Logger {
         Logger._logToFile(level, message, target, time);
     }
 
+    private static errorToString(error: Error): string[] {
+        return error.stack?.split("\n") ?? [`${error.name}: ${error.message}`]
+    }
+
     public static fatal(message: string | string[], target?: string) {
         Logger.log(LogLevel.FATAL, message, target);
         process.exit();
     }
 
-    public static error(error: string | string[] | Error, target?: string) {
-        let message: string | string[]
-        if(error instanceof Error) {
-            if(error.stack)
-                message = error.stack.split("\n");
-            else
-                message = `${error.name}: ${error.message}`;
-        } else message = error;
+
+    public static error(error: string | (string | Error)[] | Error, target?: string) {
+        let message: string | string[] = []
+        if(!Array.isArray(error)) {
+            message = error instanceof Error ? Logger.errorToString(error) : [ error ];
+        } else {
+            for(let e of error) {
+                if(e instanceof Error)
+                    message.push(...Logger.errorToString(e))
+                else
+                    message.push(e)
+            }
+        }
         Logger.log(LogLevel.ERROR, message, target)
     }
 
