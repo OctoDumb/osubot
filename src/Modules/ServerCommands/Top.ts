@@ -4,10 +4,12 @@ import Bot from "../../Bot";
 import { IServerCommandArguments, ITopCommandArguments, parseArguments, Parsers } from "../../Commands/Arguments";
 import { defaultArguments, getStatus, getUserInfo, modsToString } from "../../Util";
 import { TopTemplate, TopSingleTemplate } from "../../Templates";
-import { ServerConnection } from "../../Database/entity/ServerConnection";
 import { Stats } from "../../Database/entity/Stats";
 import { Cover } from "../../Database/entity/Cover";
 import { OsuAPI } from "../../API/Osu/OsuServerAPI";
+import IncorrectArgumentsError from "../../Errors/IncorrectArguments";
+import NotFoundError from "../../Errors/NotFound";
+import MissingArgumentsError from "../../Errors/MissingArguments";
 
 export default class TopCommand extends ServerCommand<OsuAPI> {
     name = "Top";
@@ -32,6 +34,9 @@ export default class TopCommand extends ServerCommand<OsuAPI> {
     async run({ message, database, mapAPI, chats, clean, vk, args }: IServerCommandArguments<ITopCommandArguments>) {
         let { username, mode } = await getUserInfo(message, this.module.name, database, clean, args);
 
+        if(!username)
+            throw new MissingArgumentsError("Не указан ник!");
+        
         let user = await this.api.getUser({ username, mode });
 
         await Stats.updateInfo(this.module.name, user, mode);
@@ -72,10 +77,10 @@ export default class TopCommand extends ServerCommand<OsuAPI> {
             });
         } else if(args.place) {
             if(args.place > 100 || args.place < 1)
-                throw "Некорректное место! (1-100)";
+                throw new IncorrectArgumentsError("Некорректное место! (1-100)");
 
             if(args.place > top.length)
-                throw "Такого скора нет!";
+                throw new NotFoundError("Такого скора нет!")
 
             let t = top[args.place - 1];
 
@@ -94,6 +99,9 @@ export default class TopCommand extends ServerCommand<OsuAPI> {
             if(args.mods != undefined)
                 top = top.filter(t => t.mods == args.mods);
             top = top.splice(0, 3);
+
+            if(!top.length)
+                throw new NotFoundError("Не найдено скоров с данной комбинацией модов!");
 
             let maps = await Promise.all([ ...top.map(t => mapAPI.getBeatmap(t.beatmapId, modsToString(t.mods))) ])
 

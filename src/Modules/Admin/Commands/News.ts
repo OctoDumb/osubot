@@ -1,5 +1,6 @@
 import ICommandArguments from "../../../Commands/Arguments";
 import Command from "../../../Commands/Command";
+import MissingArgumentsError from "../../../Errors/MissingArguments";
 import { Permission } from "../../../Permissions";
 
 export default class AdminNews extends Command {
@@ -14,7 +15,7 @@ export default class AdminNews extends Command {
 
     async run({ message, news }: ICommandArguments) {
         if(!message.forwarded)
-            return message.reply("Перешлите сообщение для рассылки!");
+            throw new MissingArgumentsError("Перешлите сообщение для рассылки!");
 
         let m = message.forwarded;
 

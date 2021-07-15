@@ -6,6 +6,7 @@ import { UserTemplate } from "../../Templates";
 import { Stats } from "../../Database/entity/Stats";
 import { defaultArguments, getStatus, getUserInfo } from "../../Util";
 import { OsuAPI } from "../../API/Osu/OsuServerAPI";
+import MissingArgumentsError from '../../Errors/MissingArguments';
 
 export default class UserCommand extends ServerCommand<OsuAPI> {
     name = "User";
@@ -26,6 +27,9 @@ export default class UserCommand extends ServerCommand<OsuAPI> {
 
     async run({ message, database, privileges, clean, args }: IServerCommandArguments<IArgumentsWithMode>) {
         let { username, mode } = await getUserInfo(message, this.module.name, database, clean, args);
+
+        if(!username)
+            throw new MissingArgumentsError("Не указан ник!");
 
         let user = await this.api.getUser({ username, mode });
 

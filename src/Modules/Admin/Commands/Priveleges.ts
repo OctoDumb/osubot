@@ -1,5 +1,7 @@
 import ICommandArguments from "../../../Commands/Arguments";
 import Command from "../../../Commands/Command";
+import IncorrectArgumentsError from "../../../Errors/IncorrectArguments";
+import MissingArgumentsError from "../../../Errors/MissingArguments";
 import { Permission } from "../../../Permissions";
 
 export default class PrivilegesCommand extends Command {
@@ -16,31 +18,23 @@ export default class PrivilegesCommand extends Command {
         let { forwarded, arguments: args } = message;
 
         if(args.length < 1)
-            return message.reply("Недостаточно аргументов!");
+            throw new MissingArgumentsError("Недостаточно аргументов!");
 
         switch(args[0].toLowerCase()) {
             case "add":
             case "+":
                 if(args.length < 2)
-                    return message.reply("Недостаточно аргументов!");
-                try {
-                    privileges.addPrivilege(forwarded?.senderId ?? message.sender, args[1]);
-                    message.reply(`Привилегия ${args[1]} добавлена`);
-                } catch(e) {
-                    message.reply(`Ошибка: ${e.message}`);
-                }
+                    throw new MissingArgumentsError("Недостаточно аргументов!");
+                privileges.addPrivilege(forwarded?.senderId ?? message.sender, args[1]);
+                message.reply(`Привилегия ${args[1]} добавлена`);
                 break;
 
             case "remove":
             case "-":
                 if(args.length < 2)
-                    return message.reply("Недостаточно аргументов!");
-                try {
-                    privileges.removePrivilege(forwarded?.senderId ?? message.sender, args[1]);
-                    message.reply(`Привилегия ${args[1]} удалена`);
-                } catch(e) {
-                    message.reply(`Ошибка: ${e.message}`);
-                }
+                    throw new MissingArgumentsError("Недостаточно аргументов!");
+                privileges.removePrivilege(forwarded?.senderId ?? message.sender, args[1]);
+                message.reply(`Привилегия ${args[1]} удалена`);
                 break;
 
             case "list":
@@ -49,7 +43,7 @@ export default class PrivilegesCommand extends Command {
                 break;
 
             default:
-                return message.reply("Неизвестная команда!");
+                throw new IncorrectArgumentsError("Неизвестная команда!");
         }
     }
 }

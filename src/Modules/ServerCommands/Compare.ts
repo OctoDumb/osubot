@@ -2,6 +2,7 @@ import { OsuAPIWithScores } from "../../API/Osu/OsuServerAPI";
 import Bot from "../../Bot";
 import { ICompareCommandArguments, IServerCommandArguments, parseArguments, Parsers } from "../../Commands/Arguments";
 import ServerCommand from "../../Commands/Server/ServerCommand";
+import NotFoundError from "../../Errors/NotFound";
 import Message from "../../Message";
 import { CompareScoreTemplate } from "../../Templates";
 import { defaultArguments, getUserInfo, modsEqual, modsToString } from "../../Util";
@@ -27,7 +28,7 @@ export default class CompareCommand extends ServerCommand<OsuAPIWithScores> {
 
         let beatmapId = chats.getChatMap(message.peerId);
         if(!beatmapId)
-            throw "Не найдена карта!";
+            throw new NotFoundError("Не найдена карта!");
 
         let scores = await this.api.getScores({
             username, mode,
@@ -39,7 +40,7 @@ export default class CompareCommand extends ServerCommand<OsuAPIWithScores> {
             : scores.sort((a, b) => b.score - a.score)[0];
 
         if(!score)
-            return message.reply("Скор не найден!");
+            throw new NotFoundError("Скор не найден!");
 
         let mods = modsToString(score.mods);
 

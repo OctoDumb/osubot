@@ -1,10 +1,11 @@
-import { stat } from "fs";
-import { In } from "typeorm";
 import ICommandArguments from "../../../Commands/Arguments";
 import Command from "../../../Commands/Command";
 import { Status } from "../../../Database/entity/Status";
 import { StatusOwned } from "../../../Database/entity/StatusOwned";
 import { User } from "../../../Database/entity/User";
+import IncorrectArgumentsError from "../../../Errors/IncorrectArguments";
+import MissingArgumentsError from "../../../Errors/MissingArguments";
+import NotFoundError from "../../../Errors/NotFound";
 
 export default class MainStatus extends Command {
     name = "Status";
@@ -17,13 +18,13 @@ export default class MainStatus extends Command {
         let args = message.arguments;
         
         if(!args[0])
-            return message.reply("nope.");
+            throw new MissingArgumentsError("nope.");
 
         switch(args.shift().toLowerCase()) {
             case "list": {
                 let [ page = 1 ] = args.map(Number);
                 if(page < 1)
-                    return message.reply("Некорректная страница");
+                    throw new IncorrectArgumentsError("Некорректная страница");
                 let owned = await StatusOwned.find({
                     where: { user: { id: message.sender } },
                     relations: [ 'status' ],
@@ -34,9 +35,9 @@ export default class MainStatus extends Command {
                 let ownedCount = await StatusOwned.count({ where: { user: { id: message.sender } } });
                 if(!owned.length)
                     if(ownedCount == 0)
-                        return message.reply("У вас нет статусов!");
+                        throw new NotFoundError("У вас нет статусов!");
                     else
-                        return message.reply("Страница не найдена");
+                        throw new NotFoundError("Страница не найдена");
                 
                 let statuses = owned.map(o => o.status);
                 message.reply(`
@@ -62,7 +63,7 @@ export default class MainStatus extends Command {
                     }
                 });
                 if(!owned)
-                    return message.reply("У вас нет этого статуса!");
+                    throw new NotFoundError("У вас нет этого статуса!");
                 await User.update({
                     id: message.sender
                 }, { status })

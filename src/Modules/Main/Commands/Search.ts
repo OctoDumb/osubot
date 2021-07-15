@@ -1,5 +1,6 @@
 import ICommandArguments from "../../../Commands/Arguments";
 import Command from "../../../Commands/Command";
+import MissingArgumentsError from "../../../Errors/MissingArguments";
 import { SearchTemplate } from "../../../Templates";
 
 export default class MainSearch extends Command {
@@ -12,7 +13,7 @@ export default class MainSearch extends Command {
         let query = message.arguments.join(" ");
 
         if(!query)
-            throw "Укажите запрос!";
+            throw new MissingArgumentsError("Укажите запрос!");
 
         let maps = await v2.getBeatmapsets({ query });
 

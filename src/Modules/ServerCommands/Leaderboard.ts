@@ -8,6 +8,7 @@ import { ServerConnection } from "../../Database/entity/ServerConnection";
 import { User } from "../../Database/entity/User";
 import { OsuAPIWithScores } from "../../API/Osu/OsuServerAPI";
 import { IScoreAPIResponse } from "../../API/Osu/APIResponse";
+import ChatExclusiveError from "../../Errors/ChatExclusive";
 
 export interface ILeaderboardEntry {
     user: ServerConnection;
@@ -38,7 +39,7 @@ export default class LeaderboardCommand extends ServerCommand<OsuAPIWithScores> 
         database
     }: IServerCommandArguments<IArgumentsWithMods>) {
         if(!message.chatId)
-            throw "Команду можно использовать только в беседах!";
+            throw new ChatExclusiveError("Команду можно использовать только в беседах!");
 
         let mapId = chats.getChatMap(message.peerId);
         let map = await mapAPI.getBeatmap(mapId);

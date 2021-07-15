@@ -3,6 +3,9 @@ import Command from "../../../Commands/Command";
 import { Status } from "../../../Database/entity/Status";
 import { StatusOwned } from "../../../Database/entity/StatusOwned";
 import { User } from "../../../Database/entity/User";
+import IncorrectArgumentsError from "../../../Errors/IncorrectArguments";
+import MissingArgumentsError from "../../../Errors/MissingArguments";
+import NotFoundError from "../../../Errors/NotFound";
 import { Permission } from "../../../Permissions";
 import { addNotification } from "../../../Util";
 
@@ -19,7 +22,7 @@ export default class AdminStatus extends Command {
         let args = message.arguments;
 
         if(!args[0])
-            return message.reply("nope.");
+            throw new MissingArgumentsError("nope.");
 
         const cmd = args.shift().toLowerCase();
         
@@ -41,7 +44,7 @@ export default class AdminStatus extends Command {
                     where: { id }
                 });
                 if(!status)
-                    return message.reply(`Статуса с таким ID не существует`);
+                    throw new NotFoundError(`Статуса с таким ID не существует`);
                 await StatusOwned.delete({ status: { id } });
                 let users = await User.find({ where: { status: { id } } });
                 for(let user of users) {
@@ -95,7 +98,7 @@ export default class AdminStatus extends Command {
                 });
                 
                 if(!res.affected)
-                    message.reply("У пользователя нет этого статуса!");
+                    throw new NotFoundError("У пользователя нет этого статуса!");
                 else {
                     await addNotification(vk, userId, `
                         [id${userId}|Вы] потеряли статус!
@@ -108,13 +111,13 @@ export default class AdminStatus extends Command {
             case "list": {
                 let [ page = 1 ] = args.map(Number);
                 if(page < 1)
-                    return message.reply("Некорректная страница");
+                    throw new IncorrectArgumentsError("Некорректная страница");
                 let statuses = await Status.find({
                     take: 10, skip: 10 * (page - 1), order: { id: "ASC" }
                 });
                 let total = await Status.count();
                 if(statuses.length == 0)
-                    return message.reply("Не найдено статусов");
+                    throw new NotFoundError("Не найдено статусов");
                 return message.reply(`
                     Статусы:
                     ${statuses.map(s => `[ID:${s.id}] ${s.name} (${s.emoji})}`).join('\n')}
@@ -131,7 +134,7 @@ export default class AdminStatus extends Command {
                     ]
                 });
                 if(!status)
-                    return message.reply("Такого статуса не существует!");
+                    throw new NotFoundError("Такого статуса не существует!");
                 let ownedBy = await StatusOwned.count({
                     where: { status: { id: status.id } }
                 });

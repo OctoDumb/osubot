@@ -5,6 +5,7 @@ import ServerCommand from "../../Commands/Server/ServerCommand";
 import { ServerConnection } from "../../Database/entity/ServerConnection";
 import { Stats } from "../../Database/entity/Stats";
 import { Status } from "../../Database/entity/Status";
+import IncorrectArgumentsError from "../../Errors/IncorrectArguments";
 import Message from "../../Message";
 import { ChatTopTemplate } from "../../Templates";
 import { defaultArguments, getStatus, getUserInfo } from "../../Util";
@@ -38,7 +39,7 @@ export default class ChatCommand extends ServerCommand<OsuAPI> {
         let { mode } = await getUserInfo(message, this.module.name, database, clean, args);
         let chatId = message.chatId ?? Number(clean);
         if(!chatId || chatId < 1)
-            throw "Некорректный ID";
+            throw new IncorrectArgumentsError("Некорректный ID");
 
         let members = (await vk.api.messages.getConversationMembers({
             peer_id: 2e9 + chatId

@@ -2,6 +2,7 @@ import Banlist from "../../../Banlist";
 import ICommandArguments from "../../../Commands/Arguments";
 import Command from "../../../Commands/Command";
 import { Ban } from "../../../Database/entity/Ban";
+import MissingArgumentsError from "../../../Errors/MissingArguments";
 import Message from "../../../Message";
 import { Permission } from "../../../Permissions";
 
@@ -18,12 +19,13 @@ export default class UnbanCommand extends Command {
 
     async run({ message, database, vk }: ICommandArguments) {
         let id = message.forwarded?.senderId;
-        if(message.arguments.length < 1) return message.reply("Недостаточно аргументов!");
+        if(message.arguments.length < 1)
+            throw new MissingArgumentsError("Недостаточно аргументов!");
         if(mention.test(message.arguments[0])) {
             id = Number(message.arguments.shift().match(mention).groups.id);
         }
         if(!id)
-            return message.reply("Не указан пользователь!");
+            throw new MissingArgumentsError("Не указан пользователь!");
         
         let d = await Ban.delete({ user: { id } });
 

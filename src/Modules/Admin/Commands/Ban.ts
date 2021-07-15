@@ -1,11 +1,9 @@
-import Banlist, { BanUtil } from "../../../Banlist";
 import ICommandArguments from "../../../Commands/Arguments";
 import Command from "../../../Commands/Command";
-import Message from "../../../Message";
 import { stringDateToMs } from "../../../Util";
-import dateformat from "dateformat";
 import { Permission } from "../../../Permissions";
 import { Ban } from "../../../Database/entity/Ban";
+import MissingArgumentsError from "../../../Errors/MissingArguments";
 
 const mention = /\[id(?<id>\d+)|.+\]/i;
 
@@ -20,12 +18,12 @@ export default class BanCommand extends Command {
 
     async run({ message, database, vk }: ICommandArguments) {
         let id = message.forwarded?.senderId;
-        if(message.arguments.length < 1) return message.reply("Недостаточно аргументов!");
-        if(mention.test(message.arguments[0])) {
+        if(message.arguments.length < 1)
+            throw new MissingArgumentsError("Недостаточно аргументов!");
+        if(mention.test(message.arguments[0]))
             id = Number(message.arguments.shift().match(mention).groups.id);
-        }
         if(!id)
-            return message.reply("Не указан пользователь!");
+            throw new MissingArgumentsError("Не указан пользователь!");
 
         let duration = stringDateToMs(message.arguments.shift() ?? "");
 

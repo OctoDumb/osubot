@@ -1,8 +1,6 @@
 import Command from "./Command";
 import Message from "../Message";
 import Bot from "../Bot";
-import { BanUtil } from "../Banlist";
-import dateformat from "dateformat";
 import PermissionManager, { Permission } from "../Permissions";
 import { Ban } from "../Database/entity/Ban";
 import Logger from "../Logger";
@@ -52,7 +50,7 @@ export default abstract class Module {
         } catch(e) {
             Logger.error(`Command ${this.name}:${command.name} failed`);
             Logger.error(e);
-            message.reply(`Ошибка! ${e instanceof Error ? e.message : e}`);
+            message.reply(`Ошибка!  ${e instanceof Error ? `[${e.name}] ${e.message}` : e}`);
         }
     }
 

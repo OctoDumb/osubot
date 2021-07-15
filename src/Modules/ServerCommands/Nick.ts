@@ -3,6 +3,7 @@ import { IServerCommandArguments } from "../../Commands/Arguments";
 import { ServerConnection } from "../../Database/entity/ServerConnection";
 import { OsuAPI } from "../../API/Osu/OsuServerAPI";
 import { TwinkAccept } from "../../Database/entity/TwinkAccept";
+import MissingArgumentsError from '../../Errors/MissingArguments';
 
 export default class NickCommand extends ServerCommand<OsuAPI> {
     name = "Nick";
@@ -13,6 +14,9 @@ export default class NickCommand extends ServerCommand<OsuAPI> {
     async run({ message }: IServerCommandArguments<null>) {
         try {
             let username = message.arguments.join(" ");
+
+            if(!username)
+                throw new MissingArgumentsError("Не указан ник!");
             
             let user = await this.api.getUser({ username });
 

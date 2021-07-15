@@ -1,6 +1,7 @@
 import Bot from "../../Bot";
 import { IArgumentsWithMode, IServerCommandArguments, parseArguments, Parsers } from "../../Commands/Arguments";
 import ServerCommand from "../../Commands/Server/ServerCommand";
+import MissingArgumentsError from "../../Errors/MissingArguments";
 import Message from "../../Message";
 import { TrackTemplate } from "../../Templates";
 import { defaultArguments, getUserInfo } from "../../Util";
@@ -28,7 +29,7 @@ export default class BanchoTrack extends ServerCommand {
         let { username, mode } = await getUserInfo(message, this.module.name, database, clean, args);
 
         if(!username)
-            throw "Не указан ник!";
+            throw new MissingArgumentsError("Не указан ник!");
         
         let update = await track.getChanges(username, mode);
 

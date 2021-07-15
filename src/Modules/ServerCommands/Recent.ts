@@ -6,6 +6,8 @@ import { defaultArguments, getUserInfo, hitsToFail, modsToString } from "../../U
 import { RecentTemplate } from "../../Templates";
 import { Cover } from "../../Database/entity/Cover";
 import { OsuAPI } from "../../API/Osu/OsuServerAPI";
+import NotFoundError from "../../Errors/NotFound";
+import MissingArgumentsError from '../../Errors/MissingArguments';
 
 export default class RecentCommand extends ServerCommand<OsuAPI> {
     name = "Recent";
@@ -28,6 +30,9 @@ export default class RecentCommand extends ServerCommand<OsuAPI> {
     async run({ message, database, mapAPI, clean, args, vk, chats }: IServerCommandArguments<IRecentCommandArguments>) {
         let { username, mode } = await getUserInfo(message, this.module.name, database, clean, args);
 
+        if(!username)
+            throw new MissingArgumentsError("Не указан ник!");
+
         let recents = await this.api.getRecent({ 
             username, 
             mode: args.mode ?? mode, 
@@ -37,7 +42,8 @@ export default class RecentCommand extends ServerCommand<OsuAPI> {
 
         let recent = recents[args.place ? args.place - 1 : 0];
 
-        if(!recent) return message.reply("no recent");
+        if(!recent)
+            throw new NotFoundError("Не найдено последних плеев!");
 
         let mods = modsToString(recent.mods);
 

@@ -42,7 +42,7 @@ export default class BanchoAPI extends OsuAPIWithScores implements IBanchoAPI {
             m: mode ?? 0
         });
         if(!data)
-            throw new APINotFoundError("User is not found!");
+            throw new APINotFoundError("Игрок не найден!");
         
         return this.adaptUser(data);
     }
@@ -95,7 +95,7 @@ export default class BanchoAPI extends OsuAPIWithScores implements IBanchoAPI {
             m: mode ?? 0
         })}`);
 
-        if (mods != null)
+        if(mods != null)
             data = data.filter(p => p.enabled_mods == mods);
         
         return data.map(d => this.adaptScore(d, mode ?? 0));
