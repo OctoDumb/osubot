@@ -79,21 +79,23 @@ export function defaultArguments(message: Message, {
 }
 
 export async function getUserInfo(message: Message, server: string, db: Connection, clean: string, args?: { mode?: number }) {
-    let connection = await ServerConnection.getRepository()
-        .createQueryBuilder("conn")
-        .innerJoinAndSelect("conn.user", "user")
-        .where("user.id = :id", { id: message.sender })
-        .andWhere("conn.server = :server", { server })
-        .getOne();
+    let connection = await ServerConnection.findOne({ where: { user: { id: message.sender }, server }, relations: [ 'user' ] })
+    // let connection = await ServerConnection.getRepository()
+    //     .createQueryBuilder("conn")
+    //     .innerJoinAndSelect("conn.user", "user")
+    //     .where("user.id = :id", { id: message.sender })
+    //     .andWhere("conn.server = :server", { server })
+    //     .getOne();
     let username = connection?.nickname ?? "";
     let mode = connection?.mode ?? 0;
     if(message.forwarded) {
-        let forwarded = await ServerConnection.getRepository()
-            .createQueryBuilder("conn")
-            .innerJoinAndSelect("conn.user", "user")
-            .where("user.id = :id", { id: message.forwarded.senderId })
-            .andWhere("conn.server = :server", { server })
-            .getOne();
+        let forwarded = await ServerConnection.findOne({ where: { user: { id: message.forwarded.senderId }, server } })
+        // let forwarded = await ServerConnection.getRepository()
+        //     .createQueryBuilder("conn")
+        //     .innerJoinAndSelect("conn.user", "user")
+        //     .where("user.id = :id", { id: message.forwarded.senderId })
+        //     .andWhere("conn.server = :server", { server })
+        //     .getOne();
         if(forwarded)
             username = forwarded.nickname;
     }
