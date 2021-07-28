@@ -9,7 +9,6 @@ import TrackAPI from "../API/TrackAPI";
 import BanchoV2API from "../API/Osu/Servers/V2/BanchoV2";
 
 import { Connection } from "typeorm";
-import PuppeteerInstance from "../PuppeteerInstance";
 import Disabled from "../Disabled";
 
 export default interface ICommandArguments {
@@ -24,7 +23,6 @@ export default interface ICommandArguments {
     uptime: number;
     track: TrackAPI;
     v2: BanchoV2API;
-    puppeteer: PuppeteerInstance;
 }
 
 export interface IArgumentsWithMode {
@@ -155,6 +153,12 @@ export const Parsers = {
         arg: "top",
         prefix: "-",
         parser: Number
+    },
+    card: {
+        arg: "card",
+        prefix: "-",
+        suffix: "card",
+        parser: Boolean
     }
 };
 
@@ -187,6 +191,10 @@ export function parseArguments<T>(args: string[], parsers: IArgumentParser[] = [
 export interface IServerCommandArguments<T> extends ICommandArguments {
     clean?: string;
     args?: T;
+}
+
+export interface IServerCommandWithCardArguments<T> extends IServerCommandArguments<T> {
+    args?: T & { card: boolean }
 }
 
 export interface IStandaloneCommandArguments<T> extends IServerCommandArguments<T> {}

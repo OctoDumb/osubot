@@ -32,7 +32,6 @@ import AkatsukiRelaxAPI from "./API/Osu/Servers/AkatsukiRelax";
 import Akatsuki from "./Modules/Akatsuki";
 import AkatsukiRelax from "./Modules/AkatsukiRelax";
 import BanchoV2API from "./API/Osu/Servers/V2/BanchoV2";
-import PuppeteerInstance from "./PuppeteerInstance";
 import TrackAPI from "./API/TrackAPI";
 import Logger, { LogLevel } from "./Logger";
 import Banlist, { BanUtil } from "./Banlist";
@@ -47,6 +46,7 @@ import IReplay from "./Replay/Replay";
 import parseReplay from "./Replay/ReplayParser";
 import Axios from "axios";
 import { modsToString } from "./Util";
+import PuppeteerInstance from "./PuppeteerInstance";
 
 export interface IBotConfig {
     vk: {
@@ -77,7 +77,6 @@ export default class Bot {
     });
 
     database: Connection;
-    puppeteer = new PuppeteerInstance();
 
     v2 = new BanchoV2API();
 
@@ -147,8 +146,12 @@ export default class Bot {
             Logger.error("Login failed!", "V2");
         }
 
-        // await this.screenshotCreator.launch();
-
+        try {
+            await PuppeteerInstance.initialize()
+        } catch(e) {
+            Logger.fatal("Puppeteer failed to initialize!");
+        }
+        
         this.v2.data.start();
         if(this.v2.logged)
             Logger.info(`Updating V2 data every ${Math.floor(this.v2.data.interval / 1e3)} seconds`, "V2");

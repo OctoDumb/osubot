@@ -1,5 +1,4 @@
-import ServerCommand from "../../Commands/Server/ServerCommand";
-import { IServerCommandArguments, parseArguments, Parsers, IRecentCommandArguments } from "../../Commands/Arguments";
+import { IServerCommandArguments, parseArguments, Parsers, IRecentCommandArguments, IServerCommandWithCardArguments } from "../../Commands/Arguments";
 import Message from "../../Message";
 import Bot from "../../Bot";
 import { defaultArguments, getUserInfo, hitsToFail, modsToString } from "../../Util";
@@ -8,26 +7,31 @@ import { Cover } from "../../Database/entity/Cover";
 import { OsuAPI } from "../../API/Osu/OsuServerAPI";
 import NotFoundError from "../../Errors/NotFound";
 import MissingArgumentsError from '../../Errors/MissingArguments';
+import ServerCommandWithCard from "../../Commands/Server/ServerCommandWithCard";
+import ScoreCardGenerator, { IScoreCardArguments } from "../../Cards/ScoreCardGenerator";
 
-export default class RecentCommand extends ServerCommand<OsuAPI> {
+export default class RecentCommand extends ServerCommandWithCard<OsuAPI, IScoreCardArguments> {
     name = "Recent";
     command = [ "r", "rp", "recent", "к", "кз", "кусуте" ];
 
     description = "Последний плей";
 
-    parseArguments(message: Message, bot: Bot): IServerCommandArguments<IRecentCommandArguments> {
+    protected readonly cardGenerator = new ScoreCardGenerator();
+
+    parseArguments(message: Message, bot: Bot): IServerCommandWithCardArguments<IRecentCommandArguments> {
         let args = defaultArguments(message, bot);
         return {
             ...args,
             ...parseArguments(message.arguments, [
                 Parsers.mode,
                 Parsers.place,
-                Parsers.pass
+                Parsers.pass,
+                Parsers.card
             ])
         };
     }
 
-    async run({ message, database, mapAPI, clean, args, vk, chats }: IServerCommandArguments<IRecentCommandArguments>) {
+    async run({ message, database, mapAPI, clean, args, vk, chats }: IServerCommandWithCardArguments<IRecentCommandArguments>) {
         let { username, mode } = await getUserInfo(message, this.module.name, database, clean, args);
 
         if(!username)
@@ -50,8 +54,6 @@ export default class RecentCommand extends ServerCommand<OsuAPI> {
         let map = await mapAPI.getBeatmap(recent.beatmapId, mods);
         chats.setChatMap(message.peerId, recent.beatmapId);
 
-        let attachment = await Cover.get(vk, map.beatmapsetID);
-
         let pp = await mapAPI.getPP(recent.beatmapId, {
             combo: recent.maxCombo,
             miss: recent.counts.miss,
@@ -61,6 +63,16 @@ export default class RecentCommand extends ServerCommand<OsuAPI> {
             mods: mods.join(),
             fail: hitsToFail(recent.counts, recent.mode)
         });
+
+        if(args.card) {
+            let player = await this.api.getUser({ username });
+            return this.sendCard({ vk, message, obj: {
+                player, recent, 
+                map, pp
+            }})
+        }
+
+        let attachment = await Cover.get(vk, map.beatmapsetID);
 
         let msg = RecentTemplate(this.module, recent, map, pp);
 
