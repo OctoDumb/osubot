@@ -4,24 +4,28 @@ export default class PuppeteerInstance {
     static browser: Browser;
 
     static async initialize() {
-        this.browser = await launch({ args: ["--no-sandbox"] });
+        this.browser = await launch({
+            args: [
+                "--window-size=1920,1080",
+                "--no-sandbox"
+            ],
+            defaultViewport: {
+                width: 1920,
+                height: 1080
+            }
+        });
     }
 
-    static async createScreenshotFromHTML(html: string): Promise<Buffer> {
+    static async createScreenshotFromHTML(html: string, selector: string = "body"): Promise<Buffer> {
         const page = await this.browser.newPage();
         await page.setContent(html, {
             waitUntil: "networkidle0"
         });
-        const [ width, height ] = await page.$eval("body", el => ([ el.clientWidth, el.clientHeight ]));
+        const clip = await (await page.$(selector)).boundingBox();
         const image = await page.screenshot({
             type: "jpeg",
             quality: 95,
-            clip: {
-                x: 0,
-                y: 0,
-                width,
-                height
-            }
+            clip
         });
 
         page.close();

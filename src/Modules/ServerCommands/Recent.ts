@@ -1,4 +1,4 @@
-import { IServerCommandArguments, parseArguments, Parsers, IRecentCommandArguments, IServerCommandWithCardArguments } from "../../Commands/Arguments";
+import { parseArguments, Parsers, IRecentCommandArguments, IServerCommandWithCardArguments } from "../../Commands/Arguments";
 import Message from "../../Message";
 import Bot from "../../Bot";
 import { defaultArguments, getUserInfo, hitsToFail, modsToString } from "../../Util";
@@ -67,7 +67,8 @@ export default class RecentCommand extends ServerCommandWithCard<OsuAPI, IScoreC
         if(args.card) {
             let player = await this.api.getUser({ username });
             return this.sendCard({ vk, message, obj: {
-                player, recent, 
+                player,
+                score: recent, 
                 map, pp
             }})
         }

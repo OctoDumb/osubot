@@ -148,6 +148,7 @@ export default class Bot {
 
         try {
             await PuppeteerInstance.initialize()
+            Logger.info("Puppeteer successfully initialized!");
         } catch(e) {
             Logger.fatal("Puppeteer failed to initialize!");
         }

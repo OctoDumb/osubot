@@ -16,7 +16,7 @@ export default abstract class ServerCommandWithCard<T, U> extends ServerCommand<
     protected async sendCard({ vk, message, obj }: ISendCardArguments<U>): Promise<void> {
         let card = this.cardGenerator.generate(obj)
 
-        let buffer = await PuppeteerInstance.createScreenshotFromHTML(card);
+        let buffer = await PuppeteerInstance.createScreenshotFromHTML(card, ".card");
 
         let image = await vk.upload.messagePhoto({
             peer_id: message.peerId,

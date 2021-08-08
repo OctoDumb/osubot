@@ -1,0 +1,18 @@
+.mod {
+    border-radius: 50%;
+
+    &::after {
+        font-size: 30px;
+        color: black;
+        left: 50%;
+        top: 50%;
+    }
+
+    &-dt {
+        background: #8850E4;
+
+        &::after {
+            content: 'dt';
+        }
+    }
+}

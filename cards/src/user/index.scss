@@ -1,0 +1,224 @@
+@import "../../styles/base.scss";
+@import "../../styles/colors.scss";
+@import "../../styles/grade.scss";
+
+.card {
+    width: 900px;
+    height: 630px;
+    background: $bg;
+
+    position: relative;
+
+    display: flex;
+    flex-direction: column;
+
+    .background {
+        position: absolute;
+        width: 100%;
+        height: 52%;
+
+        background-position: center center;
+        background-size: cover;
+
+        .dim {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            bottom: 0;
+            background: linear-gradient(to top, rgba($bg, 1) 0%, rgba($bg, .6) 33%, rgba($bg, 0.4) 60% 100%);
+        }
+
+        z-index: 1;
+    }
+
+    .mode {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        padding-bottom: 50px;
+
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        font-size: 480px;
+
+        color: white;
+
+        opacity: 5%;
+
+        z-index: 2;
+    }
+
+    .header {
+        margin: 42px;
+
+        display: flex;
+        flex-direction: row;
+
+        .avatar {
+            background-position: center center;
+            background-size: cover;
+
+            border-radius: 25px;
+
+            width: 190px;
+            height: 190px;
+        }
+
+        .main {
+            margin-left: 30px;
+
+            display: flex;
+            flex-direction: column;
+
+            .nickname {
+                font-size: 46px;
+                font-weight: 600;
+                text-shadow: 0 6px 12px black;
+            }
+
+            .ranks {
+                margin-top: 24px;
+
+                .rank {
+                    margin: 10px 0;
+
+                    display: flex;
+                    flex-direction: row;
+                    align-items: center;
+                    
+                    .flag {
+                        width: 50px;
+                        height: 30px;
+                        border-radius: 5px;
+                        
+                        background-position: center center;
+                        background-size: cover;
+
+                        box-shadow: 0 0 13px 4px #0006;
+                    }
+
+                    .place {
+                        margin-left: 10px;
+                        font-size: 34px;
+                        font-weight: 600;
+                        
+                        text-shadow: 0 0 8px black;
+                    }
+                }
+            }
+        }
+
+        z-index: 2;
+    }
+
+    .grades {
+        width: 100%;
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+
+        .item {
+            display: flex;
+            flex-direction: column;
+
+            .amount {
+                margin-top: 2px;
+
+                width: 100%;
+                text-align: center;
+
+                font-size: 26px;
+                font-weight: 600;
+            }
+        }
+
+        z-index: 2;
+    }
+
+    .pp {
+        margin-top: 22px;
+
+        width: 100%;
+        display: flex;
+        justify-content: center;
+
+        font-size: 70px;
+        font-weight: bold;
+
+        .text {
+            color: $link;
+
+            text-shadow: 0 0 6px;
+        }
+
+        z-index: 2;
+    }
+
+    .playtime {
+        i { margin-left: 8px }
+
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        font-size: 28px;
+        font-weight: 600;
+
+        &* { color: $light_gray }
+
+        z-index: 2;
+    }
+
+    .stats {
+        position: absolute;
+        bottom: 30px;
+
+        width: 100%;
+
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+
+        z-index: 2;
+
+        .item {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+
+            color: $gold;
+            font-size: 38px;
+
+            margin: 0 16px;
+
+            .icon {
+                background: $icon_bg;
+                width: 54px;
+                height: 54px;
+
+                margin-left: 16px;
+
+                display: flex;
+                justify-content: center;
+                align-items: center;
+
+                border-radius: 10px;
+
+                box-shadow: 0 0 20px -1px $icon_bg;
+
+                transform: rotate(-45deg);
+
+                i {
+                    color: $gold;
+
+                    font-size: 32px;
+
+                    transform: rotate(45deg);
+                }
+            }
+        }
+    }
+}

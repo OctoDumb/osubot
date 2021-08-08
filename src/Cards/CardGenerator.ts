@@ -2,6 +2,7 @@ import path from "path";
 import { readFileSync } from "fs";
 import { JSDOM } from "jsdom";
 import { scaleLinear, interpolateRgb } from "d3";
+import Config from "../Config";
 
 export default abstract class CardGenerator<T> {
     protected template: string;
@@ -15,20 +16,24 @@ export default abstract class CardGenerator<T> {
     public generate(data: T): string {
         let DOM = new JSDOM(this.template)
 
+        DOM.window.document.querySelector("#osuicons").setAttribute("href", this.icons);
+
         this.transform(DOM, data);
 
         return DOM.serialize();
     }
 
-    protected readonly abstract _name: string;
+    private readonly icons = `http://localhost:${Config.data.api.port}/public/osu-icons.css`;
 
-    protected get dir(): string { return path.join(__dirname + "cards/dist" + this._name); }
+    protected get dir(): string { return path.join(".", "cards/dist", this._dir) }
 
     protected abstract transform(dom: JSDOM, data: T): void;
 
-    constructor() {
-        let html = readFileSync(`${this.dir}/index.html`, 'utf-8');
-        let css = readFileSync(`${this.dir}/index.css`, 'utf-8');
+    constructor(
+        protected _dir: string
+    ) {
+        let html = readFileSync(path.join(this.dir, 'index.html'), 'utf-8');
+        let css = readFileSync(path.join(this.dir, 'index.css'), 'utf-8');
 
         let DOM = new JSDOM(html);
         const style = DOM.window.document.createElement("style");
@@ -37,6 +42,10 @@ export default abstract class CardGenerator<T> {
 
         this.template = DOM.serialize();
     }
+
+    protected separateNumber = (num: number) => String(num).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+
+    protected getCountryCode = (code: string) => code.split('').map(c => (c.charCodeAt(0) + 127397).toString(16)).join('-');
 
     protected getDiffColor = (diff: number) => diff >= 8 ? "#000000" : this.diffColorSpectrum(diff);
 

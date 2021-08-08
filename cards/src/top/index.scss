@@ -1,0 +1,157 @@
+@import "../../styles/base.scss";
+@import "../../styles/colors.scss";
+@import "../../styles/grade.scss";
+@import "../../styles/mods.scss";
+
+.card {
+    width: 1200px;
+    height: 780px;
+    background: $bg;
+
+    position: relative;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    z-index: -2;
+
+    .background {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+
+        background-position: center center;
+        background-size: cover;
+
+        filter: blur(25px);
+
+        .dim {
+            width: 100%;
+            height: 100%;
+
+            background: rgba($bg, 0.7);
+        }
+
+        z-index: -1;
+    }
+
+    .player {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+
+        margin: 15px 30px;
+
+        width: calc(100% - 30px);
+
+        .info {
+            display: flex;
+            flex-direction: row;
+
+            .left {
+                width: 90px;
+                height: 90px;
+                border-radius: 10px;
+
+                margin-right: 18px;
+
+                background-size: cover;
+                background-position: center center;
+            }
+
+            .right {
+                display: flex;
+                flex-direction: column;
+                justify-content: space-between;
+
+                height: 90px;
+                padding: 2px 0;
+
+                .flag {
+                    width: 50px;
+                    height: 30px;
+                    border-radius: 5px;
+
+                    background-position: center center;
+                    background-size: cover;
+
+                    box-shadow: 0 0 20px 1px #0009;
+                }
+
+                .nickname {
+                    font-size: 40px;
+                    font-weight: 600;
+
+                    text-shadow: 0px 4px 8px #0004;
+                }
+            }
+        }
+
+        .mode {
+            font-size: 90px;
+        }
+    }
+
+    .item {
+        width: 1140px;
+        height: 90px;
+
+        margin: 15px 0;
+
+        z-index: -1;
+
+        .body {
+            position: relative;
+
+            width: 100%;
+            height: 100%;
+            border-radius: 16px;
+
+            background: $bg;
+            overflow: hidden;
+            
+            display: flex;
+            flex-direction: row;
+
+            align-items: center;
+            
+            z-index: 1;
+
+            .background {
+                position: absolute;
+                width: 100%;
+                height: 100%;
+
+                background-position: center center;
+                background-size: cover;
+
+                filter: blur(2px);
+
+                .dim {
+                    width: 100%;
+                    height: 100%;
+
+                    background: #0006;
+                }
+            }
+
+            .content {
+
+            }
+
+            .pp {
+                font-size: 36px;
+                font-weight: 600;
+
+                color: $link;
+
+                .value {
+                    color: white;
+                }
+            }
+        }
+    }
+}
