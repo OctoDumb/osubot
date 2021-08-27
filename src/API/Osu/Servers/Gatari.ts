@@ -5,6 +5,7 @@ import { APINotFoundError } from "../../APIErrors";
 import { getAccuracy } from "../../../Util";
 import Axios from "axios";
 import { IOsuAPIWithLeaderboard, IOsuAPIWithRecent, IOsuAPIWithScores, IOsuAPIWithTop, IOsuAPIWithUser, OsuAPIWithScores } from "../OsuServerAPI";
+import Logger from "../../../Logger";
 
 export interface IGatariAPI extends
     IOsuAPIWithUser,
@@ -76,8 +77,7 @@ export default class GatariAPI extends OsuAPIWithScores {
     async getScores({
         username,
         beatmapId,
-        mode = 0,
-        mods = null
+        mode = 0
     }: IScoreRequestParams): Promise<IScoreAPIResponse[]> {
         let user = await this.getUser({ username, mode });
         let { data } = await this.api.get(`/beatmap/user/score?${stringify({
@@ -86,17 +86,16 @@ export default class GatariAPI extends OsuAPIWithScores {
             mode
         })}`);
 
-        if(!data.scores)
-            throw new APINotFoundError("No scores found!");
+        Logger.debug(JSON.stringify(data.score))
 
-        if (mods != null)
-            data.scores = data.scores.filter(p => p.enabled_mods == mods);
+        if(!data.score)
+            throw new APINotFoundError("No scores found!");
         
-        return data.scores.map(d => this.adaptScore(d, mode ?? mode));
+        return [ this.adaptScore({ ...data.score, beatmapId: beatmapId }, mode) ];
     }
 
     protected adaptScore(
-        scoreData, 
+        scoreData,
         mode: number
     ): IScoreAPIResponse {
         let counts = {
@@ -109,14 +108,14 @@ export default class GatariAPI extends OsuAPIWithScores {
         };
         
         return {
-            beatmapId: Number(scoreData.beatmap.beatmap_id),
+            beatmapId: scoreData.beatmapId,
             mode,
             score: Number(scoreData.score),
             maxCombo: Number(scoreData.max_combo),
             counts,
             mods: Number(scoreData.mods),
-            rank: scoreData.ranking,
-            date: new Date(scoreData.time),
+            rank: scoreData.rank,
+            date: new Date(scoreData.time * 1e3),
             accuracy: getAccuracy(mode, counts)
         }
     }
