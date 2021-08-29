@@ -1,6 +1,7 @@
 import Axios, { AxiosInstance } from "axios";
 import * as qs from "querystring";
 import Logger, { LogLevel } from "../Logger";
+import MapAPIError from "../Errors/MapAPI";
 
 export interface IBeatmap {
     title: string
@@ -66,12 +67,16 @@ export default class MapAPI {
 
     async getBeatmap(id: number, mods?: string[]): Promise<IBeatmap> {
         let { data } = await this.api(`/getBeatmap?${qs.stringify({ id, mods: mods?.join(",") })}`);
+        if(data.error)
+            throw new MapAPIError(`${data.error} (${JSON.stringify(data.data ?? {})})`);
         return data;
     }
 
     async getPP(id: number, args?: IPPArguments): Promise<IPPResponse> {
         Logger.debug(`[MapAPI] PPArguments: ${JSON.stringify(args)}`);
         let { data } = await this.api(`/getScorePP?${qs.stringify({ id, ...args })}`);
+        if(data.error)
+            throw new MapAPIError(`${data.error} (${JSON.stringify(data.data ?? {})})`);
         Logger.debug(`[MapAPI] PPResponse: ${JSON.stringify(data)}`);
         return data;
     }
