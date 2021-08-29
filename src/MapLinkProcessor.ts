@@ -5,6 +5,7 @@ import { MapInfoTemplate, MapsetInfoTemplate } from "./Templates";
 import { IV2Beatmapset } from "./API/Osu/Servers/V2/V2Responses";
 import Message from "./Message";
 import { Cover } from "./Database/entity/Cover";
+import Logger from './Logger';
 
 interface IMapLink {
     beatmapsetId?: number;
@@ -55,27 +56,32 @@ export default class MapLinkProcessor {
     async process(message: Message, mapLink: IMapLink) {
         let { beatmapsetId, beatmapId } = mapLink;
         
-        if (beatmapsetId && !beatmapId) {
-            let mapset = await this.api.getBeatmapset({ beatmapsetId });
-            let attachment = await Cover.get(this.bot.vk, beatmapsetId);
-            mapset = this.cutBeatmapset(mapset);
+        try {
+            if (beatmapsetId && !beatmapId) {
+                let mapset = await this.api.getBeatmapset({ beatmapsetId });
+                let attachment = await Cover.get(this.bot.vk, beatmapsetId);
+                mapset = this.cutBeatmapset(mapset);
 
-            message.reply(MapsetInfoTemplate(mapset), {
-                attachment
-            });
-        } else if (beatmapId) {
-            let map = await this.bot.maps.getBeatmap(beatmapId);
-            let pp98 = await this.bot.maps.getPP(beatmapId, { acc: 98, score: 8e5 });
-            let pp99 = await this.bot.maps.getPP(beatmapId, { acc: 99, score: 9e5 });
-            let attachment = await Cover.get(this.bot.vk, map.beatmapsetID);
+                message.reply(MapsetInfoTemplate(mapset), {
+                    attachment
+                });
+            } else if (beatmapId) {
+                let map = await this.bot.maps.getBeatmap(beatmapId);
+                let pp98 = await this.bot.maps.getPP(beatmapId, { acc: 98, score: 8e5 });
+                let pp99 = await this.bot.maps.getPP(beatmapId, { acc: 99, score: 9e5 });
+                let attachment = await Cover.get(this.bot.vk, map.beatmapsetID);
 
-            this.bot.lastMaps.setChatMap(message.peerId, beatmapId);
+                this.bot.lastMaps.setChatMap(message.peerId, beatmapId);
 
-            message.reply(MapInfoTemplate(map, pp98, pp99), {
-                attachment
-            });
-        } else {
-            message.reply("Некорректная ссылка");
+                message.reply(MapInfoTemplate(map, pp98, pp99), {
+                    attachment
+                });
+            } else {
+                message.reply("Некорректная ссылка");
+            }
+        } catch(e) {
+            Logger.error(e);
+            message.reply(`Ошибка!  ${e instanceof Error ? `[${e.name}] ${e.message}` : e}`);
         }
     }
 
