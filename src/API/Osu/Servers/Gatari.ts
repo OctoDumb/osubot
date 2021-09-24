@@ -108,14 +108,14 @@ export default class GatariAPI extends OsuAPIWithScores {
         };
         
         return {
-            beatmapId: scoreData.beatmapId,
+            beatmapId: scoreData.beatmap.beatmap_id,
             mode,
             score: Number(scoreData.score),
             maxCombo: Number(scoreData.max_combo),
             counts,
             mods: Number(scoreData.mods),
-            rank: scoreData.rank,
-            date: new Date(scoreData.time * 1e3),
+            rank: scoreData.ranking,
+            date: new Date(scoreData.time),
             accuracy: getAccuracy(mode, counts)
         }
     }
