@@ -1,18 +1,18 @@
 .mod {
-    border-radius: 50%;
+    border-radius: 7px;
 
-    &::after {
-        font-size: 30px;
-        color: black;
-        left: 50%;
-        top: 50%;
-    }
+    padding: 4px 12px;
 
-    &-dt {
+    font-size: 22px;
+    color: black;
+
+    &.DT {
         background: #8850E4;
-
-        &::after {
-            content: 'dt';
-        }
+        box-shadow: 0 4px 0 0 #7534E0;
+    }
+    &.FL {
+        color: white;
+        background: #212121;
+        box-shadow: 0 4px 0 0 #333333;
     }
 }
