@@ -1,18 +1,67 @@
 .mod {
     border-radius: 7px;
 
-    padding: 4px 12px;
+    padding: 2px 8px;
 
-    font-size: 22px;
+    font-size: 24px;
     color: black;
 
+    &.EZ {
+        background: #6EF57C;
+        box-shadow: 0 4px 0 0 #28F03D;
+    }
+    &.HR {
+        background: #E95D5D;
+        box-shadow: 0 4px 0 0 #E33535;
+    }
+    &.NF {
+        background: #6E94F5;
+        box-shadow: 0 4px 0 0 #2861F0;
+    }
+    &.SD {
+        background: #AA8A5A;
+        box-shadow: 0 4px 0 0 #79623E;
+    }
+    &.PF {
+        background: #FFE55B;
+        box-shadow: 0 4px 0 0 #FFD600;
+    }
+    &.HT {
+        background: #EABB44;
+        box-shadow: 0 4px 0 0 #CE9B17;
+    }
     &.DT {
         background: #8850E4;
         box-shadow: 0 4px 0 0 #7534E0;
+    }
+    &.NC {
+        background: #B578E5;
+        box-shadow: 0 4px 0 0 #9F50DD;
+    }
+    &.HD,&.FI {
+        background: #E6E976;
+        box-shadow: 0 4px 0 0 #CED322;
     }
     &.FL {
         color: white;
         background: #212121;
         box-shadow: 0 4px 0 0 #333333;
+    }
+    &.RX {
+        background: #5DE0E9;
+        box-shadow: 0 4px 0 0 #1ECCD7;
+    }
+    &.AP {
+        background: #E82B9C;
+        box-shadow: 0 4px 0 0 #B81476;
+    }
+    &.SO {
+        background: #C9769E;
+        box-shadow: 0 4px 0 0 #A84273;
+    }
+    &.V2 {
+        color: white;
+        background: #515F60;
+        box-shadow: 0 4px 0 0 #3A4445;
     }
 }
