@@ -346,7 +346,7 @@
 
             .grade {
                 margin-left: 20px;
-                width: 70px;
+                width: 100px;
                 height: 100%;
                 display: flex;
                 flex-direction: column;
@@ -355,7 +355,8 @@
 
                 & > * {
                     width: 100%;
-                    text-align: center;
+                    display: flex;
+                    justify-content: center;
                 }
 
                 .SSH,.SH {
@@ -386,6 +387,7 @@
 
                     &.SS,&.SSH {
                         letter-spacing: -0.3em;
+                        padding-right: 0.3em;
                     }
                 }
 
@@ -399,7 +401,7 @@
             }
 
             .score {
-                flex-basis: 100%;
+                flex-grow: 1;
                 height: 100%;
                 display: flex;
                 flex-direction: column;
