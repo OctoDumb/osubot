@@ -55,7 +55,8 @@ export default abstract class CardGenerator<T> {
         switch(grade) {
             case "SSH":
             case "XH":
-                return "X";
+            case "X":
+                return "SS";
             case "SH":
                 return "S";
             default:

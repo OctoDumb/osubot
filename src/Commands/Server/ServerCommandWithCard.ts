@@ -1,20 +1,21 @@
 import VK from "vk-io";
 import CardGenerator from "../../Cards/CardGenerator";
+import CardsManager from "../../Cards/CardsManager";
 import Message from "../../Message";
 import PuppeteerInstance from "../../PuppeteerInstance";
 import ServerCommand from "./ServerCommand";
 
-export interface ISendCardArguments<T> {
+export interface ISendCardArguments {
     vk: VK;
     message: Message;
-    obj: T;
+    obj: any;
 }
 
-export default abstract class ServerCommandWithCard<T, U> extends ServerCommand<T> {
-    protected abstract readonly cardGenerator: CardGenerator<U>;
-
-    protected async sendCard({ vk, message, obj }: ISendCardArguments<U>): Promise<void> {
-        let card = this.cardGenerator.generate(obj)
+export default abstract class ServerCommandWithCard<T> extends ServerCommand<T> {
+    protected async sendCard<G extends CardGenerator<any>>(Gen: new () => G, { vk, message, obj }: ISendCardArguments): Promise<void> {
+        let generator = CardsManager.getGenerator(Gen);
+        
+        let card = generator.generate(obj)
 
         let buffer = await PuppeteerInstance.createScreenshotFromHTML(card, ".card");
 

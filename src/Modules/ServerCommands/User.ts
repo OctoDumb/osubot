@@ -10,13 +10,11 @@ import MissingArgumentsError from '../../Errors/MissingArguments';
 import ServerCommandWithCard from "../../Commands/Server/ServerCommandWithCard";
 import UserCardGenerator, { IUserCardArguments } from "../../Cards/UserCardGenerator";
 
-export default class UserCommand extends ServerCommandWithCard<OsuAPI, IUserCardArguments> {
+export default class UserCommand extends ServerCommandWithCard<OsuAPI> {
     name = "User";
     command = [ "u", "user", "г", "гыук" ];
 
     description = `Посмотреть профиль на ${this.module.name}`;
-
-    protected readonly cardGenerator = new UserCardGenerator();
 
     parseArguments(message: Message, bot: Bot): IServerCommandWithCardArguments<IArgumentsWithMode> {
         let args = defaultArguments(message, bot);
@@ -39,9 +37,8 @@ export default class UserCommand extends ServerCommandWithCard<OsuAPI, IUserCard
 
         await Stats.updateInfo(this.module.name, user, mode);
 
-        if(args.card) {
-            return this.sendCard({ vk, message, obj: { player: user } });
-        }
+        if(args.card)
+            return this.sendCard(UserCardGenerator, { vk, message, obj: { player: user } });
 
         let status = await getStatus(user.id);
 

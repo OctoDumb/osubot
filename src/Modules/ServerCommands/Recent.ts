@@ -10,13 +10,11 @@ import MissingArgumentsError from '../../Errors/MissingArguments';
 import ServerCommandWithCard from "../../Commands/Server/ServerCommandWithCard";
 import ScoreCardGenerator, { IScoreCardArguments } from "../../Cards/ScoreCardGenerator";
 
-export default class RecentCommand extends ServerCommandWithCard<OsuAPI, IScoreCardArguments> {
+export default class RecentCommand extends ServerCommandWithCard<OsuAPI> {
     name = "Recent";
     command = [ "r", "rp", "recent", "к", "кз", "кусуте" ];
 
     description = "Последний плей";
-
-    protected readonly cardGenerator = new ScoreCardGenerator();
 
     parseArguments(message: Message, bot: Bot): IServerCommandWithCardArguments<IRecentCommandArguments> {
         let args = defaultArguments(message, bot);
@@ -66,11 +64,11 @@ export default class RecentCommand extends ServerCommandWithCard<OsuAPI, IScoreC
 
         if(args.card) {
             let player = await this.api.getUser({ username });
-            return this.sendCard({ vk, message, obj: {
+            return this.sendCard(ScoreCardGenerator, { vk, message, obj: {
                 player,
                 score: recent, 
                 map, pp
-            }})
+            }});
         }
 
         let attachment = await Cover.get(vk, map.beatmapsetID);

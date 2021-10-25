@@ -122,6 +122,7 @@ export default class Bot {
             this.database = await createConnection();
             Logger.info("Database connection successful", "DB");
         } catch(e) {
+            Logger.error(e);
             Logger.fatal("Database connection failed", "DB");
         }
 
@@ -131,7 +132,7 @@ export default class Bot {
             this.startTime = Date.now();
             Logger.info("VK Long Poll listening", "BOT");
         } catch(e) {
-            console.log(e);
+            Logger.error(e);
             Logger.fatal("VK Long Poll connection failed", "BOT");
         }
 
@@ -143,6 +144,7 @@ export default class Bot {
 
             Logger.info("Successfully logged in!", "V2");
         } catch(e) {
+            Logger.error(e);
             Logger.error("Login failed!", "V2");
         }
 
@@ -150,6 +152,7 @@ export default class Bot {
             await PuppeteerInstance.initialize()
             Logger.info("Puppeteer successfully initialized!");
         } catch(e) {
+            Logger.error(e);
             Logger.fatal("Puppeteer failed to initialize!");
         }
         

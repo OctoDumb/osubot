@@ -1,7 +1,7 @@
 import ServerCommand from "../../Commands/Server/ServerCommand";
 import Message from "../../Message";
 import Bot from "../../Bot";
-import { IServerCommandArguments, ITopCommandArguments, parseArguments, Parsers } from "../../Commands/Arguments";
+import { IServerCommandArguments, IServerCommandWithCardArguments, ITopCommandArguments, parseArguments, Parsers } from "../../Commands/Arguments";
 import { defaultArguments, getStatus, getUserInfo, modsToString } from "../../Util";
 import { TopTemplate, TopSingleTemplate } from "../../Templates";
 import { Stats } from "../../Database/entity/Stats";
@@ -10,14 +10,17 @@ import { OsuAPI } from "../../API/Osu/OsuServerAPI";
 import IncorrectArgumentsError from "../../Errors/IncorrectArguments";
 import NotFoundError from "../../Errors/NotFound";
 import MissingArgumentsError from "../../Errors/MissingArguments";
+import ServerCommandWithCard from "../../Commands/Server/ServerCommandWithCard";
+import ScoreCardGenerator from "../../Cards/ScoreCardGenerator";
+import TopCardGenerator from "../../Cards/TopCardGenerator";
 
-export default class TopCommand extends ServerCommand<OsuAPI> {
+export default class TopCommand extends ServerCommandWithCard<OsuAPI> {
     name = "Top";
     command = [ "top", "t", "ещз", "е" ];
 
     description = "Посмотреть топ 3 ваших скоров";
 
-    parseArguments(message: Message, bot: Bot): IServerCommandArguments<ITopCommandArguments> {
+    parseArguments(message: Message, bot: Bot): IServerCommandWithCardArguments<ITopCommandArguments> {
         let args = defaultArguments(message, bot);
         return {
             ...args,
@@ -26,12 +29,13 @@ export default class TopCommand extends ServerCommand<OsuAPI> {
                 Parsers.mods,
                 Parsers.place,
                 Parsers.approximate,
-                Parsers.morethan
+                Parsers.morethan,
+                Parsers.card
             ])
         };
     }
 
-    async run({ message, database, mapAPI, chats, clean, vk, args }: IServerCommandArguments<ITopCommandArguments>) {
+    async run({ message, database, mapAPI, chats, clean, vk, args }: IServerCommandWithCardArguments<ITopCommandArguments>) {
         let { username, mode } = await getUserInfo(message, this.module.name, database, clean, args);
 
         if(!username)
@@ -66,6 +70,24 @@ export default class TopCommand extends ServerCommand<OsuAPI> {
 
             let map = await mapAPI.getBeatmap(score.beatmapId, modsToString(score.mods));
 
+            if(args.card) {
+                let pp = await mapAPI.getPP(score.beatmapId, {
+                    combo: score.maxCombo,
+                    miss: score.counts.miss,
+                    n50: score.counts[50],
+                    acc: score.accuracy * 100,
+                    score: score.score,
+                    mods: modsToString(score.mods).join()
+                });
+                return this.sendCard(ScoreCardGenerator, {
+                    vk, message,
+                    obj: {
+                        player: user,
+                        score, map, pp
+                    }
+                });
+            }
+
             let attachment = await Cover.get(vk, map.beatmapsetID);
             
             let msg = TopSingleTemplate(this.module, user.username, score, index + 1, map, status);
@@ -82,20 +104,54 @@ export default class TopCommand extends ServerCommand<OsuAPI> {
             if(args.place > top.length)
                 throw new NotFoundError("Такого скора нет!")
 
-            let t = top[args.place - 1];
+            let score = top[args.place - 1];
 
-            let map = await mapAPI.getBeatmap(t.beatmapId, modsToString(t.mods));
+            let map = await mapAPI.getBeatmap(score.beatmapId, modsToString(score.mods));
+
+            if(args.card) {
+                let pp = await mapAPI.getPP(score.beatmapId, {
+                    combo: score.maxCombo,
+                    miss: score.counts.miss,
+                    n50: score.counts[50],
+                    acc: score.accuracy * 100,
+                    score: score.score,
+                    mods: modsToString(score.mods).join()
+                });
+                return this.sendCard(ScoreCardGenerator, {
+                    vk, message,
+                    obj: {
+                        player: user,
+                        score, map, pp
+                    }
+                });
+            }
 
             let attachment = await Cover.get(vk, map.beatmapsetID);
 
-            let msg = TopSingleTemplate(this.module, user.username, t, args.place, map, status);
+            let msg = TopSingleTemplate(this.module, user.username, score, args.place, map, status);
 
-            chats.setChatMap(message.peerId, t.beatmapId);
+            chats.setChatMap(message.peerId, score.beatmapId);
             
             message.reply(msg, {
                 attachment
             });
         } else {
+            if(args.card) {
+                top = top.splice(0, 5);
+                if(!top.length)
+                    throw new NotFoundError("Не найдено скоров с данной комбинацией модов!");
+
+                let maps = await Promise.all(top.map(t => mapAPI.getBeatmap(t.beatmapId, modsToString(t.mods))));
+
+                return this.sendCard(TopCardGenerator, {
+                    vk, message,
+                    obj: {
+                        player: user,
+                        top, maps
+                    }
+                });
+            }
+
             if(args.mods != undefined)
                 top = top.filter(t => t.mods == args.mods);
             top = top.splice(0, 3);
@@ -103,7 +159,7 @@ export default class TopCommand extends ServerCommand<OsuAPI> {
             if(!top.length)
                 throw new NotFoundError("Не найдено скоров с данной комбинацией модов!");
 
-            let maps = await Promise.all([ ...top.map(t => mapAPI.getBeatmap(t.beatmapId, modsToString(t.mods))) ])
+            let maps = await Promise.all(top.map(t => mapAPI.getBeatmap(t.beatmapId, modsToString(t.mods))));
 
             let msg = TopTemplate(this.module, user.username, top, maps, status);
 

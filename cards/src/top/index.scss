@@ -37,7 +37,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba($bg, 0.7);
+            background: rgba($bg, 0.9);
         }
 
         z-index: -1;
@@ -187,6 +187,8 @@
                     height: 0;
                     border-bottom: 90px solid #394246; 
                     border-left: 50px solid transparent;
+                    
+                    filter: drop-shadow(-10px 0 5px darken(#394246, 15%));
                 }
 
                 .value {

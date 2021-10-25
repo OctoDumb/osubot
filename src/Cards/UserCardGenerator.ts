@@ -12,7 +12,6 @@ export default class UserCardGenerator extends CardGenerator<IUserCardArguments>
     protected transform(dom: JSDOM, { player }: IUserCardArguments) {
         let { document } = dom.window;
         document.querySelector(".avatar").setAttribute("style", `background-image: url('https://a.ppy.sh/${player.id}?1.jpeg')`);
-        // document.getElementsByClassName("nickname")[0].innerHTML = player.username;
         document.querySelector(".nickname").innerHTML = player.username;
         
         document.querySelector("#worldrank>.place").innerHTML = `#${this.separateNumber(player.rank.total)}`;
