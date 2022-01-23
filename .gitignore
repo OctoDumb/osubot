@@ -2,6 +2,8 @@
 /.vscode
 /dist
 /node_modules
+/cards/dist
+/cards/node_modules
 *.db
 *.sqlite
 config.json

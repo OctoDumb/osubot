@@ -1,6 +1,6 @@
-import { AttachmentType, MessageContext, VK } from "vk-io";
-import { readFileSync } from "fs";
+import { MessageContext, VK } from "vk-io";
 import cron from "node-cron";
+import Axios from "axios";
 
 import Message from "./Message";
 import MapAPI from "./API/MapAPI";
@@ -22,20 +22,12 @@ import Kurikku from "./Modules/Kurikku";
 import Ripple from "./Modules/Ripple";
 import Enjuu from "./Modules/Enjuu";
 
-import BanchoAPI from "./API/Osu/Servers/Bancho";
-import GatariAPI from "./API/Osu/Servers/Gatari";
-import KurikkuAPI from "./API/Osu/Servers/Kurikku";
-import EnjuuAPI from "./API/Osu/Servers/Enjuu";
-import RippleAPI from "./API/Osu/Servers/Ripple";
-import AkatsukiAPI from "./API/Osu/Servers/Akatsuki";
-import AkatsukiRelaxAPI from "./API/Osu/Servers/AkatsukiRelax";
 import Akatsuki from "./Modules/Akatsuki";
 import AkatsukiRelax from "./Modules/AkatsukiRelax";
 import BanchoV2API from "./API/Osu/Servers/V2/BanchoV2";
 import PuppeteerInstance from "./PuppeteerInstance";
 import TrackAPI from "./API/TrackAPI";
 import Logger, { LogLevel } from "./Logger";
-import Banlist, { BanUtil } from "./Banlist";
 import Config from "./Config";
 import { Connection, createConnection, In } from "typeorm";
 import { Notification } from "./Database/entity/Notification";
@@ -43,27 +35,8 @@ import { User } from "./Database/entity/User";
 import { Ban } from "./Database/entity/Ban";
 import DisableBotCommand from "./StandaloneCommands/DisableBot";
 import Disabled from "./Disabled";
-import IReplay from "./Replay/Replay";
 import parseReplay from "./Replay/ReplayParser";
-import Axios from "axios";
 import { modsToString } from "./Util";
-
-export interface IBotConfig {
-    vk: {
-        token: string,
-        groupId: number,
-        ownerId: number
-    },
-    osu: {
-        token: string,
-        username: string,
-        password: string
-    },
-    api: {
-        port: number,
-        password: string
-    }
-}
 
 interface IMapLink {
     beatmapsetId?: number;
@@ -82,10 +55,10 @@ export default class Bot {
     v2 = new BanchoV2API();
 
     track = new TrackAPI();
-    
-    modules: Module[] = [ 
-        Main, 
-        Admin, 
+
+    modules: Module[] = [
+        Main,
+        Admin,
         Bancho,
         Gatari,
         Kurikku,
@@ -106,7 +79,7 @@ export default class Bot {
 
     mapLinkProcessor = new MapLinkProcessor(this);
     private adminApi = new BotAPI(this);
-    
+
     public news = new NewsController(this);
 
     private startTime: number;
@@ -152,20 +125,20 @@ export default class Bot {
         this.v2.data.start();
         if(this.v2.logged)
             Logger.info(`Updating V2 data every ${Math.floor(this.v2.data.interval / 1e3)} seconds`, "V2");
-        
+
         cron.schedule('*/5 * * * *', () => { this.updateUses() });
 
         Logger.debug(`Initialized with ${this.modules.length} modules and ${this.modules.flatMap(m => m.commands).length + this.commands.length} commands`, "BOT");
 
         this.startMessageListening();
     }
-    
+
     private startMessageListening() {
         this.vk.updates.on("new_message", async ctx => {
             try {
                 let user = await User.findOrCreate(ctx.senderId);
                 let message = new Message(ctx, user);
-                
+
                 let notifications = await Notification.find({
                     where: { user: { id: user.id }, delivered: false },
                     order: { id: "ASC" }
@@ -180,7 +153,7 @@ export default class Bot {
 
                 let mapLink = this.mapLinkProcessor.checkLink(message, ctx);
 
-                if (mapLink && !this.disabled.isDisabled(message.peerId)) 
+                if (mapLink && !this.disabled.isDisabled(message.peerId))
                     return this.mapLinkProcessor.process(message, mapLink);
 
                 let replay = ctx.getAttachments("doc").filter(d => d.extension == "osr")[0]
@@ -190,7 +163,7 @@ export default class Bot {
 
                 for(let module of this.modules)
                     await module.run(message, this);
-                
+
                 message.arguments.unshift(message.command);
                 for(let command of this.commands) {
                     if(this.disabled.isDisabled(message.peerId) && command.disables) continue;
