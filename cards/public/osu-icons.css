@@ -1,0 +1,32 @@
+@font-face {
+  font-family: 'osu-icons';
+  src: url('./osu-icons.ttf?62809405') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+[class^="mode-"]:before, [class*=" mode-"]:before {
+  font-family: "osu-icons";
+  font-style: normal;
+  font-weight: normal;
+
+  display: inline-block;
+  text-decoration: inherit;
+  width: 1em;
+  margin-right: .2em;
+  text-align: center;
+
+  font-variant: normal;
+  text-transform: none;
+
+  line-height: 1em;
+  margin-left: .2em;
+
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.mode-standard:before { content: '\e800'; }
+.mode-taiko:before { content: '\e801'; }
+.mode-catch:before { content: '\e802'; }
+.mode-mania:before { content: '\e803'; }

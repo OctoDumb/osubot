@@ -1,6 +1,7 @@
 import { JSDOM } from "jsdom";
 import { IArgumentsWithMode, IServerCommandArguments } from "../../Commands/Arguments";
 import ServerCommand from "../../Commands/Server/ServerCommand";
+import PuppeteerInstance from "../../PuppeteerInstance";
 
 export default class BanchoStatus extends ServerCommand {
     name = "Status";
@@ -10,9 +11,8 @@ export default class BanchoStatus extends ServerCommand {
 
     async run({
         message, 
-        puppeteer,
     }: IServerCommandArguments<IArgumentsWithMode>) {
-        const html = await puppeteer.getHTMLPageContent("https://p.datadoghq.com/sb/irf3GA-9d3320518e0c2ab413cb8774f5562ce2");
+        const html = await PuppeteerInstance.getHTMLPageContent("https://p.datadoghq.com/sb/irf3GA-9d3320518e0c2ab413cb8774f5562ce2");
         const DOM = new JSDOM(html);
         const { document } = DOM.window;
 

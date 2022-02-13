@@ -62,8 +62,7 @@ export function defaultArguments(message: Message, {
     news, lastMaps: chats,
     disabled,
     privilegesManager: privileges,
-    uptime, track, v2,
-    puppeteer
+    uptime, track, v2
 }: Bot) {
 
     return {
@@ -73,8 +72,7 @@ export function defaultArguments(message: Message, {
         news, chats,
         disabled,
         privileges,
-        uptime, track,
-        v2, puppeteer
+        uptime, track, v2
     };
 }
 

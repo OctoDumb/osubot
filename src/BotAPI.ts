@@ -3,7 +3,7 @@ import bodyParser from "body-parser";
 import cors from "cors";
 import Bot from "./Bot";
 import md5 from "md5";
-import Logger, { LogLevel } from "./Logger";
+import Logger from "./Logger";
 import Config from "./Config";
 import { ServerConnection } from "./Database/entity/ServerConnection";
 import { Stats } from "./Database/entity/Stats";
@@ -20,6 +20,8 @@ export default class BotAPI {
         this.app.use(bodyParser.json());
         this.app.use(bodyParser.urlencoded({ extended: true }));
         this.app.use(cors());
+
+        this.app.use('/public', express.static('cards/public'));
 
         this.setContentType();
         this.createEndpoints();

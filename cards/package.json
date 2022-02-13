@@ -1,0 +1,22 @@
+{
+  "name": "cards",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "watch": "gulp watch"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "gulp": "^4.0.2",
+    "gulp-sass": "^5.0.0",
+    "node-sass": "^6.0.1",
+    "sass": "^1.36.0"
+  },
+  "dependencies": {
+    "fs-extra": "^10.0.0"
+  }
+}

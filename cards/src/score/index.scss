@@ -1,0 +1,573 @@
+@use "sass:math" as math;
+
+@import "../../styles/base.scss";
+@import "../../styles/colors.scss";
+@import "../../styles/mods.scss";
+
+.card {
+    width: 1000px;
+    height: 740px;
+    background: darken($bg, 6%);
+
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    overflow: hidden;
+
+    .background-wrapper {
+        position: absolute;
+        left: 0;
+        top: 0;
+        border-radius: 10px;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+    }
+
+    .background {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+
+        background-position: center center;
+        background-size: cover;
+
+        filter: blur(5px);
+
+        &::after {
+            position: absolute;
+            top: 0;
+            left: 0;
+            content: "";
+            width: 100%;
+            height: 100%;
+
+            background: rgba($bg, .9);
+        }
+    }
+
+    .header {
+        position: relative;
+
+        margin-top: 25px;
+        width: 950px;
+        height: 260px;
+        border-radius: 10px;
+
+        background: $gray;
+        filter: drop-shadow(0px 4px 4px rgba(0, 0, 0, 0.25));
+
+        z-index: 1;
+
+        .background {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+
+            background-position: center center;
+            background-size: cover;
+
+            filter: blur(2px);
+
+            .dim {
+                position: absolute;
+                width: 100%;
+                height: 100%;
+
+                background: #0007;
+            }
+        }
+
+        .bubble {
+            padding: 7px 14px;
+            background: #0007;
+            border-radius: 100px;
+
+            font-size: 21px;
+            font-weight: 700;
+
+            text-transform: uppercase;
+
+            &#status {
+                position: absolute;
+                top: 12px;
+                left: 10px;
+            }
+
+            &#keys {
+                position: absolute;
+                top: 12px;
+                right: 10px;
+            }
+        }
+
+        .stats {
+            position: absolute;
+            top: 14px;
+            width: 100%;
+
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+
+            .stats__item {
+                width: 90px;
+                height: 34px;
+
+                margin: 0 5px;
+                padding-top: 4px;
+
+                border-radius: 8px;
+                
+                display: flex;
+                justify-content: center;
+
+                font-size: 20px;
+                font-weight: 600;
+
+                &--cs {
+                    background-color: #F58D12;
+                    box-shadow: 0 3px 0 0 #BE7620;
+                }
+                &--ar {
+                    background-color: #FF5256;
+                    box-shadow: 0 3px 0 0 #C02E31;
+                }
+                &--od {
+                    background-color: #588BE0;
+                    box-shadow: 0 3px 0 0 #2562C7;
+                }
+                &--hp {
+                    background-color: #1FBA38;
+                    box-shadow: 0 3px 0 0 #2B933C;
+                }
+            }
+        }
+
+        .info {
+            position: absolute;
+            left: 0;
+            bottom: 50px;
+            padding: 10px 14px;
+
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            align-items: flex-start;
+
+            * { text-shadow: 0 0 7px #000e }
+
+            &__title {
+                font-size: 36px;
+                font-weight: 500;
+            }
+
+            &__artist {
+                font-size: 24px;
+                font-weight: 300;
+            }
+        }
+
+        .footer {
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            width: 100%;
+            height: 50px;
+
+            padding: 10px;
+            box-sizing: border-box;
+
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+            align-items: center;
+
+            background: $gray;
+
+            border-radius: 0 0 10px 10px;
+
+            font-size: 18px;
+            font-weight: 400;
+
+            .mapper {
+                .nickname {
+                    color: $link;
+                }
+            }
+
+            .id {
+                color: $link;
+
+                .value {
+                    color: white;
+                }
+            }
+        }
+    }
+
+    .mode {
+        $size: 80px;
+        position: absolute;
+        top: 285px - math.div($size, 2) * 1.5;
+        left: 50%;
+        width: $size;
+        height: $size;
+        border-radius: 50%;
+        background: $gray;
+
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        z-index: 2;
+
+        font-size: 60px;
+
+        transform: translateX(-50%);
+
+        /*.icon {
+            position: relative;
+
+            width: $size - 15;
+            height: $size - 15;
+
+            // &::after {
+            //     content: '';
+
+            //     border-radius: 50%;
+            //     position: absolute;
+            //     top: 0;
+            //     left: 0;
+            //     width: $size - 15;
+            //     height: $size - 15;
+
+            //     background: #2b2;
+
+            //     mix-blend-mode: difference;
+            // }
+
+            // &.m0 { background-image: url(../icons/Standard.svg) }
+            // &.m1 { background-image: url(../icons/Taiko.svg) }
+            // &.m2 { background-image: url(../icons/Catch.svg) }
+            // &.m3 { background-image: url(../icons/Mania.svg) }
+        }*/
+    }
+}
+
+.body {
+    margin-top: 50px;
+    width: 1000px;
+    z-index: 2;
+
+    .body-container {
+        margin-top: 20px;
+        display: flex;
+        flex: 1 0 auto;
+        align-items: center;
+        width: 100%;
+        height: 160px;
+
+
+        .map-stats {
+            display: flex;
+            flex-basis: 100%;
+            height: 100%;
+            flex-direction: column;
+            justify-content: center;
+
+            &-top, &-bottom {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+            }
+
+            &-top {
+                &__value {
+                    font-family: Torus;
+                    font-style: normal;
+                    font-weight: 600;
+                    font-size: 36px;
+                    margin-right: 5px;
+                }
+
+                &__icon {
+                    font-size: 32px;
+                    color: $gold;
+                    filter: drop-shadow(0px 0px 10px rgba(255, 221, 85, 0.3));
+                }
+            }
+
+            &-bottom {
+                display: flex;
+                justify-content: center;
+                margin-top: 20px;
+                padding-right: 20px;
+
+                &__item {
+                    display: flex;
+                    align-items: center;
+                }
+
+                &__value {
+                    font-size: 18px;
+                    color: $gold;
+                    font-size: 22px;
+                    margin: 0 20px;
+                }
+
+                &__icon {
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    width: 32px;
+                    height: 32px;
+                    border-radius: 5px;
+                    background-color: $icon_bg;
+                    box-shadow: 0px 0px 13px -1px $icon_bg;
+                    transform: rotate(45deg);
+                    i {
+                        color: $gold;
+                        font-size: 20px;
+                        transform: rotate(-45deg);
+                    }
+                }
+            }
+        }
+
+        &__score-stats {
+            display: flex;
+            flex-basis: 100%;
+            height: 100%;
+
+            .grade {
+                margin-left: 20px;
+                width: 100px;
+                height: 100%;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+
+                & > * {
+                    width: 100%;
+                    display: flex;
+                    justify-content: center;
+                }
+
+                .SSH,.SH {
+                    color: $silver;
+                    text-shadow: 0 0 5px $silver;
+                }
+                .SS,.S {
+                    color: $gold;
+                    text-shadow: 0 0 5px $gold;
+                }
+                .A {
+                    color: #88DA20;
+                    text-shadow: 0 0 5px #88DA20;
+                }
+                .B {
+                    color: #3E89F9;
+                    text-shadow: 0 0 5px #3E89F9;
+                }
+                .C {
+                    color: #8C60E9;
+                    text-shadow: 0 0 5px #8C60E9;
+                }
+
+                &__value {
+                    font-size: 96px;
+                    font-weight: 700;
+                    line-height: 90px;
+                    letter-spacing: -0.3em;
+                    padding-right: 0.3em;
+                }
+
+                &__acc {
+                    letter-spacing: 0em;
+                    line-height: 34px;
+                    font-size: 24px;
+
+                    text-shadow: none;
+                }
+            }
+
+            .score {
+                flex-grow: 1;
+                height: 100%;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+
+                font-weight: 700;
+
+                .date, .date>* {
+                    font-size: 17px;
+                    color: #AAA;
+                }
+
+                .score-value {
+                    font-size: 40px;
+                    color: white;
+                }
+
+                .combo {
+                    font-size: 24px;
+                    color: #AAA;
+                    margin-bottom: 5px;
+                }
+
+                .mods {
+                    display: flex;
+                    flex-direction: row;
+                    justify-content: center;
+
+                    .mod {
+                        margin: 0 3px;
+                    }
+                }
+            }
+        }
+
+        &__avatar {
+            position: relative;
+            flex: 0 1 auto;
+            width: 140px;
+            height: 140px;
+            border-radius: 15px;
+
+            &--img {
+                width: 140px;
+                height: 140px;
+                border-radius: 15px;
+            }
+
+            &--flag {
+                position: absolute;
+                top: -12px;
+                left: 50%;
+                transform: translateX(-50%);
+                width: 34px;
+                height: 24px;
+                box-shadow: 0px 0px 10px 2px rgba(0, 0, 0, 0.65);
+                background-size: cover;
+                background-repeat: no-repeat;
+                background-position: center center;
+            }
+        }
+    }
+
+    .nickname {
+        display: block;
+        width: 100%;
+        font-family: Torus;
+        font-style: normal;
+        font-weight: 600;
+        font-size: 24px;
+        line-height: 19px;
+        text-align: center;
+        color: #FFFFFF;
+        text-shadow: 0px 2px 6px rgba(0, 0, 0, 0.7);
+    }
+
+    .hitcounts {
+        margin: 24px 0;
+        width: 100%;
+        display: flex;
+        justify-content: center;
+
+        .hit {
+            &-320::before {
+                background-color: #E0C88A;
+            }
+            &-300::before {
+                background-color: #FEC942;
+            }
+            &-200::before {
+                background-color: #0075FF;
+            }
+            &-100::before {
+                background-color: #26AD6C;
+            }
+            &-50::before {
+                background-color: #8430D8;
+            }
+            &-0::before {
+                background-color: #E92B2B;
+            }
+        }
+
+        &__item {
+            margin: 0 5px;
+            position: relative;
+            padding: 1px 12px 1px 20px;
+            background: #394246;
+            border-radius: 7px;
+            overflow: hidden;
+            transform: matrix(0.92, 0, -0.48, 1, 0, 0);
+            font-size: 24px;
+            font-weight: 500;
+
+            &::before {
+                content: "";
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 10px;
+                height: 100%;
+            }
+
+            span {
+                display: block;
+                transform: matrix(0.92, 0, 0.48, 1, 0, 0);
+            }
+        }
+    }
+
+    .pps {
+        width: calc(100% - 100px);
+        margin: 15px 50px;
+
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        
+        * {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+
+            .head {
+                display: flex;
+                flex-direction: row;
+                align-items: center;
+
+                .left,.right {
+                    width: 66px;
+                    height: 7px;
+                    border-radius: 5px;
+                    background: $link;
+                    box-shadow: 0 0 12px 2px $link;
+                    margin: 0 8px;
+                }
+
+                .text {
+                    font-size: 30px;
+                    color: $link;
+                    text-shadow: 0 0 20px $link;
+                }
+            }
+
+            .value {
+                font-size: 48px;
+                font-weight: 700;
+            }
+        }
+    }
+}

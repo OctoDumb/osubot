@@ -1,30 +1,31 @@
 import { Browser, launch } from "puppeteer";
 
 export default class PuppeteerInstance {
-    browser: Browser;
+    static browser: Browser;
 
-    async launch() {
-        this.browser = await launch({ args: ["--no-sandbox"] });
+    static async initialize() {
+        this.browser = await launch({
+            args: [
+                "--window-size=1920,1080",
+                "--no-sandbox"
+            ],
+            defaultViewport: {
+                width: 1920,
+                height: 1080
+            }
+        });
     }
 
-    async createScreenshotFromHTML(
-        html: string,
-        size: [number, number]
-    ): Promise<Buffer> {
+    static async createScreenshotFromHTML(html: string, selector: string = "body"): Promise<Buffer> {
         const page = await this.browser.newPage();
-        const [width, height] = size;
         await page.setContent(html, {
             waitUntil: "networkidle0"
         });
+        const clip = await (await page.$(selector)).boundingBox();
         const image = await page.screenshot({
             type: "jpeg",
             quality: 95,
-            clip: {
-                x: 0,
-                y: 0,
-                width,
-                height
-            }
+            clip
         });
 
         page.close();
@@ -32,7 +33,7 @@ export default class PuppeteerInstance {
         return image;
     }
 
-    async getHTMLPageContent(url: string, waitFor: number = 0) {
+    static async getHTMLPageContent(url: string, waitFor: number = 0) {
         try {
             const page = await this.browser.newPage();
             await page.goto(url, { waitUntil: "networkidle0"});
