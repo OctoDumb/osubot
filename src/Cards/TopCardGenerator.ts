@@ -1,6 +1,7 @@
 import { JSDOM } from "jsdom";
 import { IBeatmap } from "../API/MapAPI";
 import { ITopAPIResponse, IUserAPIResponse } from "../API/Osu/APIResponse";
+import { modsToString } from "../Util";
 import CardGenerator from "./CardGenerator";
 
 export interface ITopCardArguments {
@@ -46,12 +47,21 @@ export default class TopCardGenerator extends CardGenerator<ITopCardArguments> {
                 bg.setAttribute("style", `background-image: url(https://assets.ppy.sh/beatmaps/${maps[i].beatmapsetID}/covers/cover.jpg);`);
                 body.append(grade, info, pp, bg);
             
+            let mods = document.createElement("div");
+            mods.className = "mods";
+            mods.append(...modsToString(t.mods).map(_mod => {
+                let mod = document.createElement("div");
+                mod.className = `mod ${_mod}`;
+                mod.innerHTML = _mod;
+                return mod;
+            }));
+
             let weight = document.createElement("div");
             weight.className = "weight";
             weight.innerHTML = `${Math.round(Math.pow(0.95, i) * 100)}%`;
 
-            item.append(body, weight);
-
+            item.append(body, mods, weight);
+            
             return item;
         });
 
